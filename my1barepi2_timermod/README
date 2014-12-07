@@ -1,0 +1,37 @@
+----------
+TUTORIAL 2
+----------
+
+This is an introduction to bare-metal programming on Raspberry Pi using
+C language. This module shows how to use the timer available on BCM2835. It
+also shows how the GPIO library module can be reused and included here.
+
+---------
+Objective
+---------
+
+----------
+Background
+----------
+
+--------
+Contents
+--------
+
+Timer module in 'timer.c' source and 'timer.h' header files.
+
+------------------
+ThingsToThinkAbout
+------------------
+
+The free-running counter actually rolls over when it overflows and there is
+no way this register can be reset. Find out how this affects the sample code
+when the initial timer_read value is actually bigger that the next.
+
+---------
+Challenge
+---------
+
+See you if can extend the timer library module to include system timer. Write
+an example application to test the functions you created. Also, try to compare
+the precision of both timers.
