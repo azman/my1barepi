@@ -3,7 +3,7 @@ TUTORIAL 0a
 -----------
 
 This is an introduction to bare-metal programming on Raspberry Pi using
-assembly language. This sample code creates a program that blinks the ACT LED.
+assembly language. This module creates a program that blinks the ACT LED.
 
 ---------
 Objective

@@ -3,7 +3,7 @@ TUTORIAL 0c
 -----------
 
 This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This sample code creates a program that blinks the ACT LED.
+C language. This module creates a program that blinks the ACT LED.
 
 ---------
 Objective
