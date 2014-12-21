@@ -24,3 +24,9 @@ unsigned int timer_read(void)
 	return timer[TIMER_CVAL];
 }
 /*----------------------------------------------------------------------------*/
+void timer_wait(unsigned int wait)
+{
+	unsigned int init = timer_read();
+	while((timer_read()-init)<wait);
+}
+/*----------------------------------------------------------------------------*/
