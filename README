@@ -2,5 +2,19 @@
 MY1BAREPI CODE TUTORIAL
 -----------------------
 
-My attempts to develop bare-metal codes for Raspberry Pi. I only have a B+
-model available, so some stuffs may not be usable for earlier models.
+More like a personal note I made while trying to develop bare-metal codes for
+Raspberry Pi. I want to use C but some things still need assembly, so I also
+added (started with) a project using assembly. On the hardware side, I only
+have a B+ model available, so some stuffs may not be usable for earlier models.
+
+I have two main reference while working on this at the early stage:
+
+- http://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/os/index.html
+  = a site at University of Cambridge which provides stuffs using assembly
+- https://github.com/dwelch67/raspberrypi
+  = code repository at github for examples on bare-metal in C
+
+To generate executable binaries, I built my own cross compiler using
+arm-gcc.build script available in my1ubuild project. The codes here have been
+compiled on both Linux and Windows (with MinGW32) platforms - notice the
+makefiles have been setup to build on both.
