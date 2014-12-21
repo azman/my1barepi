@@ -9,7 +9,7 @@
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
-	volatile unsigned int test, loop, read, temp, humi, csum, wait;
+	volatile unsigned int test, loop, read, temp, humi, csum, wait, init;
 	unsigned char disp[32];
 	float value;
 	gpio_init();
@@ -25,6 +25,7 @@ void main(void)
 	/** do the thing... */
 	while(1)
 	{
+		init = timer_read();
 		gpio_clr(SENS_IN);
 		uart_print("Sending request...\n");
 		timer_wait(1000); /* >= 1ms */
@@ -92,6 +93,8 @@ void main(void)
 		float2str(disp,value);
 		uart_print(disp);
 		uart_print(" %%\n");
+		/** 2 seconds between read */
+		while(timer_read()-init<2000000);
 	}
 }
 /*----------------------------------------------------------------------------*/
