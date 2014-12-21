@@ -20,6 +20,8 @@ pi: main.img
 clean:
 	rm -rf *.img *.lst *.map
 
+new: clean pi
+
 %.img: %.elf
 	$(TOOLPFIX)objcopy $< -O binary $@
 	$(TOOLPFIX)objcopy $< -O binary $(TARGET)

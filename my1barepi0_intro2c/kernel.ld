@@ -4,12 +4,10 @@ SECTIONS {
 		KEEP(*(.text.startup))
 		*(.text)
 	}
-	/* . = ALIGN(4096); align to 4K page size */
 	.data : { /** data segment */
-		*(.data)
 		*(COMMON)
+		*(.data)
 	}
-	/* . = ALIGN(4096); */
 	/DISCARD/ : { /** discard all other... */
 		*(*)
 	}

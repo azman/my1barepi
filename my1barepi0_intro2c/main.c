@@ -22,7 +22,7 @@ void main(void)
 		for(loop=0;loop<0x3F0000;loop++);
 		/** set pin - off led! */
 		gpio[GPIO_FSET+(GPIO_ACT_LED/32)] = 1 << (GPIO_ACT_LED%32);
-		/** delay a bit to allow us see the light! */
+		/** delay a bit to allow us see the blink! */
 		for(loop=0;loop<0x3F0000;loop++);
 	}
 }

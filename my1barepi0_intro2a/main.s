@@ -11,7 +11,7 @@ loop:
 	lsl r1,#15
 	str r1,[r0,#44]
 @loop delay
-	mov r2,#0x7F0000
+	mov r2,#0x3F0000
 wait1:
 	sub r2,#1
 	cmp r2,#0
@@ -21,7 +21,7 @@ wait1:
 	lsl r1,#15
 	str r1,[r0,#32]
 @loop delay
-	mov r2,#0x7F0000
+	mov r2,#0x3F0000
 wait2:
 	sub r2,#1
 	cmp r2,#0

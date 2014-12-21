@@ -13,7 +13,9 @@ Objective
    = also covers a bit on memory map
 2- To understand how GPIO can be accessed
    = also shows how hardware pins are driven by registers
-3- To show that assembly language can be fun! :p
+3- To introduce ARM assembly language
+   = mainly just to show ARM instructions
+   = still need a little bit of this for specific setup
 
 ----------
 Background
@@ -36,8 +38,8 @@ starts up the ARM core. The startup sequence is as follows:
    - a.k.a. VideoCore OS (remains running on GPU after ARM starts execution)
    - prepares/splits memory for GPU/ARM use
    - by default, looks for kernel.img (first ARM binary to be executed)
-   - loads kernel.img @0x8000 and releases reset on ARM core
    - also looks for config.txt and cmdline.txt
+   - loads kernel.img @0x8000 and releases reset on ARM core
 
 --------
 Contents

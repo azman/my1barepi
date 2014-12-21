@@ -9,9 +9,13 @@ C language. This module creates a program that blinks the ACT LED.
 Objective
 ---------
 
-1- To emphasize what have been covered previously (TUTORIAL 0a)
-2- To show how C language can be used to achieve the same thing
+1- To understand how the Raspberry Pi boots (starts up)
+   = also covers a bit on memory map
+2- To understand how GPIO can be accessed
+   = also shows how hardware pins are driven by registers
+3- To show how C language can be used to achieve the same thing
    = highlights the power of C pointers
+   = understanding the C keyword 'volatile'
 
 ----------
 Background
@@ -34,8 +38,8 @@ starts up the ARM core. The startup sequence is as follows:
    - a.k.a. VideoCore OS (remains running on GPU after ARM starts execution)
    - prepares/splits memory for GPU/ARM use
    - by default, looks for kernel.img (first ARM binary to be executed)
-   - loads kernel.img @0x8000 and releases reset on ARM core
    - also looks for config.txt and cmdline.txt
+   - loads kernel.img @0x8000 and releases reset on ARM core
 
 --------
 Contents
