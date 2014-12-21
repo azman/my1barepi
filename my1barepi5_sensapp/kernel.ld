@@ -7,8 +7,8 @@ SECTIONS {
 		*(.rodata*)
 	}
 	.data : { /** data segment */
-		*(.data)
 		*(COMMON)
+		*(.data)
 	}
 	/DISCARD/ : { /** discard all other... */
 		*(*)

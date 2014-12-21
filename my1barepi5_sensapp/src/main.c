@@ -2,19 +2,16 @@
 #include "gpio.h"
 #include "uart.h"
 #include "timer.h"
+#include "utils.h"
 /*----------------------------------------------------------------------------*/
 #define SENS_IN 4
 #define WAIT_1S 1000000
 /*----------------------------------------------------------------------------*/
-void timer_wait(unsigned int wait)
-{
-	unsigned int init = timer_read();
-	while((timer_read()-init)<wait);
-}
-/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	volatile unsigned int test, loop, read, temp, humi, csum, wait;
+	unsigned char disp[32];
+	float value;
 	gpio_init();
 	gpio_config(SENS_IN,GPIO_OUTPUT);
 	gpio_pull(SENS_IN,GPIO_PULL_NONE);
@@ -79,7 +76,6 @@ void main(void)
 			while(gpio_read(SENS_IN)); /* prep data */
 			if(timer_read()-wait>50) csum |= 0x01;
 		}
-		uart_print("Got it!\n");
 		/* set back to high??? */
 		gpio_config(SENS_IN,GPIO_OUTPUT);
 		gpio_set(SENS_IN);
@@ -88,12 +84,14 @@ void main(void)
 			uart_print("Invalid checksum!\n");
 		/* print everything for now */
 		uart_print("Humidity: ");
-		uart_print_hex(humi);
-		uart_print(", Temperature: ");
-		uart_print_hex(temp);
-		uart_print(", Checksum: ");
-		uart_print_hex(csum);
-		uart_print("\n");
+		value = humi / 10.0;
+		float2str(disp,value);
+		uart_print(disp);
+		uart_print(" C, Temperature: ");
+		value = temp / 10.0;
+		float2str(disp,value);
+		uart_print(disp);
+		uart_print(" %%\n");
 	}
 }
 /*----------------------------------------------------------------------------*/

@@ -8,7 +8,7 @@ endif
 TOOLPFIX ?= $(TOOLPATH)arm-none-eabi
 
 # multiple source files (list them here as object files!)
-OBJLST = boot.o gpio.o timer.o uart.o main.o
+OBJLST = boot.o gpio.o timer.o uart.o utils.o main.o
 
 LINKER = kernel.ld
 TARGET = kernel.img
@@ -21,7 +21,7 @@ CFLAGS += -nostdlib -nostartfiles -ffreestanding
 CFLAGS += -march=armv6zk -mtune=arm1176jzf-s
 CFLAGS += -I../my1barepi4_uartmod/src/
 CFLAGS += -I../my1barepi2_timermod/src/
-LFLAGS += --no-undefined
+LFLAGS += --no-undefined -L/usr/lib/gcc/i486-slackware-linux/4.8.2/libgcc.a
 
 # prevent make from automatically removing these!
 .SECONDARY: $(OBJLST)
@@ -31,11 +31,13 @@ all: $(TARGET)
 clean:
 	rm -rf *.img *.elf *.lst *.map *.o
 
+new: clean all
+
 $(TARGET): main.elf
 	$(TOOLPFIX)-objcopy $< -O binary $@
 
 %.elf: $(OBJLST)
-	$(TOOLPFIX)-ld $(LFLAGS) $^ -Map $(MAP) -o $@ -T $(LINKER)
+	$(TOOLPFIX)-ld -o $@ $^ -Map $(MAP) -T $(LINKER) $(LFLAGS)
 	$(TOOLPFIX)-objdump -d $@ > $(LST)
 
 %.o: src/%.s

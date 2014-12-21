@@ -1,0 +1,31 @@
+----------
+TUTORIAL 5
+----------
+
+This is an introduction to bare-metal programming on Raspberry Pi using
+C language. This module creates a program that reads raw data from a
+temperature/humidity sensor and sends them to UART terminals.
+
+This tutorial also reveals that the ARM controller used here does not have
+an integer division hardware and therefore, this operation has to be done
+in software. The code in utils module shows how this can be done.
+
+---------
+Objective
+---------
+
+----------
+Background
+----------
+
+--------
+Contents
+--------
+
+------------------
+ThingsToThinkAbout
+------------------
+
+---------
+Challenge
+---------
