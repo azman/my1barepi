@@ -33,6 +33,8 @@ all: $(TARGET)
 clean:
 	rm -rf *.img *.elf *.lst *.map *.o
 
+new: clean all
+
 $(TARGET): main.elf
 	$(TOOLPFIX)-objcopy $< -O binary $@
 

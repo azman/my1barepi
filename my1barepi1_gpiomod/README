@@ -3,9 +3,8 @@ TUTORIAL 1
 ----------
 
 This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This module shows how the codes in TUTORIAL 0c can be rewritten
-into a modular (and reusable) code structure that will be used in subsequent
-code tutorials.
+C language. This module shows how a software can be written in a modular
+(and reusable) code structure that will be used in subsequent code tutorials.
 
 ---------
 Objective
@@ -37,10 +36,14 @@ Contents
 All source codes are placed in the 'src' folder. Main code is expected in
 in 'main.c', while the GPIO module is written in 'gpio.c' source and 'gpio.h'
 header files. A 'boot.s' is introduced here as the entry point. This is
-necessary to initialize the stack pointer (which is usually necessary when
-we need to execute function calls. The list of objects files required by the
+necessary to initialize the stack pointer which is usually necessary when
+we need to execute function calls (note: In ARM, stack is only needed to save
+all the general purpose registers fr reuse - including the link register that
+is used to save return address). The list of objects files required by the
 application must be listed in the makefile (OBJLST variable) for them to be
 included in the build.
+
+The code also uses macros (LED_ON, LED_OFF, SWITCH_IS_OFF) to make it readable.
 
 ------------------
 ThingsToThinkAbout
