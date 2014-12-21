@@ -6,8 +6,8 @@ SECTIONS {
 		*(.text)
 	}
 	.data : { /** data segment */
-		*(.data)
 		*(COMMON)
+		*(.data)
 	}
 	/DISCARD/ : { /** discard all other... */
 		*(*)
