@@ -62,6 +62,7 @@ void main(void)
 	gpio_config(segment_gpio[SEGMENT_F],GPIO_OUTPUT);
 	gpio_config(segment_gpio[SEGMENT_G],GPIO_OUTPUT);
 	gpio_config(MY_SWI,GPIO_INPUT);
+	timer_init();
 	while(1)
 	{
 		show_number(0);
