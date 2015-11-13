@@ -7,5 +7,10 @@ float str2float(char* str); /** convert string to float */
 int int2str(char* str, int val); /** convert integer to string */
 int float2str(char* str, float val); /** convert float to string (2dp) */
 /*----------------------------------------------------------------------------*/
+/**
+ * This module also provides __aeabi_uidiv and __aeabi_uidivmod to allow
+ * integer division (no hardware for this).
+**/
+/*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/
