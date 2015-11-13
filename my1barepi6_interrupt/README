@@ -1,0 +1,37 @@
+----------
+TUTORIAL 6
+----------
+
+This is an introduction to bare-metal programming on Raspberry Pi using
+C language. This module shows how to use the interrupt facility on BCM2835. It
+also shows a rewrite of the timer module in order to utilize interrupt.
+
+---------
+Objective
+---------
+
+1- To explore interrupt facilities available on BCM2835
+2- To understand how an interrupt can be used for event triggers (timer)
+
+----------
+Background
+----------
+
+Interrupts are very useful to have - many applications appreciate having the
+possibility of event-based implementation.
+
+--------
+Contents
+--------
+
+Interrupt module in 'interrupt.c' source and 'interrupt.h' header files.
+
+------------------
+ThingsToThinkAbout
+------------------
+
+
+---------
+Challenge
+---------
+
