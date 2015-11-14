@@ -8,6 +8,7 @@ SECTIONS {
 	.data : { /** data segment */
 		*(COMMON)
 		*(.data)
+		*(.bss)
 	}
 	/DISCARD/ : { /** discard all other... */
 		*(*)

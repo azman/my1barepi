@@ -10,6 +10,8 @@
 #define INTR_IRQCHK2 2
 /*----------------------------------------------------------------------------*/
 #define INTR_BASIC_TIMER 0x00000001
+/* GPIO interrupts @IRQ49-52 => BIT17-20 */
+#define INTR_PEND2_GPIOS 0x001E0000
 /*----------------------------------------------------------------------------*/
 void interrupt_init(void);
 void interrupt_enable(int set,unsigned int sel);
