@@ -1,0 +1,27 @@
+----------
+TUTORIAL 7
+----------
+
+This is an introduction to bare-metal programming on Raspberry Pi using
+C language. This module creates a program that simply echoes whatever
+byte that is detected on the incoming bit banging UART line.
+
+---------
+Objective
+---------
+
+----------
+Background
+----------
+
+--------
+Contents
+--------
+
+------------------
+ThingsToThinkAbout
+------------------
+
+---------
+Challenge
+---------
