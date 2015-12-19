@@ -6,7 +6,8 @@ void main(void)
 {
 	unsigned int test;
 	gpio_init();
-	uart_init();
+	/** initialize uart with default baudrate */
+	uart_init(UART_BAUD_DEFAULT);
 	/** send out the word! */
 	uart_print("\nYAY! THIS WORKS!\n");
 	/** do the thing... */

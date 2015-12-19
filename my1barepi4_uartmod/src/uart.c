@@ -28,7 +28,7 @@
 /*----------------------------------------------------------------------------*/
 volatile unsigned int *uart;
 /*----------------------------------------------------------------------------*/
-void uart_init(void)
+void uart_init(int baudrate)
 {
 	uart = (unsigned int*) AUX_BASE;
 	uart[AUX_ENABLES] |= UART_AUX_ENABLE;
@@ -36,8 +36,17 @@ void uart_init(void)
 	uart[UART_LCR_REG]  = 0x03; /** 8-bit data (errata in manual) */
 	uart[UART_MCR_REG]  = 0x00;
 	uart[UART_IIR_REG]  = 0x00;
+	/** check requested baudrate **/
+	switch (baudrate)
+	{
+		case UART_BAUD_115200:
+		case UART_BAUD_9600:
+			break;
+		default:
+			baudrate = UART_BAUD_DEFAULT;
+	}
 	/** baudrate count = ((sys_clk/baudrate)/8)-1 */
-	uart[UART_BAUD_REG] = 270; /** 16-bit baudrate counter */
+	uart[UART_BAUD_REG] = baudrate; /** 16-bit baudrate counter */
 	/* setup pins! */
 	gpio_config(UART_TXD_GPIO,GPIO_ALTF5);
 	gpio_config(UART_RXD_GPIO,GPIO_ALTF5);
