@@ -18,7 +18,16 @@ Background
 ----------
 
 Timers are very useful to have - many applications appreciate having proper
-timing in their execution.
+timing in their execution. There are 2 timers that can be used on BCM2835 -
+an ARM timer based on ARM's timer module SP804 and a system timer. The
+ARM timer uses a derived clock signal that adapts to system performance
+capabilities/requirements and therefore changes dynamically (e.g. slower in
+low power mode). For accurate timing, the manual recommends using the system
+timer.
+
+The ARM timer can be utilized in two ways - setting the SP804-compatible timer
+or getting lapsed time from a free-running counter. In this module, we will
+focus on using the simpler method of using the free-running counter.
 
 --------
 Contents
