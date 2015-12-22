@@ -15,16 +15,18 @@ MAP = kernel.map
 CFLAGS += -O2 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
 CFLAGS += -nostdlib -nostartfiles -ffreestanding
 
-pi: main.img
+pi: $(TARGET)
 
 clean:
 	rm -rf *.img *.lst *.map
 
 new: clean pi
 
+$(TARGET): main.img
+	mv $< $(TARGET)
+
 %.img: %.elf
 	$(TOOLPFIX)objcopy $< -O binary $@
-	$(TOOLPFIX)objcopy $< -O binary $(TARGET)
 
 %.elf: %.o $(LINKER)
 	$(TOOLPFIX)ld --no-undefined $< -Map $(MAP) -o $@ -T $(LINKER)
