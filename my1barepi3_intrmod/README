@@ -4,7 +4,7 @@ TUTORIAL 3
 
 This is an introduction to bare-metal programming on Raspberry Pi using
 C language. This module shows how to use the interrupt facility on BCM2835. It
-also shows a rewrite of the timer module in order to utilize interrupt.
+also shows a rewrite of the timer/gpio module in order to utilize interrupt.
 
 ---------
 Objective
@@ -19,6 +19,10 @@ Background
 
 Interrupts are very useful to have - many applications appreciate having the
 possibility of event-based implementation.
+
+Most of the time, configuring interrupt facilities can only be done using
+assembly. Notice that the code in 'boot.s' is significantly larger, and
+different from the previous tutorials.
 
 --------
 Contents
