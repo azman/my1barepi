@@ -1,5 +1,5 @@
 ----------
-TUTORIAL 3
+TUTORIAL 4
 ----------
 
 This is an introduction to bare-metal programming on Raspberry Pi using
@@ -16,12 +16,16 @@ Objective
 Background
 ----------
 
+For most simple embedded applications, using LCD displays can be an overkill.
+One of the most common display alternative (especially for numerical display)
+is using 7-segments. A 7-segment is basically a set of LEDs that are arranged
+as such that it can display 0-9 when designated LEDs are turned on.
+
 --------
 Contents
 --------
 
-All codes related to 7-segment are in 'main.c'. Notice in the makefile that
-this tutorial uses both gpio and timer modules from previous tutorials.
+All codes related to 7-segment usage are in 'main.c'.
 
 ------------------
 ThingsToThinkAbout
