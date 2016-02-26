@@ -1,12 +1,15 @@
 /*----------------------------------------------------------------------------*/
+#include "gpio.h"
 #include "7seg.h"
 /*----------------------------------------------------------------------------*/
-void seven_init(seven_seg_t *segment,int *pattern,int *gpio,int gpio_dp)
+void seven_init(seven_seg_t *segment,int *pattern)
 {
+	volatile unsigned int loop;
 	segment->p_pattern = pattern;
-	/* should we check for valid gpio number?? */
-	segment->gpio_num = gpio;
-	segment->gpio_dp = gpio_dp;
+	/* gpio pins should be assigned/validated externally */
+	for(loop=0;loop<SEGMENT_COUNT;loop++)
+		gpio_config(segment->gpio_num[loop],GPIO_OUTPUT);
+	gpio_config(segment->gpio_dp,GPIO_OUTPUT);
 }
 /*----------------------------------------------------------------------------*/
 void seven_show(seven_seg_t *segment,int number)
