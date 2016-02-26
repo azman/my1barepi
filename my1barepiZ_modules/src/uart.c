@@ -69,7 +69,7 @@ void uart_send(unsigned int data)
 /*----------------------------------------------------------------------------*/
 unsigned int uart_incoming(void)
 {
-    return uart[UART_LSR_REG]&UART_RXFIFO_AVAIL;
+	return uart[UART_LSR_REG]&UART_RXFIFO_AVAIL;
 }
 /*----------------------------------------------------------------------------*/
 unsigned int uart_read(void)

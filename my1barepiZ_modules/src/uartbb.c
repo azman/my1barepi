@@ -45,6 +45,25 @@ void uartbb_send(unsigned int data)
 	timer_wait(B9600_TX_DELAY);
 }
 /*----------------------------------------------------------------------------*/
+void uartbb_find_stop(void)
+{
+	unsigned int init;
+	int not_done = 1;
+	do {
+		/* in case we're low, wait for stop bit (high) */
+		while(!gpio_read(uartbb_rx));
+		/* mark start-of-high time */
+		init = timer_read();
+		while(gpio_read(uartbb_rx))
+		{
+			if(timer_read()-init>B9600_RX_DELAY)
+			{
+				not_done = 0; break;
+			}
+		}
+	} while(not_done);
+}
+/*----------------------------------------------------------------------------*/
 unsigned int uartbb_read(void)
 {
 	int loop;
