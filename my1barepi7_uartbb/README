@@ -10,13 +10,22 @@ byte that is detected on the incoming bit banging UART line.
 Objective
 ---------
 
+1. To show how to implement bit banging UART interface terminal
+
 ----------
 Background
 ----------
 
+The Raspberry Pi board has only a single UART terminal. Some applications
+require more than one - so, a common solution for this is to implement
+bit banging technique.
+
 --------
 Contents
 --------
+
+All codes related to implement bit banging is in 'uartbb.c' source and
+'uartbb.h' header files.
 
 ------------------
 ThingsToThinkAbout
@@ -25,3 +34,5 @@ ThingsToThinkAbout
 ---------
 Challenge
 ---------
+
+Try to add more baudrate option(s) to the module.
