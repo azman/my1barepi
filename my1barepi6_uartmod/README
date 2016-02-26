@@ -10,17 +10,24 @@ byte that is detected on the incoming UART line.
 Objective
 ---------
 
+1- To understand how a RS232 UART interface can be implemented
+
 ----------
 Background
 ----------
+
+The RS232 UART interface is still relevant in current systems - mainly used
+as a fallback method to access a system.
 
 --------
 Contents
 --------
 
-As usual the new uart module is written as 'uart.c' and 'uart.h'. The gpio
-module is rewritten to include a feature to change pull-{up,down} settings
-of a GPIO pin.
+As usual, the new uart module is written as 'uart.c' and 'uart.h'. But this
+time it is placed directly in the 'modules' folder.
+
+In order to implement UART, the gpio module should also include a feature to
+change pull-{up,down} settings of a GPIO pin.
 
 ------------------
 ThingsToThinkAbout
