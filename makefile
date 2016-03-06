@@ -15,10 +15,20 @@ TARGET ?= kernel.img
 LST ?= kernel.lst
 MAP ?= kernel.map
 
+# assembler option(s)
 AFLAGS +=
-CFLAGS += -O2 -mfpu=vfp -mfloat-abi=hard
+# compiler option(s)
+ifeq ($(RASPI2),YES)
+# for raspberry pi 2 b (2014)
+CFLAGS += -mfpu=neon-vfpv4 -mfloat-abi=hard
+CFLAGS += -march=armv7-a -mtune=cortex-a7
+CFLAGS += -DRASPI2
+else
+CFLAGS += -mfpu=vfp -mfloat-abi=hard
 CFLAGS += -march=armv6zk -mtune=arm1176jzf-s
+endif
 CFLAGS += -nostdlib -nostartfiles -ffreestanding
+# linker option(s)
 LFLAGS += --no-undefined
 
 # prevent make from automatically removing these!
