@@ -12,10 +12,17 @@ TARGET = kernel.img
 LST = kernel.lst
 MAP = kernel.map
 
+AFLAGS +=
+LFLAGS += --no-undefined
+
+help:
+	@echo "Targets: help clean pi <filename>.img"
+
 pi: main.img
 
 clean:
 	rm -rf *.img *.lst *.map
+# *.elf *.o deleted by compiler once done with
 
 new: clean pi
 
@@ -24,8 +31,8 @@ new: clean pi
 	$(TOOLPFIX)objcopy $< -O binary $(TARGET)
 
 %.elf: %.o $(LINKER)
-	$(TOOLPFIX)ld --no-undefined $< -Map $(MAP) -o $@ -T $(LINKER)
+	$(TOOLPFIX)ld $(LFLAGS) $< -Map $(MAP) -o $@ -T $(LINKER)
 	$(TOOLPFIX)objdump -d $@ > $(LST)
 
 %.o: %.s
-	$(TOOLPFIX)as $< -o $@
+	$(TOOLPFIX)as $(AFLAGS) $< -o $@

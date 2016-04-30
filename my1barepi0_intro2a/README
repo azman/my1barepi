@@ -5,47 +5,7 @@ TUTORIAL 0a
 This is an introduction to bare-metal programming on Raspberry Pi using
 assembly language. This module creates a program that blinks the ACT LED.
 
----------
-Objective
----------
-
-1- To understand how the Raspberry Pi boots (starts up)
-   = also covers a bit on memory map
-2- To understand how GPIO can be accessed
-   = also shows how hardware pins are driven by registers
-3- To introduce ARM assembly language
-   = mainly just to show ARM instructions
-   = still need a little bit of this for specific setup
-
-----------
-Background
-----------
-
-The Raspberry Pi has Broadcom's SoC-packaged ARM-based BCM2835 microcontroller
-that also contains a GPU (Graphics Processing Unit), which is also frequently
-referred to as VC (VideoCore) in BCM2835 ARM peripherals manual. The first
-code that runs on this package is actually executed by the GPU, which then
-starts up the ARM core. The startup sequence is as follows:
-
-1) GPU boots stage 1 bootloader from on-chip ROM
-   - capable of accessing FAT32 partition on (micro)SD card
-   - looks for bootcode.bin (stage 2 bootloader)
-2) GPU loads bootcode.bin into the 128KB on-chip L2 cache
-   - (older version) looks for loader.bin (stage 3 bootloader) for ELF utils
-   - (newer version) already equipped with ELF utils
-   - looks for start.elf (THE bootloader with configurable properties)
-3) GPU executes start.elf (configurable with config.txt)
-   - a.k.a. VideoCore OS (remains running on GPU after ARM starts execution)
-   - prepares/splits memory for GPU/ARM use
-   - by default, looks for kernel.img (first ARM binary to be executed)
-   - also looks for config.txt and cmdline.txt
-   - loads kernel.img @0x8000 and releases reset on ARM core
-
---------
-Contents
---------
-
-The three files provided contains all the required information for this module.
+The three files provided this module:
 
 - makefile
   = contains the build method for bare-metal programming
@@ -59,10 +19,6 @@ The three files provided contains all the required information for this module.
   = this one simply blinks the ACT LED (GPIO access)
   = need to understand physical vs virtual address
 
-------------------
-ThingsToThinkAbout
-------------------
-
-Notice that in the code, the GPIO pin need to be at logic low ('0' @ GND) for
-the LED to turn ON. Find out why this is the case. (Hint: It has something to
-do with pull-up/pull-down strength of semiconductor devices.)
+The makefile in this module allows building kernel.img from any single-file
+assembly source code (e.g. type 'make test.img' to create kernel.img from
+an assembly source file named test.s).
