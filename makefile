@@ -12,6 +12,7 @@ OBJLST ?= boot.o main.o
 
 LINKER ?= ../linker.ld
 TARGET ?= kernel.img
+TOPELF ?= main.elf
 LST ?= kernel.lst
 MAP ?= kernel.map
 
@@ -48,10 +49,10 @@ clean:
 
 new: clean pi
 
-$(TARGET): main.elf
+$(TARGET): $(TOPELF)
 	$(TOOLPFIX)-objcopy $< -O binary $@
 
-%.elf: $(OBJLST)
+$(TOPELF): $(OBJLST) $(LINKER)
 	$(TOOLPFIX)-ld $(LFLAGS) $^ -Map $(MAP) -o $@ -T $(LINKER)
 	$(TOOLPFIX)-objdump -d $@ > $(LST)
 
