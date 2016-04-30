@@ -4,44 +4,35 @@ TUTORIAL 1
 
 This is an introduction to bare-metal programming on Raspberry Pi using
 C language. This module shows how a software can be written in a modular
-(and reusable) code structure that will be used in subsequent code tutorials.
+(and reusable) code structure.
 
 ---------
 Objective
 ---------
 
-1- To analyze multiple-source (modular) project file structure
-2- To understand how a GPIO module can be created
-3- To understand how GPIO pin external interfacing is done
+1- To understand how a GPIO pin interfacing can be done
+2- To review modular coding style
 
 ----------
 Background
 ----------
 
-When working towards developing larger and more complex code, it is nice to
-have reusable codes in appropriately named functions that are accessible from
-other modules (modular programming). This tutorial's main purpose is to show
-how the GPIO-related codes can be generalized and 'packed' into a 'library'
-module.
+This module shows how the board can be connected to external (off-board) LED
+and switch. The example program will blink an LED that is connected to GPIO2
+pin (active low) whenever a switch at GPIO3 pin (active low) is pushed.
 
-On the hardware side, this module also expects the board to be connected to
-external (off-board) LED and switch. The example program will blink an LED that
-is connected to GPIO2 pin (active low) whenever a switch at GPIO3 pin (active
-low) is pushed.
+When working towards developing larger and more complex code, it is nice to
+have reusable codes in appropriately named functions (modular programming).
+Consequently, the modularized codes can be generalized and 'packed' into a
+'library' module that can be used in the subsequent tutorials.
 
 --------
 Contents
 --------
 
-All source codes are placed in the 'src' folder. Main code is expected in
-in 'main.c', while the GPIO module is written in 'gpio.c' source and 'gpio.h'
-header files. A 'boot.s' is introduced here as the entry point. This is
-necessary to initialize the stack pointer which is usually necessary when
-we need to execute function calls (note: In ARM, stack is only needed to save
-all the general purpose registers for reuse - including the link register that
-is used to save return address). The list of objects files required by the
-application must be listed in the makefile (OBJLST variable) for them to be
-included in the build.
+All source codes are placed in the 'src' folder. The list of objects files
+required by the application must be listed in the makefile (OBJLST variable)
+for them to be included in the build.
 
 The code also uses macros (LED_ON, LED_OFF, SWITCH_IS_OFF) to make it readable.
 
