@@ -10,7 +10,7 @@ TOOLPFIX ?= $(TOOLPATH)arm-none-eabi
 # multiple source files (list them here as object files!)
 OBJLST ?= boot.o main.o
 
-LINKER ?= kernel.ld
+LINKER ?= ../linker.ld
 TARGET ?= kernel.img
 LST ?= kernel.lst
 MAP ?= kernel.map
