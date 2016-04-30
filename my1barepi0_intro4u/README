@@ -59,7 +59,10 @@ The files:
   = this one simply blinks the ACT LED (GPIO access)
   = need to understand physical vs virtual address
 - boot.s
-  = a simple start-up code in assembly, sets up the stack pointer
+  = a simple start-up code in assembly (entry point)
+  = sets up stack pointer (necessary for proper function call/return)
+    = in ARM, stack is only needed to save all registers for reuse
+    = including the link register that is used to save return address
   = this has become a requirement (unless we use 'naked' attribute :p)
 
 ------------------

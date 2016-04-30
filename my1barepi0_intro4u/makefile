@@ -7,9 +7,9 @@ OBJLST = boot.o main.o
 # default rule
 all: $(TARGET)
 
+# get project's common makefile stuffs
+include ../makefile
+
 # in case we need customization
 CFLAGS += -O2
 # -02 optimization got us (160-140) bytes savings
-
-# get project's common makefile stuffs
-include ../makefile
