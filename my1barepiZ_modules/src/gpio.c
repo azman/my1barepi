@@ -1,7 +1,13 @@
 /*----------------------------------------------------------------------------*/
 #include "gpio.h"
 /*----------------------------------------------------------------------------*/
+#ifdef RASPI2
+#define GPIO_BASE 0x3F200000
+#define COUNT_MAX 0x100000
+#else
 #define GPIO_BASE 0x20200000
+#define COUNT_MAX 0x200000
+#endif
 #define GPIO_FSEL 0x00
 #define GPIO_FSET 0x07
 #define GPIO_FCLR 0x0A

@@ -8,9 +8,11 @@
 #define LED_OFF gpio_set
 #define SWITCH_IS_OFF gpio_read
 /*----------------------------------------------------------------------------*/
+#define COUNT_MAX 0x100000
+/*----------------------------------------------------------------------------*/
 void main(void)
 {
-	volatile unsigned int loop; /** does not work if NOT volatile! */
+	volatile int loop; /** loop will be optimized OUT if NOT volatile */
 	gpio_init();
 	gpio_config(MY_LED,GPIO_OUTPUT);
 	gpio_config(MY_SWITCH,GPIO_INPUT);
@@ -19,9 +21,9 @@ void main(void)
 	{
 		if(SWITCH_IS_OFF(MY_SWITCH)) continue;
 		LED_ON(MY_LED);
-		for(loop=0;loop<0x100000;loop++);
+		for(loop=0;loop<COUNT_MAX;loop++);
 		LED_OFF(MY_LED);
-		for(loop=0;loop<0x100000;loop++);
+		for(loop=0;loop<COUNT_MAX;loop++);
 	}
 }
 /*----------------------------------------------------------------------------*/

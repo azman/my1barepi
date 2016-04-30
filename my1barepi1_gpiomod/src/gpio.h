@@ -5,8 +5,6 @@
 #define GPIO_INPUT  0x00
 #define GPIO_OUTPUT 0x01
 /*----------------------------------------------------------------------------*/
-extern volatile unsigned int *gpio;
-/*----------------------------------------------------------------------------*/
 void gpio_init(void);
 void gpio_config(int gpio_num, int gpio_sel);
 void gpio_set(int gpio_num);

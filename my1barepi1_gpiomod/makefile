@@ -7,5 +7,8 @@ OBJLST = boot.o gpio.o main.o
 # default rule
 all: $(TARGET)
 
+# in case we need customization
+CFLAGS += -O2
+
 # get project's common makefile stuffs
 include ../makefile
