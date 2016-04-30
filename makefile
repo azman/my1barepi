@@ -28,7 +28,7 @@ else
 CFLAGS += -mfpu=vfp -mfloat-abi=hard
 CFLAGS += -march=armv6zk -mtune=arm1176jzf-s
 endif
-CFLAGS += -nostdlib -nostartfiles -ffreestanding
+CFLAGS += -nostdlib -nostartfiles -ffreestanding -Wall
 # linker option(s)
 LFLAGS += --no-undefined
 
