@@ -1,7 +1,13 @@
 /*----------------------------------------------------------------------------*/
 #include "timer.h"
 /*----------------------------------------------------------------------------*/
+#ifdef RASPI2
+#define TIMER_BASE 0x3F00B400
+#define TIMER_SYS_BASE 0x3F003000
+#else
 #define TIMER_BASE 0x2000B400
+#define TIMER_SYS_BASE 0x20003000
+#endif
 #define TIMER_LOAD 0x00
 #define TIMER_DVAL 0x01
 #define TIMER_CTRL 0x02
@@ -28,7 +34,6 @@
 #define TIMER_TMR_ENABLE 0x00000080
 #define TIMER_IRQ_ENABLE 0x00000020
 /*----------------------------------------------------------------------------*/
-#define TIMER_SYS_BASE 0x20003000
 #define TIMER_SYS_CTRL 0
 #define TIMER_SYS_STAT 0
 #define TIMER_SYS_CNTL 1

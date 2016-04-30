@@ -3,7 +3,11 @@
 /*----------------------------------------------------------------------------*/
 /** TIMER MODULE BEGIN - THESE FUNCTIONS WILL BE MADE INTO A LIBRARY! */
 /*----------------------------------------------------------------------------*/
+#ifdef RASPI2
+#define TIMER_BASE 0x3F00B000
+#else
 #define TIMER_BASE 0x2000B000
+#endif
 /** offset 0x400 */
 #define TIMER_CTRL 0x102
 #define TIMER_CVAL 0x108

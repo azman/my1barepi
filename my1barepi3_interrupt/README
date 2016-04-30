@@ -28,7 +28,9 @@ different from the previous tutorials.
 Contents
 --------
 
-Interrupt module in 'interrupt.c' source and 'interrupt.h' header files.
+All codes related to interrupt configuration are in 'main.c'. The things that
+are specific to GPIO and timer can be found in respective source files in
+my1barepiZ.
 
 ------------------
 ThingsToThinkAbout
