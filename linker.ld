@@ -4,6 +4,7 @@ SECTIONS {
 		KEEP(*(.boot))
 		KEEP(*(.text.startup))
 		*(.text)
+		*(.rodata*)
 	}
 	.data : { /** data segment */
 		*(COMMON)

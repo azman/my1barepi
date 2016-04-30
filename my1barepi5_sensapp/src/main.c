@@ -21,7 +21,7 @@ int segment_pattern[10][SEGMENT_COUNT] =
 /*----------------------------------------------------------------------------*/
 int sensor_read(int gpio_sens,unsigned int* ptemp,unsigned int* phumi)
 {
-	unsigned int test, loop, read, temp, humi, csum, wait, init;
+	unsigned int loop, read, temp, humi, csum, wait;
 	/* start protocol! */
 	gpio_clr(gpio_sens);
 	timer_wait(1000); /* >= 1ms */
