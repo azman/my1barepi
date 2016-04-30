@@ -19,13 +19,16 @@
 #define ASCII_EOT 0x04
 #define ASCII_CR  0x0D
 /*----------------------------------------------------------------------------*/
+void exec_this(unsigned int); /** decribed in assembly */
+/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	unsigned int prev, test, crcc, loop, index, check;
-	unsigned char buff[XMODEM_BUFF_SIZE], mesg[] = "\nMY1 R-PI LOADER\n";
+	unsigned char buff[XMODEM_BUFF_SIZE];
 	unsigned char *pbase;
+	char mesg[] = "\nMY1 R-PI LOADER\n";
 	gpio_init();
-	uart_init();
+	uart_init(UART_BAUD_9600);
 	timer_init();
 	/** send out the word! */
 	uart_print(mesg);
