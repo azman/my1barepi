@@ -23,8 +23,8 @@ as a fallback method to access a system.
 Contents
 --------
 
-As usual, the new uart module is written as 'uart.c' and 'uart.h'. But this
-time it is placed directly in the 'modules' folder.
+The new uart module is written as 'uart.c' and 'uart.h', which are placed
+directly in the 'finalized modules' folder.
 
 In order to implement UART, the gpio module should also include a feature to
 change pull-{up,down} settings of a GPIO pin.
