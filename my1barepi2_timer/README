@@ -33,7 +33,7 @@ focus on using the simpler method of using the free-running counter.
 Contents
 --------
 
-Timer module in 'timer.c' source and 'timer.h' header files.
+All codes related to timer usage are in 'main.c'.
 
 ------------------
 ThingsToThinkAbout
@@ -47,6 +47,6 @@ when the initial timer_read value is actually bigger that the next.
 Challenge
 ---------
 
-See if you can extend the timer library module to include system timer. Write
-an example application to test the functions you created. Also, try to compare
-the precision of both timers.
+See if you can extend the timer codes to include system timer. Write an example
+application to test the functions you created. Also, try to compare the
+precision of both timers.
