@@ -21,4 +21,4 @@ The three files provided in this module:
 
 The makefile in this module allows building kernel.img from any single-file
 C source code (e.g. type 'make test.img' to create kernel.img from
-an assembly source file named test.s).
+a C source file named test.c).
