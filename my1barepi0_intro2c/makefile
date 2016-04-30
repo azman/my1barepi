@@ -12,24 +12,27 @@ TARGET = kernel.img
 LST = kernel.lst
 MAP = kernel.map
 
-CFLAGS += -O2 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
-CFLAGS += -nostdlib -nostartfiles -ffreestanding
+CFLAGS += -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
+CFLAGS += -nostdlib -nostartfiles -ffreestanding -Wall
+LFLAGS += --no-undefined
 
-pi: $(TARGET)
+help:
+	@echo "Targets: help clean pi <filename>.img"
+
+pi: main.img
 
 clean:
 	rm -rf *.img *.lst *.map
+# *.elf *.o deleted by compiler once done with
 
 new: clean pi
 
-$(TARGET): main.img
-	mv $< $(TARGET)
-
 %.img: %.elf
 	$(TOOLPFIX)objcopy $< -O binary $@
+	$(TOOLPFIX)objcopy $< -O binary $(TARGET)
 
 %.elf: %.o $(LINKER)
-	$(TOOLPFIX)ld --no-undefined $< -Map $(MAP) -o $@ -T $(LINKER)
+	$(TOOLPFIX)ld $(LFLAGS) $< -Map $(MAP) -o $@ -T $(LINKER)
 	$(TOOLPFIX)objdump -d $@ > $(LST)
 
 %.o: %.c
