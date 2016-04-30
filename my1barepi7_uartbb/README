@@ -25,7 +25,7 @@ Contents
 --------
 
 All codes related to implement bit banging is in 'uartbb.c' source and
-'uartbb.h' header files.
+'uartbb.h' header files, placed in 'finalized modules' folder.
 
 ------------------
 ThingsToThinkAbout
