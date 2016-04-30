@@ -9,7 +9,7 @@ all: $(TARGET)
 
 # in case we need customization
 CFLAGS += -O2
-# - not needed here got only (160-148) byte-savings
+# -02 optimization got us (160-140) bytes savings
 
 # get project's common makefile stuffs
 include ../makefile
