@@ -18,8 +18,8 @@ Background
 
 For most simple embedded applications, using LCD displays can be an overkill.
 One of the most common display alternative (especially for numerical display)
-is using 7-segments. A 7-segment is basically a set of LEDs that are arranged
-as such that it can display 0-9 when designated LEDs are turned on.
+is a 7-segment. It is basically a set of LEDs that are arranged as such that
+it can display 0-9 when designated LEDs are turned on.
 
 --------
 Contents
