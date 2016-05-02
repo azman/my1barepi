@@ -54,10 +54,6 @@ unsigned int gpio_read(int gpio_num)
 #define MY_LED 2
 #define MY_SWITCH 3
 /*----------------------------------------------------------------------------*/
-#define LED_ON gpio_clr
-#define LED_OFF gpio_set
-#define SWITCH_IS_OFF gpio_read
-/*----------------------------------------------------------------------------*/
 #ifdef RASPI2
 #define COUNT_MAX 0x100000
 #else
@@ -70,13 +66,13 @@ void main(void)
 	gpio_init();
 	gpio_config(MY_LED,GPIO_OUTPUT);
 	gpio_config(MY_SWITCH,GPIO_INPUT);
-	LED_OFF(MY_LED);
+	gpio_clr(MY_LED);
 	while(1)
 	{
-		if(SWITCH_IS_OFF(MY_SWITCH)) continue;
-		LED_ON(MY_LED);
+		if(gpio_read(MY_SWITCH)) continue;
+		gpio_set(MY_LED);
 		for(loop=0;loop<COUNT_MAX;loop++);
-		LED_OFF(MY_LED);
+		gpio_clr(MY_LED);
 		for(loop=0;loop<COUNT_MAX;loop++);
 	}
 }

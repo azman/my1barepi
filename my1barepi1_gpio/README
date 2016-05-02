@@ -34,8 +34,6 @@ All source codes are placed in the 'src' folder. The list of objects files
 required by the application must be listed in the makefile (OBJLST variable)
 for them to be included in the build.
 
-The code also uses macros (LED_ON, LED_OFF, SWITCH_IS_OFF) to make it readable.
-
 ------------------
 ThingsToThinkAbout
 ------------------

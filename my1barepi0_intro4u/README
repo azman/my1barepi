@@ -69,6 +69,5 @@ The files:
 ThingsToThinkAbout
 ------------------
 
-Notice that in the code, the GPIO pin need to be at logic low ('0' @ GND) for
-the LED to turn ON. Find out why this is the case. (Hint: It has something to
-do with pull-up/pull-down strength of semiconductor devices.)
+Notice that, sometimes, the GPIO pin need to be at logic low ('0' @ GND) for
+the LED to turn ON. Find out why this is the case.

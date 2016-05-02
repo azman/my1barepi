@@ -12,11 +12,11 @@
 #define GPIO_ACT_LED 47
 
 /**
- * 
+ *
  * This can be added to the code to avoid using boot.s
- * 
+ *
  * void main(void) __attribute__((naked));
- * 
+ *
 **/
 void main(void)
 {
@@ -29,11 +29,11 @@ void main(void)
 	/** main loop */
 	while(1)
 	{
-		/** clear pin - on led! */
+		/** clear pin! */
 		gpio[GPIO_FCLR+(GPIO_ACT_LED/32)] = 1 << (GPIO_ACT_LED%32);
-		/** delay a bit to allow us see the light! */
+		/** delay a bit to allow us see the blink! */
 		for(loop=0;loop<COUNT_MAX;loop++);
-		/** set pin - off led! */
+		/** set pin! */
 		gpio[GPIO_FSET+(GPIO_ACT_LED/32)] = 1 << (GPIO_ACT_LED%32);
 		/** delay a bit to allow us see the blink! */
 		for(loop=0;loop<COUNT_MAX;loop++);
