@@ -25,6 +25,9 @@ void uartbb_init(int rx_gpio,int tx_gpio)
 	/* disable pulls on tx/rx pins? */
 	gpio_pull(uartbb_rx,GPIO_PULL_NONE);
 	gpio_pull(uartbb_tx,GPIO_PULL_NONE);
+	/* mark - logic hi */
+	gpio_set(uartbb_tx);
+	timer_wait(B9600_TX_DELAY);
 }
 /*----------------------------------------------------------------------------*/
 void uartbb_send(unsigned int data)

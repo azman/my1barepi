@@ -33,9 +33,9 @@ void uart_init(int baudrate)
 	uart = (unsigned int*) AUX_BASE;
 	uart[AUX_ENABLES] |= UART_AUX_ENABLE;
 	uart = (unsigned int*) UART_BASE;
-	uart[UART_LCR_REG]  = 0x03; /** 8-bit data (errata in manual) */
+	uart[UART_LCR_REG]  = 0x03; /** 8-bit data (errata in manual 0x01) */
 	uart[UART_MCR_REG]  = 0x00;
-	uart[UART_IIR_REG]  = 0x00;
+	uart[UART_IER_REG]  = 0x00; /** no need interrupt */
 	/** check requested baudrate **/
 	switch (baudrate)
 	{
@@ -54,8 +54,12 @@ void uart_init(int baudrate)
 	gpio_pull(UART_TXD_GPIO,GPIO_PULL_NONE);
 	gpio_pull(UART_RXD_GPIO,GPIO_PULL_NONE);
 	/** ready to go? */
-	uart[UART_IER_REG]  = 0xC6; /** enable & clear TX/RX FIFO */
+	uart[UART_IIR_REG]  = 0xC6; /** clear TX/RX FIFO */
 	uart[UART_CNTL_REG] = 0x03; /** enable TX/RX */
+/*
+	uart[UART_IIR_REG]  |= 0x06; /** clear TX/RX FIFO * /
+	uart[UART_CNTL_REG] |= 0x03; /** enable TX/RX * /
+*/
 }
 /*----------------------------------------------------------------------------*/
 #define UART_TXFIFO_EMPTY 0x20
