@@ -1,0 +1,28 @@
+-----------
+TUTORIAL 90
+-----------
+
+This is an introduction to bare-metal programming on Raspberry Pi using
+C language. This module creates a simple program that communicates with
+a GSM module through standard UART interface and echoes all actions and
+results to a PC using a bit-bang UART interface.
+
+---------
+Objective
+---------
+
+----------
+Background
+----------
+
+--------
+Contents
+--------
+
+------------------
+ThingsToThinkAbout
+------------------
+
+---------
+Challenge
+---------
