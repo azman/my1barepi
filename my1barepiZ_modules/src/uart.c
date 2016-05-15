@@ -57,8 +57,8 @@ void uart_init(int baudrate)
 	uart[UART_IIR_REG]  = 0xC6; /** clear TX/RX FIFO */
 	uart[UART_CNTL_REG] = 0x03; /** enable TX/RX */
 /*
-	uart[UART_IIR_REG]  |= 0x06; /** clear TX/RX FIFO * /
-	uart[UART_CNTL_REG] |= 0x03; /** enable TX/RX * /
+	uart[UART_IIR_REG]  |= 0x06;
+	uart[UART_CNTL_REG] |= 0x03;
 */
 }
 /*----------------------------------------------------------------------------*/
