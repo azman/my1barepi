@@ -7,7 +7,7 @@
 #define BUFF_SIZE 80
 #define TIMER_10S 10000000
 #define TIMER_100MS 100000
-#define GSM_WAIT_DELAY TIMER_100MS
+#define GSM_WAIT_DELAY 1000
 #define GSM_OK "\r\nOK\r\n"
 #define GSM_OK_SIZE 6
 /*----------------------------------------------------------------------------*/
@@ -15,6 +15,29 @@ void gsm_command(char* message)
 {
 	uart_print(message);
 	uart_send(0x0d); /** CR only */
+}
+/*----------------------------------------------------------------------------*/
+int gsm_patience(char* message, int size)
+{
+	int count = 0, check = 0;
+	do {
+		message[count] = uart_read();
+		count++;
+		if (count==size-1) break;
+		if (!check)
+		{
+			if (count>1&&message[0]==0x0d&&message[1]==0x0a)
+				check = 1;
+		}
+		else
+		{
+			if (count>3&&message[count-2]==0x0d&&message[count-1]==0x0a)
+				break;
+		}
+	}
+	while (1);
+	message[count] = 0x0;
+	return count;
 }
 /*----------------------------------------------------------------------------*/
 int gsm_replies(char* message, int size)
@@ -25,7 +48,7 @@ int gsm_replies(char* message, int size)
 		count++;
 		if (count==size-1) break;
 		if (!uart_incoming())
-			timer_wait(GSM_WAIT_DELAY); /** allow 100ms delay between bytes */
+			timer_wait(GSM_WAIT_DELAY); /** allow delay between bytes */
 	}
 	while (uart_incoming());
 	message[count] = 0x0;
@@ -34,7 +57,7 @@ int gsm_replies(char* message, int size)
 /*----------------------------------------------------------------------------*/
 int gsm_checkit(char* message, int size)
 {
-	timer_wait(GSM_WAIT_DELAY); /** allow 100ms before checking response */
+	timer_wait(TIMER_100MS); /** allow 100ms before checking response */
 	if (!uart_incoming()) return 0;
 	return gsm_replies(message,size);
 }
@@ -123,7 +146,6 @@ void main(void)
 				uartbb_print_hex(count);
 				uartbb_print(">\n");
 			}
-			count = 0;
 		}
 		timer_wait(3000000); /* wait between retries */
 	}
@@ -135,16 +157,18 @@ void main(void)
 		/* check if sim card is in? */
 		uartbb_print("Checking SIM status... ");
 		gsm_command("AT+CPIN?");
-		count = gsm_replies(buffer,BUFF_SIZE);
+		//count = gsm_replies(buffer,BUFF_SIZE);
+		count = gsm_patience(buffer,BUFF_SIZE);
 		if (count==0)
 		{
 			uartbb_print("should not get here!\n");
 		}
 		else
 		{
-			if (!strncmp(buffer,"\r\n+CPIN:READY\r\n",15))
+			if (!strncmp(buffer,"\r\n+CPIN: READY\r\n",16))
 			{
 				uartbb_print("SIM ready.\n");
+				gsm_replies(buffer,BUFF_SIZE); /*  get OK! */
 				break;
 			}
 			else if (!strncmp(buffer,"\r\nERROR\r\n",9))
@@ -165,32 +189,39 @@ void main(void)
 		timer_wait(3000000); /* wait between retries */
 	}
 	/** do the thing... */
-	uartbb_print("Setting SMS Text Mode... ");
-	gsm_command("AT+CGMF=1");
-	gsm_replies(buffer,BUFF_SIZE);
-	if (strncmp(buffer,GSM_OK,GSM_OK_SIZE)) /* something is wrong? */
-	{
-		uartbb_print("error!\n");
-		uartbb_print("[DEBUG]\n{");
-		uartbb_print(buffer);
-		uartbb_print("}\n[DONE]<");
-		uartbb_print_hex(count);
-		uartbb_print(">\n");
-		while(1); /* hang out */
-	}
-	uartbb_print("done!\n");
+	//uartbb_print("Setting SMS Text Mode... ");
+	//gsm_command("AT+CGMF=1");
+	//gsm_replies(buffer,BUFF_SIZE);
+	//if (strncmp(buffer,GSM_OK,GSM_OK_SIZE)) /* something is wrong? */
+	//{
+	//	uartbb_print("error!\n");
+	//	uartbb_print("[DEBUG]\n{");
+	//	uartbb_print(buffer);
+	//	uartbb_print("}\n[DONE]<");
+	//	uartbb_print_hex(count);
+	//	uartbb_print(">\n");
+	//	while(1); /* hang out */
+	//}
+	//uartbb_print("done!\n");
 	/** send the thing... */
-	uartbb_print("Sending SMS... ");
-	gsm_command("AT+CGMS=\"+601110967797\"");
-	while(uart_read()!='>');
-	uart_print("HELLO, WORLD!");
-	uart_send(0x1a); // ctrl+z
-	gsm_replies(buffer,BUFF_SIZE);
-	uartbb_print("[DEBUG]\n{");
-	uartbb_print(buffer);
-	uartbb_print("}\n[DONE]<");
-	uartbb_print_hex(count);
-	uartbb_print(">\n");
-	while(1);
+	//uartbb_print("Sending SMS... ");
+	//gsm_command("AT+CGMS=\"+601110967797\"");
+	//while(uart_read()!='>');
+	//uart_print("HELLO, WORLD!");
+	//uart_send(0x1a); // ctrl+z
+	//gsm_replies(buffer,BUFF_SIZE);
+	//uartbb_print("[DEBUG]\n{");
+	//uartbb_print(buffer);
+	//uartbb_print("}\n[DONE]<");
+	//uartbb_print_hex(count);
+	//uartbb_print(">\n");
+	/** make a call... */
+	uartbb_print("Calling... ");
+	gsm_command("ATD+601110967797;");
+	uartbb_print("\n=> ");
+	while(1)
+	{
+		uartbb_send((unsigned int)uart_read());
+	}
 }
 /*----------------------------------------------------------------------------*/
