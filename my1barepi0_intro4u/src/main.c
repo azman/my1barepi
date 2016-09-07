@@ -1,6 +1,7 @@
 #ifdef RASPI2
 #define GPIO_BASE 0x3F200000
 #define COUNT_MAX 0x100000
+/** smaller COUNT_MAX for v2 because its op freq is 900MHz (quad core!) */
 #else
 #define GPIO_BASE 0x20200000
 #define COUNT_MAX 0x200000
