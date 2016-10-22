@@ -1,0 +1,62 @@
+-----------
+TUTORIAL 02
+-----------
+
+This is an introduction to bare-metal programming on Raspberry Pi using
+C language. This module shows how to use the timer available on BCM2835. It
+also shows how the GPIO library module can be reused and included here.
+
+---------
+Objective
+---------
+
+1- To explore timer facilities available on BCM2835
+2- To understand how a simple free-running counter can be used for timing
+3- To understand how a 'module' can be included in a multi-source project
+
+----------
+Background
+----------
+
+Timers are very useful to have - many applications appreciate having proper
+timing in their execution. There are 2 timers that can be used on BCM2835 -
+an ARM timer based on ARM's timer module SP804 and a system timer. The
+ARM timer uses a derived clock signal that adapts to system performance
+capabilities/requirements and therefore changes dynamically (e.g. slower in
+low power mode). For accurate timing, the manual recommends using the system
+timer.
+
+The ARM timer can be utilized in two ways - setting the SP804-compatible timer
+or getting lapsed time from a free-running counter. In this module, we will
+focus on using the simpler method of using the free-running counter.
+
+To test this code, we need to use the oscilloscope since square-waves with
+milli-seconds period cannot be seen on LED etc. Find out the accuracy of the
+ARM timer.
+
+In a multi-source project, each source file (e.g. boot.s, main.c, gpio.c) will
+generate an object file (usually with .o extension). The list of objects files
+required by the application must be listed in the makefile (OBJLST variable)
+for them to be included in the build.
+
+--------
+Contents
+--------
+
+All codes related to timer usage are in 'main.c'.
+
+------------------
+ThingsToThinkAbout
+------------------
+
+The free-running counter actually rolls over when it overflows and there is
+no way this register can be reset. Find out if this affects the sample code
+when the initial timer_read value is actually bigger that the next.
+
+---------
+Challenge
+---------
+
+See if you can extend the timer codes to include system timer. Write an example
+application to test the functions you created. Also, try to compare the
+precision of both timers.

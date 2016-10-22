@@ -1,0 +1,42 @@
+/*----------------------------------------------------------------------------*/
+#ifndef __MY1TEXTLCD_H
+#define __MY1TEXTLCD_H
+/*----------------------------------------------------------------------------*/
+/**
+ * LCD Interface Library
+ *   - for text lcd using HD44780U controller/driver
+**/
+/*----------------------------------------------------------------------------*/
+/** LCD_DATA: GPIO27-GPIO20 MSB is also the busy status line */
+#define LCD_ENB_GPIO 17
+#define LCD_DNC_GPIO 18
+#define LCD_RNW_GPIO 19
+#define LCD_BUSY_GPIO 27
+/*----------------------------------------------------------------------------*/
+/** lcd init reset sequence */
+#define LCD_CMD_INITSEQ 0x30
+/** 8-bit, 2-lines, 5x8 dots font */
+#define LCD_CMD_CONF_B8L2D5x7 0x38
+/** display off */
+#define LCD_CMD_CONF_DISP0 0x08
+/** display on, cursor off, blinking off */
+#define LCD_CMD_CONF_D1C0B0 0x0C
+/** addr increment, shift diplay off - entry mode set? */
+#define LCD_CMD_CONF_CIS0 0x06
+/** clear diplay, ram addr 0 */
+#define LCD_CMD_CLEAR 0x01
+/** lcd max char per row */
+#define LCD_MAX_CHAR 16
+/** lcd line cursor positions */
+#define LCD_POS_LINE1 0x80
+#define LCD_POS_LINE2 0xC0
+/*----------------------------------------------------------------------------*/
+typedef unsigned char lcdbyte;
+/*----------------------------------------------------------------------------*/
+void lcd_init(void);
+void lcd_send_command(lcdbyte command);
+void lcd_send_data(lcdbyte asciidat);
+void lcd_print(char* message);
+/*----------------------------------------------------------------------------*/
+#endif
+/*----------------------------------------------------------------------------*/

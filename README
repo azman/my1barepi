@@ -6,7 +6,7 @@ More like a personal note I made while trying to develop bare-metal codes for
 Raspberry Pi. I want to use C but some things still need assembly, so I also
 added (started with) a project using assembly. On the hardware side, I only
 have a B+ model available, so some stuffs may not be usable for earlier models.
-I also have compiled some of the codes for the V2 board.
+I have also compiled some of the codes for the V2 board.
 
 I have two main references while working on this at the early stage:
 
