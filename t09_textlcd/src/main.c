@@ -3,12 +3,16 @@
 #include "timer.h"
 #include "textlcd.h"
 /*----------------------------------------------------------------------------*/
+#define GPIO_ACT_LED 47
+/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	char fillo = '.'; int check = 0;
 	/** do initialization */
 	gpio_init();
-	gpio_init_data();
+	gpio_config(GPIO_ACT_LED,GPIO_OUTPUT);
+	gpio_set(GPIO_ACT_LED);
+	gpio_init_data(GPIO_OUTPUT);
 	timer_init();
 	lcd_init();
 	lcd_send_command(LCD_POS_LINE1);
@@ -27,6 +31,7 @@ void main(void)
 			else fillo = '.';
 		}
 		timer_wait(TIMER_S);
+		gpio_toggle(GPIO_ACT_LED);
 	}
 }
 /*----------------------------------------------------------------------------*/

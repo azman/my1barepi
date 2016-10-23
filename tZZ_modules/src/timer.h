@@ -6,6 +6,7 @@ void timer_init(void);
 unsigned int timer_read(void);
 /*----------------------------------------------------------------------------*/
 /* timer_wait is usleep equivalent */
+#define TIMER_US 1
 #define TIMER_MS 1000
 #define TIMER_S 1000000
 /*----------------------------------------------------------------------------*/

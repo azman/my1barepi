@@ -92,7 +92,7 @@ void gpio_put_data(unsigned int data)
 	gpio[GPIO_FCLR] = (~data&0xff)<<16;
 }
 /*----------------------------------------------------------------------------*/
-unsigned int gpio_get_data(int gpio_set)
+unsigned int gpio_get_data(void)
 {
 	return (gpio[GPIO_FGET]>>16)&0xff;
 }

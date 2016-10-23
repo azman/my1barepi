@@ -61,7 +61,6 @@ void lcd_init(void)
 	lcd_send_init(LCD_CMD_INITSEQ);
 	/** wait >100ums (from HD44780U datasheet) */
 	timer_wait(1*TIMER_MS);
-	loop_delay(LCD_COUNT_001MS,LCD_CHECK_001MS);
 	lcd_send_init(LCD_CMD_INITSEQ);
 	/** reset sequence */
 	timer_wait(100*TIMER_US);
