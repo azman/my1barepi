@@ -21,10 +21,11 @@
 #define GPIO_SELECT_BITS 3
 #define GPIO_SELECT 0x07
 /*----------------------------------------------------------------------------*/
-#define GPIO_SET_DECADE 2
+#define GPIO_DATA_OFFSET 20
+#define GPIO_DATA_DECADE 2
 /** 0010_0100_1001_0010_0100_1001 */
-#define GPIO_SET_OUTPUT 0x00249249
-#define GPIO_SET_DOMASK 0x00FFFFFF
+#define GPIO_DATA_OUTPUT 0x00249249
+#define GPIO_DATA_DOMASK 0x00FFFFFF
 /*----------------------------------------------------------------------------*/
 volatile unsigned int *gpio;
 /*----------------------------------------------------------------------------*/
@@ -81,20 +82,20 @@ void gpio_pull(int gpio_num, int pull_dir)
 /*----------------------------------------------------------------------------*/
 void gpio_init_data(int gpio_sel)
 {
-	gpio[GPIO_SET_DECADE] &= ~GPIO_SET_DOMASK;
+	gpio[GPIO_DATA_DECADE] &= ~GPIO_DATA_DOMASK;
 	if(gpio_sel==GPIO_OUTPUT)
-		gpio[GPIO_SET_DECADE] |= GPIO_SET_OUTPUT;
+		gpio[GPIO_DATA_DECADE] |= GPIO_DATA_OUTPUT;
 }
 /*----------------------------------------------------------------------------*/
 void gpio_put_data(unsigned int data)
 {
-	gpio[GPIO_FSET] = (data&0xff)<<16;
-	gpio[GPIO_FCLR] = (~data&0xff)<<16;
+	gpio[GPIO_FSET] = (data&0xff)<<GPIO_DATA_OFFSET;
+	gpio[GPIO_FCLR] = (~data&0xff)<<GPIO_DATA_OFFSET;
 }
 /*----------------------------------------------------------------------------*/
 unsigned int gpio_get_data(void)
 {
-	return (gpio[GPIO_FGET]>>16)&0xff;
+	return (gpio[GPIO_FGET]>>GPIO_DATA_OFFSET)&0xff;
 }
 /*----------------------------------------------------------------------------*/
 void gpio_setevent(int gpio_num,int events)

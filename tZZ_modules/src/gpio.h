@@ -33,7 +33,7 @@ void gpio_toggle(int gpio_num);
 unsigned int gpio_read(int gpio_num);
 void gpio_pull(int gpio_num, int pull_dir);
 /*----------------------------------------------------------------------------*/
-/** GPIO_SET => 20-27 : LSB-MSB */
+/** GPIO_DATA => 20-27 : LSB-MSB */
 void gpio_init_data(int gpio_sel); /** select GPIO_INPUT or GPIO_OUTPUT */
 void gpio_put_data(unsigned int data);
 unsigned int gpio_get_data(void);
