@@ -11,7 +11,7 @@ void lcd_busy_wait(void) /** wait while lcd is busy! */
 	gpio_config(LCD_BUSY_GPIO,GPIO_INPUT); /** need to read busy status */
 	do { /** PWmin(LCD_ENB) = 230n (from HD44780U datasheet) */
 		gpio_set(LCD_ENB_GPIO);
-		/* is this enough??? maybe insert 1us wait? */
+		timer_wait(TIMER_US);
 		gpio_clr(LCD_ENB_GPIO);
 	} while(gpio_read(LCD_BUSY_GPIO));
 	gpio_config(LCD_BUSY_GPIO,GPIO_OUTPUT); /** restore as output! */
@@ -25,6 +25,7 @@ void lcd_send_init(lcdbyte command)
 	gpio_clr(LCD_DNC_GPIO);
 	gpio_clr(LCD_RNW_GPIO);
 	gpio_set(LCD_ENB_GPIO);
+	timer_wait(TIMER_US);
 	gpio_clr(LCD_ENB_GPIO);
 }
 /*----------------------------------------------------------------------------*/
@@ -36,6 +37,7 @@ void lcd_send_command(lcdbyte command)
 	gpio_clr(LCD_DNC_GPIO);
 	gpio_clr(LCD_RNW_GPIO);
 	gpio_set(LCD_ENB_GPIO);
+	timer_wait(TIMER_US);
 	gpio_clr(LCD_ENB_GPIO);
 }
 /*----------------------------------------------------------------------------*/
@@ -47,6 +49,7 @@ void lcd_send_data(lcdbyte asciidat)
 	gpio_set(LCD_DNC_GPIO);
 	gpio_clr(LCD_RNW_GPIO);
 	gpio_set(LCD_ENB_GPIO);
+	timer_wait(TIMER_US);
 	gpio_clr(LCD_ENB_GPIO);
 }
 /*----------------------------------------------------------------------------*/

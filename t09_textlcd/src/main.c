@@ -11,8 +11,8 @@ void main(void)
 	/** do initialization */
 	gpio_init();
 	gpio_config(GPIO_ACT_LED,GPIO_OUTPUT);
-	gpio_set(GPIO_ACT_LED);
-	gpio_init_data(GPIO_OUTPUT);
+	gpio_clr(GPIO_ACT_LED);
+	gpio_init_data(GPIO_OUTPUT); /* pins 27-20 as 8-bit data bus */
 	timer_init();
 	lcd_init();
 	lcd_send_command(LCD_POS_LINE1);
