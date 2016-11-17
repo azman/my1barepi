@@ -118,8 +118,8 @@ int video_init(unsigned int fbinfo_addr)
 void main(void)
 {
 	volatile unsigned char *fb, dummy,chk_r=0xFF,chk_g=0x00,chk_b=0x00;
-	volatile fbinfo *fb_info = (fbinfo*) (1<<22);
-	volatile int loopx, loopy;
+	volatile fbinfo *fb_info = (fbinfo*) (1<<22); /* 0x00400000 */
+	volatile int loopx, loopy, chk_x, chk_y, psize;
 	volatile int loop;
 	/** initialize gpio */
 	gpio_init();
@@ -127,10 +127,10 @@ void main(void)
 	LED_OFF(MY_LED);
 	timer_init();
 	/** initialize fbinfo */
-	fb_info->height = 0;
-	fb_info->width = 0;
-	fb_info->vheight = VIDEO_WIDTH;
-	fb_info->vwidth = VIDEO_HEIGHT;
+	fb_info->height = VIDEO_HEIGHT;
+	fb_info->width = VIDEO_WIDTH;
+	fb_info->vheight = VIDEO_HEIGHT;
+	fb_info->vwidth = VIDEO_WIDTH;
 	fb_info->pitch = 0;
 	fb_info->depth = VIDEO_PIXEL_BITS;
 	fb_info->xoffset = 0;
@@ -159,15 +159,18 @@ void main(void)
 	/** this works, but don't we need (fb_info->pointer&~VC_MMU_MAP)??? */
 	fb = (volatile unsigned char*) (fb_info->pointer);
 	/** do the thing... */
+	psize = fb_info->depth/8; /* pixel size in bytes */
 	while(1)
 	{
-		for (loopy=0;loopy<VIDEO_HEIGHT;loopy++)
+		for (loopy=0;loopy<fb_info->height;loopy++)
 		{
-			for (loopx=0;loopx<VIDEO_WIDTH;loopx++)
+			chk_y = loopy*fb_info->pitch + fb_info->yoffset;
+			for (loopx=0;loopx<fb_info->width;loopx++)
 			{
-				fb[loopy*fb_info->pitch+loopx*VIDEO_PIXEL_SIZE+0] = chk_r;
-				fb[loopy*fb_info->pitch+loopx*VIDEO_PIXEL_SIZE+1] = chk_g;
-				fb[loopy*fb_info->pitch+loopx*VIDEO_PIXEL_SIZE+2] = chk_b;
+				chk_x = loopx*psize + fb_info->xoffset;
+				fb[chk_y+chk_x+0] = chk_b;
+				fb[chk_y+chk_x+1] = chk_g;
+				fb[chk_y+chk_x+2] = chk_r;
 			}
 		}
 		dummy = chk_b; chk_b = chk_g; chk_g = chk_r; chk_r = dummy;
