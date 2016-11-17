@@ -96,12 +96,29 @@ int strncmp(char* src1, char* src2, int size)
 	return stat;
 }
 /*----------------------------------------------------------------------------*/
+void do_debug(char* buffer, int count)
+{
+	uartbb_print("INVALID RESPONSE.\n");
+	uartbb_print("[DEBUG]\n{");
+	uartbb_print(buffer);
+	uartbb_print("}\n[DONE]<");
+	uartbb_print_hex(count);
+	uartbb_print(">\n");
+}
+/*----------------------------------------------------------------------------*/
+#define CALL_GPIO 2
+#define MESG_GPIO 3
+/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	int count = 0;
 	char buffer[BUFF_SIZE];
 	/** initialize stuffs */
 	gpio_init();
+	gpio_config(CALL_GPIO,GPIO_INPUT);
+	gpio_setevent(CALL_GPIO,GPIO_EVENT_AEDGF);
+	gpio_config(MESG_GPIO,GPIO_INPUT);
+	gpio_setevent(MESG_GPIO,GPIO_EVENT_AEDGF);
 	timer_init();
 	/** initialize uart with default baudrate */
 	uart_init(UART_BAUD_DEFAULT);
@@ -117,7 +134,6 @@ void main(void)
 	while(1)
 	{
 		/* wait for modem response, disable echo! */
-		buffer[0] = 0x0;
 		uartbb_print("Sending 'ATE'... ");
 		gsm_command("ATE");
 		count = gsm_checkit(buffer,BUFF_SIZE);
@@ -132,25 +148,14 @@ void main(void)
 				uartbb_print("OK.\n");
 				break;
 			}
-			if (!strncmp(buffer,"ATE\r\r\nOK",8))
+			else if (!strncmp(buffer,"ATE\r\r\nOK",8))
 			{
 				uartbb_print("OK.\n");
 				break;
 			}
-			else
-			{
-				uartbb_print("invalid response.\n");
-				uartbb_print("[DEBUG]\n{");
-				uartbb_print(buffer);
-				uartbb_print("}\n[DONE]<");
-				uartbb_print_hex(count);
-				uartbb_print(">\n");
-			}
+			else do_debug(buffer,count);
 		}
 		timer_wait(3000000); /* wait between retries */
-	}
-	for (count=0;count<BUFF_SIZE;count++) {
-		buffer[count] = 0x0;
 	}
 	while(1)
 	{
@@ -174,54 +179,69 @@ void main(void)
 			else if (!strncmp(buffer,"\r\nERROR\r\n",9))
 			{
 				uartbb_print("missing SIM?\n");
-				while(1); /* hang out */
 			}
-			else
-			{
-				uartbb_print("SIM not ready?.\n");
-				uartbb_print("[DEBUG]\n{");
-				uartbb_print(buffer);
-				uartbb_print("}\n[DONE]<");
-				uartbb_print_hex(count);
-				uartbb_print(">\n");
-			}
+			else do_debug(buffer,count);
 		}
 		timer_wait(3000000); /* wait between retries */
 	}
 	/** do the thing... */
-	//uartbb_print("Setting SMS Text Mode... ");
-	//gsm_command("AT+CGMF=1");
-	//gsm_replies(buffer,BUFF_SIZE);
-	//if (strncmp(buffer,GSM_OK,GSM_OK_SIZE)) /* something is wrong? */
-	//{
-	//	uartbb_print("error!\n");
-	//	uartbb_print("[DEBUG]\n{");
-	//	uartbb_print(buffer);
-	//	uartbb_print("}\n[DONE]<");
-	//	uartbb_print_hex(count);
-	//	uartbb_print(">\n");
-	//	while(1); /* hang out */
-	//}
-	//uartbb_print("done!\n");
-	/** send the thing... */
-	//uartbb_print("Sending SMS... ");
-	//gsm_command("AT+CGMS=\"+601110967797\"");
-	//while(uart_read()!='>');
-	//uart_print("HELLO, WORLD!");
-	//uart_send(0x1a); // ctrl+z
-	//gsm_replies(buffer,BUFF_SIZE);
-	//uartbb_print("[DEBUG]\n{");
-	//uartbb_print(buffer);
-	//uartbb_print("}\n[DONE]<");
-	//uartbb_print_hex(count);
-	//uartbb_print(">\n");
-	/** make a call... */
-	uartbb_print("Calling... ");
-	gsm_command("ATD+601110967797;");
-	uartbb_print("\n=> ");
 	while(1)
 	{
-		uartbb_send((unsigned int)uart_read());
+		uartbb_print("Setting SMS Text Mode... ");
+		gsm_command("AT+CMGF=1");
+		count = gsm_replies(buffer,BUFF_SIZE);
+		if (count==0)
+		{
+			uartbb_print("no response?\n");
+		}
+		else
+		{
+			if (!strncmp(buffer,GSM_OK,GSM_OK_SIZE))
+			{
+				uartbb_print("done!\n");
+				break;
+			}
+			else do_debug(buffer,count);
+		}
+		timer_wait(3000000); /* wait between retries */
+	}
+	/** clear invalid gpio events - just in case */
+	gpio_rstevent(CALL_GPIO);
+	gpio_rstevent(MESG_GPIO);
+	/** main loop */
+	while(1)
+	{
+		if (gpio_chkevent(MESG_GPIO))
+		{
+			/** send the thing... */
+			uartbb_print("Sending SMS... ");
+			gsm_command("AT+CMGS=\"+601110967797\"");
+			while(uart_read()!='>');
+			uart_print("HELLO, WORLD!");
+			uart_send(0x1a); // ctrl+z
+			count = gsm_replies(buffer,BUFF_SIZE);
+			do_debug(buffer,count);
+			gpio_rstevent(MESG_GPIO);
+			gpio_rstevent(CALL_GPIO); /* cannot request call while messaging */
+			continue;
+		}
+		if (gpio_chkevent(CALL_GPIO))
+		{
+			/** make a call... */
+			uartbb_print("Calling... ");
+			gsm_command("ATD+601110967797;");
+			uartbb_print("\n=> ");
+			timer_wait(3000000); /* wait 3s before hanging up! */
+			uartbb_print("\nHanging up... ");
+			gsm_command("ATH");
+			count = gsm_replies(buffer,BUFF_SIZE);
+			if (strncmp(buffer,GSM_OK,GSM_OK_SIZE)) /* something is wrong? */
+				do_debug(buffer,count);
+			else uartbb_print("done!\n");
+			gpio_rstevent(CALL_GPIO);
+			gpio_rstevent(MESG_GPIO); /* cannot do messaging while calling */
+			continue;
+		}
 	}
 }
 /*----------------------------------------------------------------------------*/
