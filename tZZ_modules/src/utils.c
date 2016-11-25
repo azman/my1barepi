@@ -3,7 +3,7 @@
 /*----------------------------------------------------------------------------*/
 unsigned int __aeabi_uidiv(unsigned int dvd, unsigned int dvs)
 {
-	unsigned int quo, rem, tmp, bit;
+	unsigned int quo, rem, bit;
 	/** take care of the obvious */
 	if(dvd<dvs) return 0;
 	else if(dvd==dvs) return 1;
@@ -29,7 +29,7 @@ unsigned int __aeabi_uidiv(unsigned int dvd, unsigned int dvs)
 /*----------------------------------------------------------------------------*/
 unsigned int __aeabi_uidivmod(unsigned int dvd, unsigned int dvs)
 {
-	unsigned int quo, rem, tmp, bit;
+	unsigned int quo, rem, bit;
 	/** take care of the obvious */
 	if(dvd<dvs) return dvd;
 	else if(dvd==dvs) return 0;
