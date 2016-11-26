@@ -6,8 +6,8 @@
 /*----------------------------------------------------------------------------*/
 #define BUFF_SIZE 80
 #define GSM_WAIT_RETRY (3*TIMER_S)
-#define GSM_WAIT_CHECK (500*TIMER_MS)
-#define GSM_WAIT_DELAY (1*TIMER_MS)
+#define GSM_WAIT_CHECK (2*TIMER_S)
+#define GSM_WAIT_DELAY (1000*TIMER_MS)
 #define GSM_OK "\r\nOK\r\n"
 #define GSM_OK_SIZE 6
 #define CALL_RING_DELAY (15*TIMER_S)
@@ -52,6 +52,15 @@ void gsm_command(char* message)
 	uart_send(0x0d); /** CR only */
 }
 /*----------------------------------------------------------------------------*/
+int gsm_checkok(char* message, int count)
+{
+	int ok_found = 0;
+	if (count>=GSM_OK_SIZE)
+		if (!strncmp(&message[count-GSM_OK_SIZE],GSM_OK,GSM_OK_SIZE))
+			ok_found = 1;
+	return ok_found;
+}
+/*----------------------------------------------------------------------------*/
 int gsm_patience(char* message, int size)
 {
 	/** basically, wait until we get GSM_OK */
@@ -71,6 +80,14 @@ int gsm_patience(char* message, int size)
 	return count;
 }
 /*----------------------------------------------------------------------------*/
+int gsm_timeout(int delay)
+{
+	unsigned int init = timer_read(), time = 1;
+	while(timer_read()-init<delay)
+		if (uart_incoming()) { time = 0; break; }
+	return time;
+}
+/*----------------------------------------------------------------------------*/
 int gsm_replies(char* message, int size)
 {
 	int count = 0;
@@ -78,8 +95,7 @@ int gsm_replies(char* message, int size)
 		message[count] = uart_read();
 		count++;
 		if (count==size-1) break;
-		if (!uart_incoming())
-			timer_wait(GSM_WAIT_DELAY); /** allow delay between bytes */
+		gsm_timeout(GSM_WAIT_DELAY); /** allow delay between bytes */
 	}
 	while (uart_incoming());
 	message[count] = 0x0;
@@ -88,16 +104,44 @@ int gsm_replies(char* message, int size)
 /*----------------------------------------------------------------------------*/
 int gsm_checkit(char* message, int size)
 {
-	timer_wait(GSM_WAIT_CHECK); /** allow 100ms before checking response */
-	if (!uart_incoming()) return 0;
+	/** allow delay before checking response */
+	if (gsm_timeout(GSM_WAIT_CHECK)) return 0;
 	return gsm_replies(message,size);
+}
+/*----------------------------------------------------------------------------*/
+char* gsm_trim_prefix(char* message)
+{
+	/* trim prefixed \r\n, some gsm module do not send these */
+	char *pbuff = message;
+	while(*pbuff=='\r'||*pbuff=='\n') pbuff++;
+	return pbuff;
 }
 /*----------------------------------------------------------------------------*/
 void do_debug(char* buffer, int count)
 {
+	int loop;
 	uartbb_print("INVALID RESPONSE.\n");
 	uartbb_print("[DEBUG]\n{");
-	uartbb_print(buffer);
+	for (loop=0;loop<count;loop++)
+	{
+		unsigned int byte = (unsigned int)(buffer[loop]), temp;
+		if (byte<0x20||byte>0x7f)
+		{
+			uartbb_send('[');
+			uartbb_send('0');
+			uartbb_send('x');
+			temp = (byte & 0xf0) >> 4;
+			if(temp>9) temp = (temp-10)+0x41;
+			else temp += 0x30;
+			uartbb_send(temp);
+			temp = (byte & 0x0f);
+			if(temp>9) temp = (temp-10)+0x41;
+			else temp += 0x30;
+			uartbb_send(temp);
+			uartbb_send(']');
+		}
+		else uartbb_send(byte);
+	}
 	uartbb_print("}\n[DONE]<");
 	uartbb_print_hex(count);
 	uartbb_print(">\n");
@@ -110,8 +154,8 @@ void do_debug(char* buffer, int count)
 void main(void)
 {
 	unsigned int initc;
-	int count = 0, check;
-	char buffer[BUFF_SIZE];
+	int count = 0;
+	char buffer[BUFF_SIZE], *pbuff;
 	/** initialize stuffs */
 	gpio_init();
 	gpio_config(MESG_GPIO,GPIO_INPUT);
@@ -127,11 +171,6 @@ void main(void)
 	/** send out the word! */
 	uartbb_print("\n\n");
 	uartbb_print("YAY! It is alive!\n");
-	/** wait for modem to settle down? */
-	//uartbb_print("Press button on the TC35 GSM board now...\n");
-	//timer_wait(10*TIMER_S);
-	/** flush fifo buffers */
-	//while(uart_incoming()) uart_read();
 	/* looking for modem response */
 	while(1)
 	{
@@ -144,35 +183,45 @@ void main(void)
 		}
 		else
 		{
-			if (!strncmp(buffer,GSM_OK,GSM_OK_SIZE))
+			if (gsm_checkok(buffer,count))
 			{
 				uartbb_print("OK.\n");
 				break;
 			}
-			else do_debug(buffer,count);
+			/** else do_debug(buffer,count); */
+			else uartbb_print("invalid response.\n");
 		}
 		timer_wait(GSM_WAIT_RETRY); /* wait between retries */
 	}
-	/* disable echo */
-	while(1)
+	/* try to disable echo - tc35 needs this */
+	uartbb_print("Sending 'ATE'... ");
+	gsm_command("ATE");
+	count = gsm_checkit(buffer,BUFF_SIZE);
+	if (count==0)
 	{
-		uartbb_print("Sending 'ATE 0'... ");
-		gsm_command("ATE 0");
-		count = gsm_checkit(buffer,BUFF_SIZE);
-		if (count==0)
-		{
-			uartbb_print("no response.\n");
-		}
-		else
-		{
-			if (!strncmp(buffer,GSM_OK,GSM_OK_SIZE))
-			{
-				uartbb_print("OK.\n");
-				break;
-			}
-			else do_debug(buffer,count);
-		}
-		timer_wait(GSM_WAIT_RETRY);
+		uartbb_print("no response. Abort!\n");
+		while(1);
+	}
+	else
+	{
+		if (gsm_checkok(buffer,count)) uartbb_print("OK.\n");
+		else do_debug(buffer,count);
+	}
+	/* on sim908, must send ate 0 */
+	uartbb_print("Sending 'ATE 0'... ");
+	gsm_command("ATE 0");
+	count = gsm_checkit(buffer,BUFF_SIZE);
+	if (count==0)
+	{
+		uartbb_print("no response. Abort!\n");
+		while(1);
+	}
+	else
+	{
+		pbuff = gsm_trim_prefix(buffer);
+		if (gsm_checkok(buffer,count)) uartbb_print("OK.\n");
+		else if (!strncmp(pbuff,"ERROR",5)) uartbb_print("ignored.\n");
+		else do_debug(buffer,count);
 	}
 	/* check if sim card is in */
 	while(1)
@@ -187,15 +236,13 @@ void main(void)
 		}
 		else
 		{
-			/* trim prefixed /r/n, some gsm module do not send these */
-			check = 0;
-			while(buffer[check]=='\r'||buffer[check]=='\n') check++;
-			if (!strncmp(&buffer[check],"+CPIN: READY",12))
+			pbuff = gsm_trim_prefix(buffer);
+			if (!strncmp(pbuff,"+CPIN: READY",12))
 			{
 				uartbb_print("SIM ready.\n");
 				break;
 			}
-			else if (!strncmp(buffer,"ERROR",5))
+			else if (!strncmp(pbuff,"ERROR",5))
 			{
 				uartbb_print("missing SIM?\n");
 			}
