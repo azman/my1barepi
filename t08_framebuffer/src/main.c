@@ -28,21 +28,28 @@ fbinfo_t;
 /*----------------------------------------------------------------------------*/
 extern void memory_barrier(void);
 /*----------------------------------------------------------------------------*/
+#define VIDEO_INIT_RETRIES 3
 #define VIDEO_INITIALIZED 0
-#define VIDEO_ERROR_RETURN 2
-#define VIDEO_ERROR_POINTER 4
+#define VIDEO_ERROR_RETURN 1
+#define VIDEO_ERROR_POINTER 2
 /*----------------------------------------------------------------------------*/
-int video_init(unsigned int fbinfo_addr)
+int video_init(fbinfo_t *p_fbinfo)
 {
-	unsigned int test;
-	memory_barrier();
-	mailbox_write(VIDEO_FB_CHANNEL,fbinfo_addr);
-	memory_barrier();
-	test = mailbox_read(VIDEO_FB_CHANNEL);
-	memory_barrier();
-	if (test)
-		return VIDEO_ERROR_RETURN;
-	return VIDEO_INITIALIZED;
+	unsigned int init = VIDEO_INIT_RETRIES;
+	unsigned int test, addr = ((unsigned int)p_fbinfo)|VC_MMU_MAP;
+	while(init>0)
+	{
+		memory_barrier();
+		mailbox_write(VIDEO_FB_CHANNEL,addr);
+		memory_barrier();
+		test = mailbox_read(VIDEO_FB_CHANNEL);
+		memory_barrier();
+		if (test) test = VIDEO_ERROR_RETURN;
+		else if (p_fbinfo->pointer==0x0) test = VIDEO_ERROR_POINTER;
+		else { test = VIDEO_INITIALIZED; break; }
+		init--;
+	}
+	return test;
 }
 /*----------------------------------------------------------------------------*/
 /** FRAMEBUFFFER MODULE END */
@@ -52,14 +59,25 @@ int video_init(unsigned int fbinfo_addr)
 #define LED_ON gpio_set
 #define LED_OFF gpio_clr
 /*----------------------------------------------------------------------------*/
-#define WAIT_DELAY (TIMER_S/2)
+#define BLINK_RATE (TIMER_S/2)
+/*----------------------------------------------------------------------------*/
+void blink(int gpio, int count)
+{
+	while(count>0)
+	{
+		LED_ON(gpio);
+		timer_wait(BLINK_RATE);
+		LED_OFF(gpio);
+		timer_wait(BLINK_RATE);
+		count--;
+	}
+}
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
-	volatile unsigned char *fb, dummy,chk_r=0xFF,chk_g=0x00,chk_b=0x00;
-	volatile fbinfo_t *fb_info = (fbinfo_t*) (1<<22); /* 0x00400000 */
-	volatile int loopx, loopy, chk_x, chk_y, psize;
-	volatile int loop;
+	unsigned char *fb, dummy,chk_r=0xFF,chk_g=0x00,chk_b=0x00;
+	fbinfo_t *fb_info = (fbinfo_t*) (1<<22); /* 0x00400000 */
+	int loopx, loopy, chk_x, chk_y, psize;
 	/** initialize gpio */
 	gpio_init();
 	gpio_config(MY_LED,GPIO_OUTPUT);
@@ -78,26 +96,16 @@ void main(void)
 	fb_info->size = 0;
 	/* initialize video stuff */
 	mailbox_init();
-	do
+	loopx = video_init(fb_info);
+	if (loopx)
 	{
-		loopx = video_init(((unsigned int)fb_info)|VC_MMU_MAP);
-		if (fb_info->pointer==0x0) loopx = VIDEO_ERROR_POINTER;
-		if (loopx)
-		{
-			for (loop=0;loop<loopx;loop++)
-			{
-				LED_ON(MY_LED);
-				timer_wait(WAIT_DELAY);
-				LED_OFF(MY_LED);
-				timer_wait(WAIT_DELAY);
-			}
-			continue;
-		}
+		/* on error, blink led and hang around */
+		blink(MY_LED,loopx);
+		while(1);
 	}
-	while (0);
 	/** do the thing... */
 	psize = fb_info->depth/8; /* pixel size in bytes */
-	fb = (volatile unsigned char*) (fb_info->pointer);
+	fb = (unsigned char*) (fb_info->pointer);
 	while(1)
 	{
 		chk_y = fb_info->yoffset;
@@ -116,13 +124,7 @@ void main(void)
 			chk_y += fb_info->pitch;
 		}
 		dummy = chk_b; chk_b = chk_g; chk_g = chk_r; chk_r = dummy;
-		for (loop=0;loop<3;loop++)
-		{
-			LED_ON(MY_LED);
-			timer_wait(WAIT_DELAY);
-			LED_OFF(MY_LED);
-			timer_wait(WAIT_DELAY);
-		}
+		blink(MY_LED,3);
 	}
 }
 /*----------------------------------------------------------------------------*/

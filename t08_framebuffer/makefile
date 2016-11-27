@@ -2,7 +2,7 @@
 TARGET = kernel.img
 
 # multiple source files (list them here as object files!)
-OBJLST = boot.o main.o gpio.o timer.o mailbox.o
+OBJLST = boot.o main.o gpio.o timer.o mailbox.o barrier.o
 
 # default rule
 all: $(TARGET)
@@ -19,3 +19,10 @@ CFLAGS += -I../tZZ_modules/src/
 # specify additional module source location
 %.o: ../tZZ_modules/src/%.c ../tZZ_modules/src/%.h
 	$(TOOLPFIX)-gcc $(CFLAGS) -c $< -o $@
+
+# specify additional module header location
+AFLAGS += -I../tZZ_modules/src/
+
+# specify additional module source location
+%.o: ../tZZ_modules/src/%.s ../tZZ_modules/src/%.h
+	$(TOOLPFIX)-as $(AFLAGS) $< -o $@
