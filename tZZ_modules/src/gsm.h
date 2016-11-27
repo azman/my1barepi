@@ -1,22 +1,19 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1UARTH__
-#define __MY1UARTH__
+#ifndef __GSM_H
+#define __GSM_H
 /*----------------------------------------------------------------------------*/
-#define UART_TXD_GPIO 14
-#define UART_RXD_GPIO 15
+#define GSM_OK "\r\nOK\r\n"
+#define GSM_OK_SIZE 6
 /*----------------------------------------------------------------------------*/
-#define UART_BAUD_115200 270
-#define UART_BAUD_9600 3254
-#define UART_BAUD_DEFAULT UART_BAUD_9600
+#define GSM_OK_COMPLETE GSM_OK_SIZE
+#define GSM_OK_FOUNDNEW 1
+#define GSM_OK_NOTFOUND 0
 /*----------------------------------------------------------------------------*/
-void uart_init(int baudrate);
-void uart_send(unsigned int data);
-unsigned int uart_incoming(void);
-unsigned int uart_read(void);
-void uart_purge(void); /* purge input buffer */
-void uart_print_hex_byte(unsigned char byte);
-void uart_print_hex_uint(unsigned int value);
-void uart_print(char *message);
+void gsm_command(char* message);
+int gsm_checkok(char* message, int count);
+int gsm_timeout(int delay);
+int gsm_replies(char* message, int size, unsigned int *okstat);
+char* gsm_trim_prefix(char* message);
 /*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/

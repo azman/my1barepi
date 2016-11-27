@@ -89,23 +89,25 @@ unsigned int uartbb_read(void)
 	return data;
 }
 /*----------------------------------------------------------------------------*/
-void uartbb_print_hex(unsigned int value)
+void uartbb_print_hex_byte(unsigned char byte)
 {
-	int loop;
-	unsigned int test,high;
-	uartbb_send('0');
-	uartbb_send('x');
+	unsigned char temp = (byte & 0xf0) >> 4;
+	if(temp>9) temp = (temp-10)+0x41;
+	else temp += 0x30;
+	uartbb_send(temp);
+	temp = (byte & 0x0f);
+	if(temp>9) temp = (temp-10)+0x41;
+	else temp += 0x30;
+	uartbb_send(temp);
+}
+/*----------------------------------------------------------------------------*/
+void uartbb_print_hex_uint(unsigned int value)
+{
+	int loop, temp;
 	for(loop=3;loop>=0;loop--)
 	{
-		test = (value >> (loop*8)) & 0xff;
-		high = (test & 0xf0) >> 4;
-		if(high>9) high = (high-10)+0x41;
-		else high += 0x30;
-		uartbb_send(high);
-		high = (test & 0x0f);
-		if(high>9) high = (high-10)+0x41;
-		else high += 0x30;
-		uartbb_send(high);
+		temp = (value >> (loop*8)) & 0xff;
+		uartbb_print_hex_byte((unsigned char)temp);
 	}
 }
 /*----------------------------------------------------------------------------*/

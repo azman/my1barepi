@@ -86,23 +86,30 @@ unsigned int uart_read(void)
 	return uart[UART_IO_REG]&0xFF;
 }
 /*----------------------------------------------------------------------------*/
-void uart_print_hex(unsigned int value)
+void uart_purge(void)
 {
-	int loop;
-	unsigned int test,high;
-	uart_send('0');
-	uart_send('x');
+	while(uart_incoming()) uart_read();
+}
+/*----------------------------------------------------------------------------*/
+void uart_print_hex_byte(unsigned char byte)
+{
+	unsigned char temp = (byte & 0xf0) >> 4;
+	if(temp>9) temp = (temp-10)+0x41;
+	else temp += 0x30;
+	uart_send(temp);
+	temp = (byte & 0x0f);
+	if(temp>9) temp = (temp-10)+0x41;
+	else temp += 0x30;
+	uart_send(temp);
+}
+/*----------------------------------------------------------------------------*/
+void uart_print_hex_uint(unsigned int value)
+{
+	int loop, temp;
 	for(loop=3;loop>=0;loop--)
 	{
-		test = (value >> (loop*8)) & 0xff;
-		high = (test & 0xf0) >> 4;
-		if(high>9) high = (high-10)+0x41;
-		else high += 0x30;
-		uart_send(high);
-		high = (test & 0x0f);
-		if(high>9) high = (high-10)+0x41;
-		else high += 0x30;
-		uart_send(high);
+		temp = (value >> (loop*8)) & 0xff;
+		uart_print_hex_byte((unsigned char)temp);
 	}
 }
 /*----------------------------------------------------------------------------*/
