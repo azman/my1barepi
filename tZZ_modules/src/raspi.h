@@ -3,7 +3,9 @@
 #define __RASPI_H
 /*----------------------------------------------------------------------------*/
 /* on VideoCore memory map, it is 0x7e000000 (BCM2835 @PiV1) */
-#ifdef RASPI2
+#if defined RASPI3
+#define PMAP_BASE 0x3F000000
+#elif defined RASPI2
 #define PMAP_BASE 0x3F000000
 #else
 #define PMAP_BASE 0x20000000
