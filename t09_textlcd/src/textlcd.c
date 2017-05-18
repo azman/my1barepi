@@ -3,6 +3,15 @@
 #include "timer.h"
 #include "textlcd.h"
 /*----------------------------------------------------------------------------*/
+void lcd_pulse(void)
+{
+	timer_wait(LCD_DELAY_E);
+	gpio_set(LCD_ENB_GPIO);
+	timer_wait(LCD_PULSE_E);
+	gpio_clr(LCD_ENB_GPIO);
+	timer_wait(LCD_DELAY_E);
+}
+/*----------------------------------------------------------------------------*/
 void lcd_busy_wait(void) /** wait while lcd is busy! */
 {
 	/** command, read */
@@ -10,9 +19,7 @@ void lcd_busy_wait(void) /** wait while lcd is busy! */
 	gpio_set(LCD_RNW_GPIO);
 	gpio_config(LCD_BUSY_GPIO,GPIO_INPUT); /** need to read busy status */
 	do { /** PWmin(LCD_ENB) = 230n (from HD44780U datasheet) */
-		gpio_set(LCD_ENB_GPIO);
-		timer_wait(TIMER_US);
-		gpio_clr(LCD_ENB_GPIO);
+		lcd_pulse();
 	} while(gpio_read(LCD_BUSY_GPIO));
 	gpio_config(LCD_BUSY_GPIO,GPIO_OUTPUT); /** restore as output! */
 }
@@ -24,37 +31,40 @@ void lcd_send_init(lcdbyte command)
 	/** command, write */
 	gpio_clr(LCD_DNC_GPIO);
 	gpio_clr(LCD_RNW_GPIO);
-	gpio_set(LCD_ENB_GPIO);
-	timer_wait(TIMER_US);
-	gpio_clr(LCD_ENB_GPIO);
+	/** enable this */
+	lcd_pulse();
 }
 /*----------------------------------------------------------------------------*/
 void lcd_send_command(lcdbyte command)
 {
-	lcd_busy_wait();
+	//lcd_busy_wait();
 	gpio_put_data(command);
 	/** command, write */
 	gpio_clr(LCD_DNC_GPIO);
 	gpio_clr(LCD_RNW_GPIO);
-	gpio_set(LCD_ENB_GPIO);
-	timer_wait(TIMER_US);
-	gpio_clr(LCD_ENB_GPIO);
+	/** enable this */
+	lcd_pulse();
 }
 /*----------------------------------------------------------------------------*/
 void lcd_send_data(lcdbyte asciidat)
 {
-	lcd_busy_wait();
+	//lcd_busy_wait();
 	gpio_put_data(asciidat);
 	/** data, write */
 	gpio_set(LCD_DNC_GPIO);
 	gpio_clr(LCD_RNW_GPIO);
-	gpio_set(LCD_ENB_GPIO);
-	timer_wait(TIMER_US);
-	gpio_clr(LCD_ENB_GPIO);
+	/** enable this */
+	lcd_pulse();
 }
 /*----------------------------------------------------------------------------*/
 void lcd_init(void)
 {
+	/* initialize gpios */
+	gpio_init_data(GPIO_OUTPUT); /* pins 27-20 as 8-bit data bus */
+	gpio_config(LCD_DNC_GPIO,GPIO_OUTPUT);
+	gpio_config(LCD_RNW_GPIO,GPIO_OUTPUT);
+	gpio_config(LCD_ENB_GPIO,GPIO_OUTPUT);
+	/* this should be low on init */
 	gpio_clr(LCD_ENB_GPIO);
 	/** wait >40ms Vcc=2.7V @ >15ms Vcc=4.5V (from HD44780U datasheet) */
 	timer_wait(100*TIMER_MS);

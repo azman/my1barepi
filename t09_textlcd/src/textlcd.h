@@ -13,6 +13,9 @@
 #define LCD_RNW_GPIO 19
 #define LCD_BUSY_GPIO 27
 /*----------------------------------------------------------------------------*/
+#define LCD_PULSE_E TIMER_US
+#define LCD_DELAY_E 25*TIMER_US
+/*----------------------------------------------------------------------------*/
 /** lcd init reset sequence */
 #define LCD_CMD_INITSEQ 0x30
 /** 8-bit, 2-lines, 5x8 dots font */
