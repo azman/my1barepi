@@ -46,6 +46,7 @@ int video_init(fbinfo_t* p_fbinfo);
 void video_clear(rgb_t color);
 void video_set_pixel(int y, int x, rgb_t color);
 void video_put_char(int y, int x, char c);
+void video_put_string(int y, int x, char* str);
 /*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/

@@ -58,6 +58,7 @@ void main(void)
 	video_put_char(1,4,'L');
 	video_put_char(1,5,'O');
 	video_put_char(1,6,'!');
+	video_put_string(3,1,"Welcome!");
 	/** sticking around */
 	while(1);
 }
