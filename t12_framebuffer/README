@@ -1,9 +1,9 @@
 -----------
-TUTORIAL 08
+TUTORIAL 12
 -----------
 
-This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This module shows how to utilize the video graphics using frame
+This is an introduction to bare-metal programming on Raspberry Pi using C
+language. This module shows how to utilize the video graphics using frame
 buffers. The ARM core needs to communicate with the GPU core through a
 mailbox.
 
