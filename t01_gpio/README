@@ -34,18 +34,16 @@ Contents
 All source files are placed in the 'src' folder. For simple projects, 'boot.s'
 need no further changes. All application-centric codes should be in 'main.c'.
 
-------------------
-ThingsToThinkAbout
-------------------
+-----------
+ThingsToTry
+-----------
 
-A GPIO configured as input pin can be further configured to have event (signal
-changes) detection mechanisms. Find out why this is actually a very useful
-feature to have. (Hint: How long are you willing to push - and hold - that
-button at a pedestrian crossing or an elevator? :p)
+* Imitate clock delay
+  - get the loop count delay for 0.5 second (for a 1s period)
+  - thus, getting a 1Hz blinking rate!
+* Utilize event detection!
+  - an input GPIO pin can be further configured to have event detection
+  - toggle another LED
+    = after every 3 blinks of main LED
+    = if a button is pushed during that 3 blinks
 
----------
-Challenge
----------
-
-See you if can extend the GPIO library module to include input event detection.
-Write an example application to test the functions you created.
