@@ -28,16 +28,9 @@ Codes related to implement the protocol to read from AM2303 Temperature /
 Humidity sensor is in 'main.c'. The 7-segment interface code has been
 rewritten as a module in '7seg.c' source and '7seg.h' header files.
 
-------------------
-ThingsToThinkAbout
-------------------
+-----------
+ThingsToTry
+-----------
 
-Showing a single value on multiple 7-segments require a breakdown of the value
-into multiple decimal digits based on its positional value.
-
----------
-Challenge
----------
-
-Try to create an interface to 2 x 7-segment modules, but using only single
-8-bit 'data bus'. The keyword here is 'refresh rate'.
+* Simple 'Alarm' Indicator
+  - modify the code so that an LED will be lit up when temperature is >28deg

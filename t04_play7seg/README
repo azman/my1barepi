@@ -23,13 +23,13 @@ it can display 0-9 when designated LEDs are turned on.
 
      g f x a b
      | | | | |
-    -----------         a
+    -----------        a
     |         |       ----
     |         |    f | g  | b
     |         |       ----
-    |         |    e |    | c
+    |         |    e | d  | c
     |         |       ---- *
-    -----------        d    dp
+    -----------            dp
      | | | | |
      e d x c dp
 
@@ -41,9 +41,12 @@ Contents
 
 All codes related to 7-segment usage are in 'main.c'.
 
-------------------
-ThingsToThinkAbout
-------------------
+-----------
+ThingsToTry
+-----------
 
-There is a limited number of GPIO pins available on the Pi. Can we create
-an application that needs 4 x 7-segments? How do we interface them?
+* Responsive Button
+  - Modify the given code so that counting can stop at any number
+* Up/down Counter
+  - Modify the given code so that the counting can be up OR down
+  - hint: need a switch!

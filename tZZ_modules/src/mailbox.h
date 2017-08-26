@@ -14,6 +14,19 @@
 #define MAIL_CH_TAGAV 0x00000008
 #define MAIL_CH_TAGVA 0x00000009
 /*----------------------------------------------------------------------------*/
+/**
+0: Power management
+1: Framebuffer
+2: Virtual UART
+3: VCHIQ
+4: LEDs
+5: Buttons
+6: Touch screen
+7: <NOT USED?>
+8: Property tags (ARM -> VC)
+9: Property tags (VC -> ARM)
+**/
+/*----------------------------------------------------------------------------*/
 void mailbox_init(void);
 unsigned int mailbox_read(unsigned int channel);
 void mailbox_write(unsigned int channel,unsigned int value);

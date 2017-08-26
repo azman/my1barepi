@@ -5,32 +5,6 @@
 /*----------------------------------------------------------------------------*/
 #define SENS_IN 4
 /*----------------------------------------------------------------------------*/
-#define USE_COMMON_ANODE
-/*----------------------------------------------------------------------------*/
-#ifdef USE_COMMON_ANODE
-/* common anode */
-#define LED_ON 0
-#define LED_OFF 1
-#else
-/* common cathode */
-#define LED_ON 1
-#define LED_OFF 0
-#endif
-/*----------------------------------------------------------------------------*/
-int segment_pattern[10][SEGMENT_COUNT] =
-{
-	{ LED_ON,LED_ON,LED_ON,LED_ON,LED_ON,LED_ON,LED_OFF }, /* 0 */
-	{ LED_OFF,LED_ON,LED_ON,LED_OFF,LED_OFF,LED_OFF,LED_OFF }, /* 1 */
-	{ LED_ON,LED_ON,LED_OFF,LED_ON,LED_ON,LED_OFF,LED_ON }, /* 2 */
-	{ LED_ON,LED_ON,LED_ON,LED_ON,LED_OFF,LED_OFF,LED_ON }, /* 3 */
-	{ LED_OFF,LED_ON,LED_ON,LED_OFF,LED_OFF,LED_ON,LED_ON }, /* 4 */
-	{ LED_ON,LED_OFF,LED_ON,LED_ON,LED_OFF,LED_ON,LED_ON }, /* 5 */
-	{ LED_ON,LED_OFF,LED_ON,LED_ON,LED_ON,LED_ON,LED_ON }, /* 6 */
-	{ LED_ON,LED_ON,LED_ON,LED_OFF,LED_OFF,LED_OFF,LED_OFF }, /* 7 */
-	{ LED_ON,LED_ON,LED_ON,LED_ON,LED_ON,LED_ON,LED_ON }, /* 8 */
-	{ LED_ON,LED_ON,LED_ON,LED_ON,LED_OFF,LED_ON,LED_ON }  /* 9 */
-};
-/*----------------------------------------------------------------------------*/
 int sensor_read(int gpio_sens,unsigned int* ptemp,unsigned int* phumi)
 {
 	unsigned int loop, read, temp, humi, csum, wait;
@@ -94,19 +68,33 @@ int sensor_read(int gpio_sens,unsigned int* ptemp,unsigned int* phumi)
 	return (read==csum) ? 0 : -1;
 }
 /*----------------------------------------------------------------------------*/
+int segment_numbers[10][SEGMENT_COUNT] =
+{
+	{ LED_ON,LED_ON,LED_ON,LED_ON,LED_ON,LED_ON,LED_OFF }, /* 0 */
+	{ LED_OFF,LED_ON,LED_ON,LED_OFF,LED_OFF,LED_OFF,LED_OFF }, /* 1 */
+	{ LED_ON,LED_ON,LED_OFF,LED_ON,LED_ON,LED_OFF,LED_ON }, /* 2 */
+	{ LED_ON,LED_ON,LED_ON,LED_ON,LED_OFF,LED_OFF,LED_ON }, /* 3 */
+	{ LED_OFF,LED_ON,LED_ON,LED_OFF,LED_OFF,LED_ON,LED_ON }, /* 4 */
+	{ LED_ON,LED_OFF,LED_ON,LED_ON,LED_OFF,LED_ON,LED_ON }, /* 5 */
+	{ LED_ON,LED_OFF,LED_ON,LED_ON,LED_ON,LED_ON,LED_ON }, /* 6 */
+	{ LED_ON,LED_ON,LED_ON,LED_OFF,LED_OFF,LED_OFF,LED_OFF }, /* 7 */
+	{ LED_ON,LED_ON,LED_ON,LED_ON,LED_ON,LED_ON,LED_ON }, /* 8 */
+	{ LED_ON,LED_ON,LED_ON,LED_ON,LED_OFF,LED_ON,LED_ON }  /* 9 */
+};
+/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	unsigned int temp, humi, init;
-	seven_seg_t seg1 = { 0x0, { 5, 6, 7, 8, 9, 10, 11 }, 12 };
-	seven_seg_t seg2 = { 0x0, { 20, 21, 22, 23, 24, 25, 26 }, 27 };
+	seven_seg_t seg1 = {0x0,{5,6,7,8,9,10,11},12,SEGMENT_COMMON_ANODE};
+	seven_seg_t seg2 = {0x0,{20,21,22,23,24,25,26},27,SEGMENT_COMMON_ANODE};
 	/* init gpio */
 	gpio_init();
 	gpio_config(SENS_IN,GPIO_OUTPUT);
 	gpio_pull(SENS_IN,GPIO_PULL_NONE);
 	gpio_set(SENS_IN);
 	/* init 7segment interface */
-	seven_init(&seg1,segment_pattern[0]);
-	seven_init(&seg2,segment_pattern[0]);
+	seven_init(&seg1,&segment_numbers[0][0]);
+	seven_init(&seg2,&segment_numbers[0][0]);
 	seven_full(&seg1,0,LED_OFF);
 	seven_full(&seg2,0,LED_ON);
 	/* init timer */

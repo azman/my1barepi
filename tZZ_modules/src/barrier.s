@@ -1,8 +1,16 @@
 .section .text
 .global memory_barrier
 memory_barrier:
-	mcr	p15, 0, ip, c7, c5, 0  @ invalidate I cache
-	mcr	p15, 0, ip, c7, c5, 6  @ invalidate BTB
-	mcr	p15, 0, ip, c7, c10, 4 @ drain write buffer
-	mcr	p15, 0, ip, c7, c5, 4  @ prefetch flush
+	mov	r4, #0 @ <Rd> should be zero (SBZ) for this
+	mcr	p15, 0, r4, c7, c10, 5 @ data memory barrier
+	mov	pc, lr
+
+@note: c7 is cache operation register
+@note: data-mem-barrier ensures apparent order, NOT completion
+@note: data-sync-barrier ensures ALL instructions are completed
+
+.global mmsync_barrier
+mmsync_barrier:
+	mov	r4, #0 @ <Rd> should be zero (SBZ) for this
+	mcr	p15, 0, r4, c7, c10, 4 @ data synchronization barrier
 	mov	pc, lr
