@@ -73,9 +73,17 @@ are actually used by all the projects. Here are some basic descriptions:
   = places our bare-metal code at the start of code segment
   = note that 'text' segment IS code segment
 
-------------------
-ThingsToThinkAbout
-------------------
+-----------
+ThingsToTry
+-----------
 
-Notice that, sometimes, the GPIO pin need to be at logic LO ('0' @ GND) for
-the LED to turn ON. Find out why this is the case.
+* Make things non-volatile! :p
+  - reminder: take note of the binary file sizes after each compilation
+  - try taking out volatile keyword from gpio pointer variable declaration
+  - recompile and test
+  - try taking out -O2 option from makefile
+  - recompile and test
+* Hate the arrays! :p
+  - this is to test your knowledge in C language!
+  - try to rewrite the code WITHOUT using array syntax!
+    = hint: pointers!

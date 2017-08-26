@@ -14,8 +14,9 @@
 #define GPIO_FSET 0x07
 #define GPIO_FCLR 0x0A
 /** GPIO number for ACT LED on R-Pi Model B+ v1.2 */
+/** ACT LED on Pi B+ v1.2 is active high */
+/** - was previously on 16, active low! */
 #define GPIO_ACT_LED 47
-
 /**
  *
  * This can be added to the code to avoid using boot.s
