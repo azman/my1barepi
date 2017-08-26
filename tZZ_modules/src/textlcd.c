@@ -37,7 +37,7 @@ void lcd_send_init(lcdbyte command)
 /*----------------------------------------------------------------------------*/
 void lcd_send_command(lcdbyte command)
 {
-	//lcd_busy_wait();
+	/**lcd_busy_wait();*/
 	gpio_put_data(command);
 	/** command, write */
 	gpio_clr(LCD_DNC_GPIO);
@@ -48,7 +48,7 @@ void lcd_send_command(lcdbyte command)
 /*----------------------------------------------------------------------------*/
 void lcd_send_data(lcdbyte asciidat)
 {
-	//lcd_busy_wait();
+	/**lcd_busy_wait();*/
 	gpio_put_data(asciidat);
 	/** data, write */
 	gpio_set(LCD_DNC_GPIO);
