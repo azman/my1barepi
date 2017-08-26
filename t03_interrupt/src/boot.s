@@ -25,7 +25,7 @@ init:
 @ copying the jmp instructions
 	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
-@ copying the jmp targets
+@ copying the jmp targets (hint: r0 & r1 incremented!)
 	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
 doit:
@@ -35,15 +35,17 @@ doit:
 here:
 	b here
 
-.globl enable_irq
+.global enable_irq
 enable_irq:
+@ equivalent to 'cpsie i'? with 'mov pc,lr'?
 	mrs r0,cpsr
 	bic r0,r0,#0x80
 	msr cpsr_c,r0
 	bx lr
 
 irqh:
-	push {r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,lr}
+@ do we need to save lr? in irq mode lr is banked!
+	push {r0-r12,lr}
 	bl irq_handler
-	pop  {r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,lr}
+	pop  {r0-r12,lr}
 	subs pc,lr,#4

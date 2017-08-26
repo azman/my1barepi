@@ -45,18 +45,12 @@ Contents
 
 All codes related to timer usage are in 'main.c'.
 
-------------------
-ThingsToThinkAbout
-------------------
+-----------
+ThingsToTry
+-----------
 
-The free-running counter actually rolls over when it overflows and there is
-no way this register can be reset. Find out if this affects the sample code
-when the initial timer_read value is actually bigger that the next.
-
----------
-Challenge
----------
-
-See if you can extend the timer codes to include system timer. Write an example
-application to test the functions you created. Also, try to compare the
-precision of both timers.
+* Create another square-wave signal on another GPIO:
+  - with the same frequency and phase
+  - with the same frequency at 180 degrees phase shift
+  - with half frequency but same phase
+  - with half frequency at 180 degrees phase shift

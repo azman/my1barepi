@@ -41,10 +41,11 @@ An interrupt facility allows the concept of event-based processing. Looking
 at the BCM2835 controller, find all the hardware events that can be uniquely
 identified. How can a software event be introduced to  the system?
 
----------
-Challenge
----------
+-----------
+ThingsToTry
+-----------
 
-Try to write a code to generate waveforms at different frequencies on three
-separate GPIO pins. This is to show a simple form of multi-tasking (i.e. static
-scheduling). Verify the generated signal on an oscilloscope.
+* Write a code to generate square-waves
+  - at different frequencies on three separate GPIO pins
+  - simple form of multi-tasking (i.e. static scheduling)
+  - verify the generated signal on an oscilloscope
