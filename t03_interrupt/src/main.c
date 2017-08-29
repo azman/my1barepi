@@ -51,7 +51,7 @@ void enable_irq(void); /** defined in assembly source file */
 /** INTERRUPT MODULE END */
 /*----------------------------------------------------------------------------*/
 #define INTR_PIN 2
-#define TEST_PIN 47
+#define TEST_PIN 3
 #define TEST_DELAY 500
 /*----------------------------------------------------------------------------*/
 int pause = 0;
@@ -79,10 +79,9 @@ void main(void)
 	gpio_config(INTR_PIN,GPIO_INPUT);
 	gpio_pull(INTR_PIN,GPIO_PULL_UP);
 	gpio_rstevent(INTR_PIN);
-	gpio_setevent(INTR_PIN,GPIO_EVENT_AEDGR);
+	gpio_setevent(INTR_PIN,GPIO_EVENT_AEDGF);
 	timer_init();
 	timer_load(TEST_DELAY*TIMER_MS);
-	timer_reload(TEST_DELAY*TIMER_MS);
 	timer_irq_clear();
 	/** ready to go */
 	enable_irq();

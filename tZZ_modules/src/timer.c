@@ -79,19 +79,25 @@ void timer_active(int enable)
 	else timer[TIMER_CTRL] &= ~TIMER_TMR_ENABLE;
 }
 /*----------------------------------------------------------------------------*/
-void timer_load(int value)
+void timer_load(unsigned int value)
 {
 	timer[TIMER_LOAD] = value;
 }
 /*----------------------------------------------------------------------------*/
-void timer_reload(int value)
+void timer_reload(unsigned int value)
 {
+	/** copy of timer load reg - does not immediately write to timer value */
 	timer[TIMER_RLOD] = value;
 }
 /*----------------------------------------------------------------------------*/
 void timer_irq_clear(void)
 {
 	timer[TIMER_IRQA] = 0; /* write any value? must it be zero? */
+}
+/*----------------------------------------------------------------------------*/
+unsigned int timer_value(void)
+{
+	return timer[TIMER_DVAL];
 }
 /*----------------------------------------------------------------------------*/
 unsigned int timer_irq_raw(void)

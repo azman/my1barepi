@@ -14,9 +14,10 @@ void timer_wait(unsigned int wait);
 /*----------------------------------------------------------------------------*/
 void timer_setirq(int enable);
 void timer_active(int enable);
-void timer_load(int value);
-void timer_reload(int value);
+void timer_load(unsigned int value);
+void timer_reload(unsigned int value);
 void timer_irq_clear(void); /** clears pending irq bit */
+unsigned int timer_value(void);
 unsigned int timer_irq_raw(void); /** returns pending irq bit */
 unsigned int timer_irq_masked(void); /** returns pending irq bit & enable bit */
 /*----------------------------------------------------------------------------*/
