@@ -59,6 +59,9 @@ $(TOPELF): $(OBJLST) $(LINKER)
 	$(TOOLPFIX)-ld $(LFLAGS) $^ -Map $(MAP) -o $@ -T $(LINKER)
 	$(TOOLPFIX)-objdump -d $@ > $(LST)
 
+%.o: src/%.s src/%.h
+	$(TOOLPFIX)-as $(AFLAGS) $< -o $@
+
 %.o: src/%.s
 	$(TOOLPFIX)-as $(AFLAGS) $< -o $@
 
