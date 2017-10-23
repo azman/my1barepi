@@ -53,7 +53,7 @@ unsigned int __aeabi_uidivmod(unsigned int dvd, unsigned int dvs)
 	return rem;
 }
 /*----------------------------------------------------------------------------*/
-unsigned int str2uint(char* str, unsigned char len)
+unsigned int str2uint(char* str, int len)
 {
 	unsigned int calc = 0, mult = 1;
 	/** browse through the array - from right! */
@@ -73,14 +73,9 @@ unsigned int str2uint(char* str, unsigned char len)
 /*----------------------------------------------------------------------------*/
 int str2int(char* str)
 {
-	int calc;
-	unsigned char len = 0;
-	unsigned char neg = 0;
+	int calc, len = 0, neg = 0;
 	/** check negative value */
-	if(str[len]=='-')
-	{
-		neg = 1; str++;
-	}
+	if(str[len]=='-') { neg = 1; str++; }
 	/** get string length */
 	while(str[len]) len++;
 	/** do your thing! */
@@ -96,25 +91,20 @@ float str2float(char* str)
 {
 	float calc = 0.0, divs = 10.0;
 	unsigned int chk;
-	unsigned char len = 0;
-	char dot = 0xFF;
-	unsigned char neg = 0;
+	int dot = -1, len = 0, neg = 0;
 	/** check negative value */
-	if(str[len]=='-')
-	{
-		neg = 1; str++;
-	}
+	if(str[len]=='-') { neg = 1; str++; }
 	/** get string length and get dp position */
 	while(str[len])
 	{
 		if(str[len]=='.') dot = len;
 		len++;
 	}
-	if((unsigned char)dot==0xFF) dot = len;
+	if(dot<0) dot = len;
 	/** do your thing! */
 	chk = str2uint(str,dot);
 	/** loop decimal points */
-	while((unsigned char)dot<len)
+	while(dot<len)
 	{
 		dot++;
 		calc = calc + (float)(str[len]-0x30)/divs;
@@ -128,30 +118,27 @@ float str2float(char* str)
 /*----------------------------------------------------------------------------*/
 int uint2str(char* str, unsigned int val)
 {
-	unsigned char idx = 0, tmp;
-	unsigned int cmp = 10000;
-	unsigned char fst = 0;
-	/** look for the 5 digits */
-	while(cmp>0)
+	int len = 0, idx;
+	unsigned int tmp = val,cmp;
+	while(tmp>0)
 	{
-		if(val>=cmp||fst) /** check fst to get following zero(es)! */
-		{
-			tmp = val / cmp; /** should be 0-9 */
-			val = val % cmp;
-			str[idx++] = tmp + 0x30;
-			fst = 1;
-		}
-		cmp /= 10;
+		cmp = tmp % 10;
+		tmp = tmp / 10;
+		/* shift digits */
+		for(idx=len;idx>0;idx--)
+			str[idx] = str[idx-1];
+		str[0] = cmp + 0x30;
+		len++;
 	}
 	/** check zero value */
-	if(idx==0) str[idx++] = '0';
-	/** return current position */
-	return idx;
+	if(len==0) str[len++] = '0';
+	/** return size */
+	return len;
 }
 /*----------------------------------------------------------------------------*/
 int int2str(char* str, int val)
 {
-	unsigned char idx = 0;
+	int idx = 0;
 	unsigned int chk;
 	/** check negative value */
 	if(val<0)
@@ -168,9 +155,9 @@ int int2str(char* str, int val)
 	return (idx-1);
 }
 /*----------------------------------------------------------------------------*/
-int float2str(char* str, float val)
+int float2str(char* str, float val, int dpc)
 {
-	unsigned char tmp, idx = 0;
+	int tmp, idx = 0;
 	unsigned int chk;
 	/** check negative value */
 	if(val<0)
@@ -178,20 +165,21 @@ int float2str(char* str, float val)
 		str[idx++] = '-';
 		val = -val;
 	}
-	chk = val; /** should be within 16-bit value - NOT checked! */
+	chk = val;
 	val -= (float) chk;
 	/** convert integer part! */
 	idx += uint2str(&str[idx],chk);
 	/** put decimal point in */
 	str[idx++] = '.';
 	/* show decimal part - 2 digits for now */
-	val *= 10;
-	tmp = (unsigned char) val;
-	str[idx++] = (unsigned char)tmp + 0x30;
-	val -= (float) tmp;
-	val *= 10;
-	tmp = (unsigned char) val;
-	str[idx++] = (unsigned char)tmp + 0x30;
+	while(dpc>0)
+	{
+		val *= 10;
+		tmp = val;
+		str[idx++] = tmp + 0x30;
+		val -= (float) tmp;
+		dpc--;
+	}
 	/** add terminator */
 	str[idx++] = 0x0;
 	/** return size (excluding null) */
