@@ -1,11 +1,10 @@
 -----------
-TUTORIAL 10
+TUTORIAL 13
 -----------
 
 This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This module creates a simple program that communicates with
-a GSM module through standard UART interface and echoes all actions and
-results to a PC using a bit-bang UART interface AND a 16x2 text LCD.
+C language. This module creates a program that reads data from a GPS module
+and sends them to a UART terminal.
 
 ---------
 Objective
@@ -18,6 +17,8 @@ Background
 --------
 Contents
 --------
+
+All codes required to read from a GPS module is in 'main.c'.
 
 ------------------
 ThingsToThinkAbout
