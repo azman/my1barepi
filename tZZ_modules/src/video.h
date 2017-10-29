@@ -104,6 +104,7 @@ void video_text_cursor(int y, int x);
 void video_text_newline(void);
 void video_text_char(char c);
 void video_text_string(char* str);
+/* graphics functions */
 void video_draw_line(int x1, int y1, int x2, int y2);
 /*----------------------------------------------------------------------------*/
 #endif
