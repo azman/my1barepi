@@ -15,6 +15,7 @@ unsigned int __aeabi_uidiv(unsigned int dvd, unsigned int dvs)
 	while(bit)
 	{
 		quo <<= 1;
+		rem <<= 1;
 		if(bit&dvd)
 			rem |= 1;
 		if(rem>=dvs)
@@ -41,6 +42,7 @@ unsigned int __aeabi_uidivmod(unsigned int dvd, unsigned int dvs)
 	while(bit)
 	{
 		quo <<= 1;
+		rem <<= 1;
 		if(bit&dvd)
 			rem |= 1;
 		if(rem>=dvs)
