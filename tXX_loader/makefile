@@ -10,6 +10,9 @@ all: $(TARGET)
 # get project's common makefile stuffs
 include ../makefile
 
+# in case we need customization
+#CFLAGS += -O2
+
 # specify additional module header location
 CFLAGS += -I../tZZ_modules/src/
 
