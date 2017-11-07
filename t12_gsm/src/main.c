@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*/
 #include "gpio.h"
-#include "uart.h"
 #include "timer.h"
+#include "uart.h"
 #include "uartbb.h"
 #include "textlcd.h"
 #include "gsm.h"

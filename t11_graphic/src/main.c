@@ -24,22 +24,17 @@ void main(void)
 	screen_t *pscr;
 	cursor_t *pcur;
 	fbinfo_t* pinfo;
+	int check;
 	/** initialize gpio */
 	gpio_init();
 	gpio_config(ERROR_LED,GPIO_OUTPUT);
 	timer_init();
 	/** initialize video stuff - mailbox before that! */
 	mailbox_init();
-	if (video_init(0x0))
-	{
-		/* on error, blink led and hang! */
-		while(1) { gpio_toggle(ERROR_LED); timer_wait(TIMER_S/2); }
-	}
-	blink_error(3);
-	/** do the thing... */
+	check = video_init(0x0);
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();
-	blink_error(3);
+	blink_error(check);
 	/** write something */
 	video_text_char('H');
 	video_text_char('E');
