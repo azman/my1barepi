@@ -8,6 +8,8 @@
 **/
 unsigned int __aeabi_uidiv(unsigned int dvd, unsigned int dvs);
 unsigned int __aeabi_uidivmod(unsigned int dvd, unsigned int dvs);
+int __aeabi_idiv(int dvd, int dvs);
+int __aeabi_idivmod(int dvd, int dvs);
 /*----------------------------------------------------------------------------*/
 int str2int(char* str); /** convert string to integer */
 float str2float(char* str); /** convert string to float */

@@ -55,6 +55,32 @@ unsigned int __aeabi_uidivmod(unsigned int dvd, unsigned int dvs)
 	return rem;
 }
 /*----------------------------------------------------------------------------*/
+int __aeabi_idiv(int dvd, int dvs)
+{
+	int sgn = 0, res;
+	if (dvd<0)
+	{
+		dvd = -dvd;
+		sgn++;
+	}
+	if (dvs<0)
+	{
+		dvs = -dvs;
+		sgn++;
+	}
+	sgn &= 0x01;
+	res = (int) ((unsigned int)dvd/(unsigned int)dvs);
+	if (sgn) res = -res;
+	return res;
+}
+/*----------------------------------------------------------------------------*/
+int __aeabi_idivmod(int dvd, int dvs)
+{
+	if (dvd<0) dvd = -dvd;
+	if (dvs<0) dvs = -dvs;
+	return (int) ((unsigned int)dvd%(unsigned int)dvs);
+}
+/*----------------------------------------------------------------------------*/
 unsigned int str2uint(char* str, int len)
 {
 	unsigned int calc = 0, mult = 1;

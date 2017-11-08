@@ -1,0 +1,24 @@
+-----------
+TUTORIAL 08
+-----------
+
+This is an introduction to bare-metal programming on Raspberry Pi using
+C language. This module creates a program that gets input from a bluetooth
+module and change relevant GPIO status, based on a pre-defined command.
+
+---------
+Objective
+---------
+
+----------
+Background
+----------
+
+--------
+Contents
+--------
+
+------------------
+ThingsToThinkAbout
+------------------
+
