@@ -2,7 +2,7 @@
 #ifndef __MY1STRING_H
 #define __MY1STRING_H
 /*----------------------------------------------------------------------------*/
-char* strword(char* src, char* del, int* chk);
+char* strword(char** src, char* del);
 int strncmp(char* src1, char* src2, int size);
 int strncpy(char* dst, char* src, int size);
 /*----------------------------------------------------------------------------*/

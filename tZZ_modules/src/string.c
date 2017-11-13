@@ -1,29 +1,31 @@
 /*----------------------------------------------------------------------------*/
 #include "string.h"
 /*----------------------------------------------------------------------------*/
-char* strword(char* src, char* del, int* chk)
+char* strword(char** src, char* del)
 {
-	char* ptr = 0x0, *buf = src;
+	char* ptr = 0x0, *buf = *src;
 	int loop = 0, test;
-	while (buf[loop])
+	if (buf[loop])
 	{
-		src++; test = 0;
-		while (del[test])
+		while (1)
 		{
-			if (buf[loop]==del[test])
+			(*src)++; test = 0;
+			while (del[test])
 			{
-				buf[loop] = 0x0;
-				ptr = src;
+				if (buf[loop]==del[test])
+				{
+					buf[loop] = 0x0;
+					break;
+				}
+				test++;
+			}
+			if (!buf[loop])
+			{
+				ptr = buf;
 				break;
 			}
-			test++;
+			loop++;
 		}
-		if (ptr) break;
-		loop++;
-	}
-	if (loop>0)
-	{
-		if (chk) *chk = loop;
 	}
 	return ptr;
 }

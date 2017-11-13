@@ -29,32 +29,10 @@ void debug_print(char *msg)
 	uartbb_print(msg);
 }
 /*----------------------------------------------------------------------------*/
-void do_debug(char* chkstr, char* buffer, int count)
-{
-	int loop;
-	if (chkstr) debug_print(chkstr);
-	debug_print("[DEBUG] {");
-	for (loop=0;loop<count;loop++)
-	{
-		unsigned int byte = (unsigned int)(buffer[loop]);
-		if (byte<0x20||byte>0x7f)
-		{
-			debug_print("[0x");
-			debug_hexbyte((unsigned char)byte);
-			debug_char(']');
-		}
-		else debug_char(byte);
-	}
-	debug_print("}[DONE](0x");
-	debug_hexbyte((unsigned char)count); /* count < 255! */
-	debug_print(")\n");
-}
-/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	btmodule_t btdev;
-	char *pbuf, *ptmp, buff[32];
-	int test, loop;
+	char *pbuf, *ptmp, buff[32], copy[BT_BUFF_SIZE];
 	/** initialize basics */
 	gpio_init();
 	timer_init();
@@ -72,100 +50,10 @@ void main(void)
 	/** check hc-06 interface */
 	while (1)
 	{
+		debug_print("Initializing HC-06... ");
 		bt_init(&btdev);
-#if 0
-		do
-		{
-			int loop;
-			/* try to communicate */
-			debug_print("Sending 'AT'... ");
-			uart_print("AT");
-			timer_wait(TIMER_S);
-			if (bt_replies(&btdev)>0)
-			{
-				debug_print("'");
-				debug_print((char*)btdev.buff);
-				debug_print("'\n");
-			}
-			else
-			{
-				debug_print("no response!\n");
-				break;
-			}
-			/* get version */
-			debug_print("Getting version... ");
-			uart_print("AT+VERSION");
-			timer_wait(TIMER_S);
-			if (bt_replies(&btdev)>0)
-			{
-				loop = 0;
-				while (btdev.buff[loop+2])
-				{
-					btdev.vers[loop] = btdev.buff[loop+2];
-					loop++;
-				}
-				btdev.vers[loop] = 0x0;
-				debug_print("'");
-				debug_print(btdev.vers);
-				debug_print("'\n");
-			}
-			else
-			{
-				debug_print("no response!\n");
-				break;
-			}
-			/* set name */
-			debug_print("Setting name... ");
-			uart_print("AT+NAME");
-			uart_print(btdev.name);
-			timer_wait(TIMER_S);
-			if (bt_cmdwait(&btdev)>0)
-			{
-				debug_print("'");
-				debug_print((char*)btdev.buff);
-				debug_print("'\n");
-			}
-			else
-			{
-				debug_print("no response!\n");
-				break;
-			}
-			/* set pin */
-			debug_print("Setting pin... ");
-			uart_print("AT+PIN");
-			uart_print(btdev.cpin);
-			timer_wait(TIMER_S);
-			if (bt_cmdwait(&btdev)>0)
-			{
-				debug_print("'");
-				debug_print((char*)btdev.buff);
-				debug_print("'\n");
-			}
-			else
-			{
-				debug_print("no response!\n");
-				break;
-			}
-			/* set baud 9600... always!*/
-			debug_print("Setting baud... ");
-			uart_print("AT+BAUD4");
-			timer_wait(TIMER_S);
-			if (bt_cmdwait(&btdev)>0)
-			{
-				debug_print("'");
-				debug_print((char*)btdev.buff);
-				debug_print("'\n");
-			}
-			else
-			{
-				debug_print("no response!\n");
-				break;
-			}
-			timer_wait(TIMER_S);
-		}
-		while(0);
-#endif
 		if (btdev.status>0) break;
+		debug_print("fail!\n");
 		timer_wait(TIMER_S);
 	}
 	debug_print("Module ready!\n");
@@ -182,24 +70,129 @@ void main(void)
 				if (btdev.bbsize>0&&btdev.buff[btdev.bbsize-1]=='\n')
 				{
 					btdev.buff[btdev.bbsize++] = 0x0;
-					pbuf = (char*) btdev.buff;
+					strncpy(copy,(char*)btdev.buff,BT_BUFF_SIZE);
+					pbuf = copy;
 					trimws(pbuf,1);
 					str2upper(pbuf);
-					loop = 0;
-					while(pbuf)
+/*
+					int loop = 0;
+					while ((ptmp=strword(&pbuf," \n\r\t")))
 					{
-						ptmp = strword(pbuf," \n\r\t",&test);
-						if (test>0)
+						loop++;
+						bt_print("[Found] Word#");
+						int2str(buff,loop);
+						bt_print(buff);
+						bt_print(": '");
+						bt_print(ptmp);
+						bt_print("'\n");
+					}
+*/
+					ptmp = strword(&pbuf," \n\r\t");
+					if (!ptmp)
+					{
+						bt_print("[ERROR] No word found? {");
+						bt_print((char*)btdev.buff);
+						bt_print("}\n");
+					}
+					else if (strncmp(ptmp,"GPIO",BT_BUFF_SIZE)==0)
+					{
+						do
 						{
-							loop++;
-							bt_print("[Found] Word#");
-							int2str(buff,loop);
-							bt_print(buff);
-							bt_print(": '");
-							bt_print(pbuf);
-							bt_print("'\n");
+							int test;
+							/* get gpio select */
+							ptmp = strword(&pbuf," \n\r\t");
+							if (!ptmp)
+							{
+								bt_print("[ERROR] No gpio selected!\n");
+								break;
+							}
+							test = str2int(ptmp);
+							if (test<2||test>27)
+							{
+								bt_print("[ERROR] Invalid gpio selected! {");
+								bt_print(ptmp);
+								bt_print("}\n");
+								break;
+							}
+							/* get gpio task */
+							ptmp = strword(&pbuf," \n\r\t");
+							if (!ptmp)
+							{
+								bt_print("[ERROR] No task for gpio command!\n");
+								break;
+							}
+							else if (strncmp(ptmp,"CONFIG",BT_BUFF_SIZE)==0)
+							{
+								ptmp = strword(&pbuf," \n\r\t");
+								if (!ptmp)
+								{
+									bt_print("[ERROR] No option for ");
+									bt_print("gpio config!\n");
+									break;
+								}
+								else if (strncmp(ptmp,"IN",BT_BUFF_SIZE)==0)
+								{
+									gpio_config(test,GPIO_INPUT);
+									bt_print("[GPIO] GPIO");
+									int2str(buff,test);
+									bt_print(buff);
+									bt_print(" configured as input!\n");
+								}
+								else if (strncmp(ptmp,"OUT",BT_BUFF_SIZE)==0)
+								{
+									gpio_config(test,GPIO_OUTPUT);
+									bt_print("[GPIO] GPIO");
+									int2str(buff,test);
+									bt_print(buff);
+									bt_print(" configured as output!\n");
+								}
+								else
+								{
+									bt_print("[ERROR] Invalid option for ");
+									bt_print("gpio config!\n");
+									break;
+								}
+							}
+							else if (strncmp(ptmp,"SET",BT_BUFF_SIZE)==0)
+							{
+								gpio_set(test);
+								bt_print("[GPIO] GPIO");
+								int2str(buff,test);
+								bt_print(buff);
+								bt_print(" set to logic HI!\n");
+							}
+							else if (strncmp(ptmp,"CLR",BT_BUFF_SIZE)==0)
+							{
+								gpio_clr(test);
+								bt_print("[GPIO] GPIO");
+								int2str(buff,test);
+								bt_print(buff);
+								bt_print(" set to logic LO!\n");
+							}
+							else if (strncmp(ptmp,"STATUS",BT_BUFF_SIZE)==0)
+							{
+								bt_print("[GPIO] GPIO");
+								int2str(buff,test);
+								bt_print(buff);
+								bt_print(" status is at logic ");
+								if (gpio_read(test)) bt_print("HI");
+								else bt_print("LO");
+								bt_print("!\n");
+							}
+							else
+							{
+								bt_print("[ERROR] Invalid gpio task! {");
+								bt_print(ptmp);
+								bt_print("}\n");
+							}
 						}
-						pbuf = ptmp;
+						while(0);
+					}
+					else
+					{
+						bt_print("[ERROR] Unknown command! {");
+						bt_print(ptmp);
+						bt_print("}\n");
 					}
 					btdev.bbsize = 0;
 				}
