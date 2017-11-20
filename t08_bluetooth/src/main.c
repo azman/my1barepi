@@ -6,6 +6,7 @@
 #include "bluez.h"
 #include "string.h"
 #include "utils.h"
+#include "mailbox.h"
 /*----------------------------------------------------------------------------*/
 void debug_char(char chk)
 {
@@ -14,14 +15,8 @@ void debug_char(char chk)
 /*----------------------------------------------------------------------------*/
 void debug_hexbyte(unsigned char byte)
 {
-	unsigned char temp = (byte & 0xf0) >> 4;
-	if(temp>9) temp = (temp-10)+0x41;
-	else temp += 0x30;
-	debug_char(temp);
-	temp = (byte & 0x0f);
-	if(temp>9) temp = (temp-10)+0x41;
-	else temp += 0x30;
-	debug_char(temp);
+	debug_char(byte2hex(byte,1,1));
+	debug_char(byte2hex(byte,0,1));
 }
 /*----------------------------------------------------------------------------*/
 void debug_print(char *msg)
@@ -29,9 +24,37 @@ void debug_print(char *msg)
 	uartbb_print(msg);
 }
 /*----------------------------------------------------------------------------*/
+void bt_hexbyte(unsigned char byte)
+{
+	bt_send(byte2hex(byte,1,1));
+	bt_send(byte2hex(byte,0,1));
+}
+/*----------------------------------------------------------------------------*/
+void bt_hexuint(unsigned int dwrd)
+{
+	int loop, pass = 32;
+	unsigned int temp;
+	for (loop=0;loop<4;loop++)
+	{
+		pass -= 8;
+		temp = dwrd;
+		temp >>= pass;
+		temp &= 0xff;
+		bt_hexbyte((unsigned char)temp);
+	}
+}
+/*----------------------------------------------------------------------------*/
+void bt_int(unsigned int dwrd)
+{
+	char buff[16];
+	int2str(buff,(int)dwrd);
+	bt_print(buff);
+}
+/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	btmodule_t btdev;
+	tags_info_t info;
 	char *pbuf, *ptmp, buff[32], copy[BT_BUFF_SIZE];
 	/** initialize basics */
 	gpio_init();
@@ -41,11 +64,13 @@ void main(void)
 	uartbb_init(UARTBB_RX_DEFAULT,UARTBB_TX_DEFAULT);
 	/** announce our presence */
 	debug_print("Testing bluetooth!\n\n");
+	/** prepare mailbox interface */
+	mailbox_init();
 	/** initialize bt structure */
 	btdev.status = 0;
 	btdev.bbsize = 0;
-	strncpy(btdev.name,"my1bluex",BT_NAME_BUFF);
-	strncpy(btdev.cpin,"1234",BT_CPIN_BUFF);
+	strncpy(btdev.name,"my1bluez",BT_NAME_BUFF);
+	strncpy(btdev.cpin,"4444",BT_CPIN_BUFF);
 	btdev.vers[0] = 0x0;
 	/** check hc-06 interface */
 	while (1)
@@ -90,9 +115,7 @@ void main(void)
 					ptmp = strword(&pbuf," \n\r\t");
 					if (!ptmp)
 					{
-						bt_print("[ERROR] No word found? {");
-						bt_print((char*)btdev.buff);
-						bt_print("}\n");
+						bt_print("[SIGNAL] I AM ALIVE!\n");
 					}
 					else if (strncmp(ptmp,"GPIO",BT_BUFF_SIZE)==0)
 					{
@@ -107,7 +130,7 @@ void main(void)
 								break;
 							}
 							test = str2int(ptmp);
-							if (test<2||test>27)
+							if (test<2||test>27||test==14||test==15)
 							{
 								bt_print("[ERROR] Invalid gpio selected! {");
 								bt_print(ptmp);
@@ -182,6 +205,95 @@ void main(void)
 							else
 							{
 								bt_print("[ERROR] Invalid gpio task! {");
+								bt_print(ptmp);
+								bt_print("}\n");
+							}
+						}
+						while(0);
+					}
+					else if (strncmp(ptmp,"INFO",BT_BUFF_SIZE)==0)
+					{
+						do
+						{
+							/* get info selection */
+							ptmp = strword(&pbuf," \n\r\t");
+							if (!ptmp)
+							{
+								bt_print("[ERROR] ");
+								bt_print("No selection for info command!\n");
+								break;
+							}
+							else if (strncmp(ptmp,"BOARD",BT_BUFF_SIZE)==0)
+							{
+								tags_get_board_info(&info);
+								bt_print("[INFO] Hardware {0x");
+								bt_hexuint(info.info_status);
+								bt_print("}\n");
+								bt_print("==> VideoCore Firmware: 0x");
+								bt_hexuint(info.vc_revision);
+								bt_print("\n");
+								bt_print("==> Board Model: 0x");
+								bt_hexuint(info.board_model);
+								bt_print("\n");
+								bt_print("==> Board Revision: 0x");
+								bt_hexuint(info.board_revision);
+								bt_print("\n");
+								bt_print("==> Board MAC Address: 0x");
+								bt_hexuint(info.board_mac_addrh);
+								bt_print(",0x");
+								bt_hexuint(info.board_mac_addrl);
+								bt_print("\n");
+								bt_print("==> Board Serial: 0x");
+								bt_hexuint(info.board_serial_h);
+								bt_print(",0x");
+								bt_hexuint(info.board_serial_l);
+								bt_print("\n");
+								bt_print("==> ARM Memory: 0x");
+								bt_hexuint(info.memory_arm_base);
+								bt_print(" {Size:");
+								bt_int(info.memory_arm_size>>20);
+								bt_print("MB}\n");
+								bt_print("==> VC Memory: 0x");
+								bt_hexuint(info.memory_vc_base);
+								bt_print(" {Size:");
+								bt_int(info.memory_vc_size>>20);
+								bt_print("MB}\n");
+							}
+							else if (strncmp(ptmp,"VIDEO",BT_BUFF_SIZE)==0)
+							{
+								tags_get_video_info(&info);
+								bt_print("[INFO] Graphics {0x");
+								bt_hexuint(info.info_status);
+								bt_print("}\n");
+								bt_print("==> Physical Dimension: ");
+								bt_int(info.fb_width);
+								bt_print("x");
+								bt_int(info.fb_height);
+								bt_print("\n");
+								bt_print("==> Virtual Dimension: ");
+								bt_int(info.fb_vwidth);
+								bt_print("x");
+								bt_int(info.fb_vheight);
+								bt_print("\n");
+								bt_print("==> Depth: ");
+								bt_int(info.fb_depth);
+								bt_print(", Pixel Order: 0x");
+								bt_hexuint(info.fb_pixel_order);
+								bt_print("\n");
+								bt_print("==> Pitch: ");
+								bt_int(info.fb_pitch);
+								bt_print(", Alpha Mode: 0x");
+								bt_hexuint(info.fb_alpha_mode);
+								bt_print("\n");
+								bt_print("==> X-Offset: ");
+								bt_int(info.fb_vx_offset);
+								bt_print(", Y-Offset: ");
+								bt_int(info.fb_vy_offset);
+								bt_print("\n");
+							}
+							else
+							{
+								bt_print("[ERROR] Invalid info task! {");
 								bt_print(ptmp);
 								bt_print("}\n");
 							}

@@ -3,6 +3,7 @@ TARGET = kernel.img
 
 # multiple source files (list them here as object files!)
 OBJLST = boot.o main.o gpio.o timer.o uart.o uartbb.o bluez.o string.o utils.o
+OBJLST += mailbox.o barrier.o
 
 # default rule
 all: $(TARGET)
@@ -11,7 +12,7 @@ all: $(TARGET)
 include ../makefile
 
 # in case we need customization
-CFLAGS += -O2
+#CFLAGS += -O2
 
 # specify additional module header location
 CFLAGS += -I../tZZ_modules/src/

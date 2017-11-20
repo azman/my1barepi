@@ -2,6 +2,11 @@
 #ifndef __RASPI_H
 #define __RASPI_H
 /*----------------------------------------------------------------------------*/
+#define VC_MMU_MAP_L2_ENABLED  0x40000000
+#define VC_MMU_MAP_L2_DISABLED 0xC0000000
+#define VC_MMU_MAP_DEFAULT VC_MMU_MAP_L2_ENABLED
+#define VC_MMU_MAP VC_MMU_MAP_DEFAULT
+/*----------------------------------------------------------------------------*/
 /* on VideoCore memory map, it is 0x7e000000 (BCM2835 @PiV1) */
 #if defined RASPI3
 #define PMAP_BASE 0x3F000000

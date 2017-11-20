@@ -81,6 +81,20 @@ int __aeabi_idivmod(int dvd, int dvs)
 	return (int) ((unsigned int)dvd%(unsigned int)dvs);
 }
 /*----------------------------------------------------------------------------*/
+char byte2hex(unsigned char byte, unsigned char high, unsigned char caps)
+{
+	unsigned char mode = 0x61;
+	/* check uppercase */
+	if (caps) mode -= 0x20;
+	/* select nibble */
+	if (high) byte = (byte & 0xf0) >> 4;
+	else byte = (byte & 0x0f);
+	/* check for alpha */
+	if(byte>9) byte = (byte-10)+mode;
+	else byte += 0x30;
+	return (char)byte;
+}
+/*----------------------------------------------------------------------------*/
 unsigned int str2uint(char* str, int len)
 {
 	unsigned int calc = 0, mult = 1;
