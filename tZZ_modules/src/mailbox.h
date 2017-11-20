@@ -153,23 +153,7 @@ tags_head_t;
 #define INFO_STATUS_INVALID_BUFFER 2
 #define INFO_STATUS_REQUEST_FAILED 3
 #define INFO_STATUS_REQUEST_ERROR_ 4
-#define INFO_STATUS_INVALID_TAGS00 5
-#define INFO_STATUS_INVALID_TAGS01 6
-#define INFO_STATUS_INVALID_TAGS02 7
-#define INFO_STATUS_INVALID_TAGS03 8
-#define INFO_STATUS_INVALID_TAGS04 9
-#define INFO_STATUS_INVALID_TAGS05 10
-#define INFO_STATUS_INVALID_TAGS06 11
-#define INFO_STATUS_INVALID_TAGS07 12
-#define INFO_STATUS_RESPONSE_ERROR 13
-#define INFO_STATUS_INVALID_TAGS08 14
-#define INFO_STATUS_INVALID_TAGS09 15
-#define INFO_STATUS_INVALID_TAGS0A 16
-#define INFO_STATUS_INVALID_TAGS0B 17
-#define INFO_STATUS_INVALID_TAGS0C 18
-#define INFO_STATUS_INVALID_TAGS0D 19
-#define INFO_STATUS_INVALID_TAGS0E 20
-#define INFO_STATUS_READING_TAGS 21
+#define INFO_STATUS_READING_TAGS 5
 /*----------------------------------------------------------------------------*/
 typedef struct _tags_info_t {
 	unsigned int info_status;
@@ -196,8 +180,8 @@ typedef struct _tags_info_t {
 }
 tags_info_t;
 /*----------------------------------------------------------------------------*/
-unsigned int* tags_get_board_info(tags_info_t* info);
-unsigned int* tags_get_video_info(tags_info_t* info);
+unsigned int* mailbox_get_board_info(tags_info_t* info);
+unsigned int* mailbox_get_video_info(tags_info_t* info);
 /*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/

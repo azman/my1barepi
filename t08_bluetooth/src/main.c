@@ -225,7 +225,7 @@ void main(void)
 							}
 							else if (strncmp(ptmp,"BOARD",BT_BUFF_SIZE)==0)
 							{
-								tags_get_board_info(&info);
+								mailbox_get_board_info(&info);
 								bt_print("[INFO] Hardware {0x");
 								bt_hexuint(info.info_status);
 								bt_print("}\n");
@@ -261,7 +261,7 @@ void main(void)
 							}
 							else if (strncmp(ptmp,"VIDEO",BT_BUFF_SIZE)==0)
 							{
-								tags_get_video_info(&info);
+								mailbox_get_video_info(&info);
 								bt_print("[INFO] Graphics {0x");
 								bt_hexuint(info.info_status);
 								bt_print("}\n");
@@ -277,13 +277,27 @@ void main(void)
 								bt_print("\n");
 								bt_print("==> Depth: ");
 								bt_int(info.fb_depth);
-								bt_print(", Pixel Order: 0x");
-								bt_hexuint(info.fb_pixel_order);
+								bt_print(", Pixel Order: ");
+								if (info.fb_pixel_order) bt_print("RGB");
+								else bt_print("BGR");
 								bt_print("\n");
 								bt_print("==> Pitch: ");
 								bt_int(info.fb_pitch);
-								bt_print(", Alpha Mode: 0x");
-								bt_hexuint(info.fb_alpha_mode);
+								bt_print(", Alpha Mode: ");
+								switch(info.fb_alpha_mode)
+								{
+									case 0x00:
+										bt_print("Enabled (0-opaque)");
+										break;
+									case 0x01:
+										bt_print("Reversed (0-transparent)");
+										break;
+									case 0x02:
+										bt_print("Disabled (ignored)");
+										break;
+									default:
+										bt_print("Invalid!");
+								}
 								bt_print("\n");
 								bt_print("==> X-Offset: ");
 								bt_int(info.fb_vx_offset);

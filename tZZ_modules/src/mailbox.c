@@ -114,7 +114,7 @@ int tags_isinfo(volatile unsigned int* buff, int size,
 	return size;
 }
 /*----------------------------------------------------------------------------*/
-unsigned int* tags_get_board_info(tags_info_t* info)
+unsigned int* mailbox_get_board_info(tags_info_t* info)
 {
 	volatile tags_head_t *ptag;
 	unsigned int temp = (unsigned int)mbbuff, test;
@@ -208,9 +208,9 @@ unsigned int* tags_get_board_info(tags_info_t* info)
 	return (unsigned int*)mbbuff;
 }
 /*----------------------------------------------------------------------------*/
-unsigned int* tags_get_video_info(tags_info_t* info)
+unsigned int* mailbox_get_video_info(tags_info_t* info)
 {
-	tags_head_t *ptag;
+	volatile tags_head_t *ptag;
 	unsigned int temp = (unsigned int)mbbuff, test;
 	int size, read;
 	/* for DEBUG! */
@@ -255,7 +255,7 @@ unsigned int* tags_get_video_info(tags_info_t* info)
 	switch(info->temp)
 	{
 		case TAGS_STATUS_SUCCESS:
-			info->info_status = INFO_STATUS_OK;
+			info->info_status = INFO_STATUS_READING_TAGS;
 			break;
 		case TAGS_STATUS_FAILURE:
 			info->info_status = INFO_STATUS_REQUEST_FAILED;
@@ -265,99 +265,37 @@ unsigned int* tags_get_video_info(tags_info_t* info)
 			return 0x0;
 	}
 	/* get physical dimension */
-	ptag = (tags_head_t*)&mbbuff[read];
-	test = ptag->req_res&TAGS_RESPONSE;
-	temp = ptag->req_res&~TAGS_RESPONSE;
-	if (ptag->tags_id!=TAGS_FB_PHYS_DIMS||
-		ptag->vbuf_size<8||!test||temp!=8)
-	{
-		info->info_status = INFO_STATUS_INVALID_TAGS08;
-		return 0x0;
-	}
+	read = tags_isinfo(mbbuff,read,TAGS_FB_PHYS_DIMS,2,&ptag);
+	if (!ptag) return 0x0;
 	info->fb_width = ptag->vbuffer[0];
 	info->fb_height = ptag->vbuffer[1];
-	read += (ptag->vbuf_size/sizeof(unsigned int))+3;
 	/* get virtual dimension */
-	ptag = (tags_head_t*)&mbbuff[read];
-	test = ptag->req_res&TAGS_RESPONSE;
-	temp = ptag->req_res&~TAGS_RESPONSE;
-	if (ptag->tags_id!=TAGS_FB_VIRT_DIMS||
-		ptag->vbuf_size<8||!test||temp!=8)
-	{
-		info->info_status = INFO_STATUS_INVALID_TAGS09;
-		return 0x0;
-	}
+	read = tags_isinfo(mbbuff,read,TAGS_FB_VIRT_DIMS,2,&ptag);
+	if (!ptag) return 0x0;
 	info->fb_vwidth = ptag->vbuffer[0];
 	info->fb_vheight = ptag->vbuffer[1];
-	read += (ptag->vbuf_size/sizeof(unsigned int))+3;
 	/* get depth */
-	ptag = (tags_head_t*)&mbbuff[read];
-	test = ptag->req_res&TAGS_RESPONSE;
-	temp = ptag->req_res&~TAGS_RESPONSE;
-	if (ptag->tags_id!=TAGS_FB_DEPTH||
-		ptag->vbuf_size<8||!test||temp!=4)
-	{
-		info->info_status = INFO_STATUS_INVALID_TAGS0A;
-		return 0x0;
-	}
+	read = tags_isinfo(mbbuff,read,TAGS_FB_DEPTH,1,&ptag);
+	if (!ptag) return 0x0;
 	info->fb_depth = ptag->vbuffer[0];
-	read += (ptag->vbuf_size/sizeof(unsigned int))+3;
 	/* get pixel order */
-	ptag = (tags_head_t*)&mbbuff[read];
-	test = ptag->req_res&TAGS_RESPONSE;
-	temp = ptag->req_res&~TAGS_RESPONSE;
-	if (ptag->tags_id!=TAGS_FB_PIXEL_ORDER||
-		ptag->vbuf_size<8||!test||temp!=4)
-	{
-		info->info_status = INFO_STATUS_INVALID_TAGS0B;
-		return 0x0;
-	}
-	info->fb_pixel_order = ptag->vbuffer[0];
-	read += (ptag->vbuf_size/sizeof(unsigned int))+3;
+	read = tags_isinfo(mbbuff,read,TAGS_FB_PIXEL_ORDER,1,&ptag);
+	if (!ptag) return 0x0;
+	info->fb_pixel_order = ptag->vbuffer[0]; /** 0x0:BGR , 0x1:RGB */
 	/* get apha mode */
-	ptag = (tags_head_t*)&mbbuff[read];
-	test = ptag->req_res&TAGS_RESPONSE;
-	temp = ptag->req_res&~TAGS_RESPONSE;
-	if (ptag->tags_id!=TAGS_FB_ALPHA_MODE||
-		ptag->vbuf_size<8||!test||temp!=4)
-	{
-		info->info_status = INFO_STATUS_INVALID_TAGS0C;
-		return 0x0;
-	}
+	read = tags_isinfo(mbbuff,read,TAGS_FB_ALPHA_MODE,1,&ptag);
+	if (!ptag) return 0x0;
+	/** 0x0:enabled(0=opaque) , 0x1:reversed(0=transparent), 0x2:ignored */
 	info->fb_alpha_mode = ptag->vbuffer[0];
-	read += (ptag->vbuf_size/sizeof(unsigned int))+3;
 	/* get pitch */
-	ptag = (tags_head_t*)&mbbuff[read];
-	test = ptag->req_res&TAGS_RESPONSE;
-	temp = ptag->req_res&~TAGS_RESPONSE;
-	if (ptag->tags_id!=TAGS_FB_PITCH||
-		ptag->vbuf_size<8||!test||temp!=4)
-	{
-		info->info_status = INFO_STATUS_INVALID_TAGS0D;
-		return 0x0;
-	}
+	read = tags_isinfo(mbbuff,read,TAGS_FB_PITCH,1,&ptag);
+	if (!ptag) return 0x0;
 	info->fb_pitch = ptag->vbuffer[0];
-	read += (ptag->vbuf_size/sizeof(unsigned int))+3;
 	/* get virtual offsets */
-	ptag = (tags_head_t*)&mbbuff[read];
-	test = ptag->req_res&TAGS_RESPONSE;
-	temp = ptag->req_res&~TAGS_RESPONSE;
-	if (ptag->tags_id!=TAGS_FB_VIROFFSET||
-		ptag->vbuf_size<8||!test||temp!=8)
-	{
-		info->info_status = INFO_STATUS_INVALID_TAGS0E;
-		return 0x0;
-	}
+	read = tags_isinfo(mbbuff,read,TAGS_FB_VIROFFSET,2,&ptag);
+	if (!ptag) return 0x0;
 	info->fb_vx_offset = ptag->vbuffer[0];
 	info->fb_vy_offset = ptag->vbuffer[1];
-	read += (ptag->vbuf_size/sizeof(unsigned int))+3;
-	/* check if buffer size overflows? */
-	temp = mbbuff[read++];
-	if (temp!=TAGS_END||read!=size)
-	{
-		info->info_status = INFO_STATUS_RESPONSE_ERROR;
-		return 0x0;
-	}
 	/* return pointer to buffer on success */
 	info->info_status = INFO_STATUS_OK;
 	return (unsigned int*)mbbuff;
