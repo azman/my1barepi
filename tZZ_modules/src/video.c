@@ -7,33 +7,42 @@
 /*----------------------------------------------------------------------------*/
 #define VIDEO_FB_CHANNEL MAIL_CH_FBUFF
 /*----------------------------------------------------------------------------*/
-/* fb_info must be 16-byte aligned! lower 4-bits address is zero! */
-fbinfo_t fbinfo __attribute__ ((aligned(16)));
+typedef struct __fbinfo
+{
+	unsigned int width, height;
+	unsigned int vwidth, vheight; /* virtual? */
+	unsigned int pitch; /* byte count in a row */
+	unsigned int depth; /* bits per pixel */
+	unsigned int xoffset, yoffset;
+	unsigned int pointer, size;
+}
+fbinfo_t;
+/*----------------------------------------------------------------------------*/
 fb_t framebuff;
 /*----------------------------------------------------------------------------*/
 extern font_t font_reg;
 extern font_t font_big;
 font_t* font_sys = &font_big;
 /*----------------------------------------------------------------------------*/
-int video_init(fbinfo_t *p_fbinfo)
+fb_t* video_init(void)
 {
 	unsigned int init = VIDEO_INIT_RETRIES, test, addr;
-	/** initialize default fbinfo if necessary */
-	if (!p_fbinfo)
-	{
-		fbinfo.height = VIDEO_HEIGHT;
-		fbinfo.width = VIDEO_WIDTH;
-		fbinfo.vheight = VIDEO_HEIGHT;
-		fbinfo.vwidth = VIDEO_WIDTH;
-		fbinfo.pitch = 0;
-		fbinfo.depth = VIDEO_PIXEL_BITS;
-		fbinfo.xoffset = 0;
-		fbinfo.yoffset = 0;
-		fbinfo.pointer = 0;
-		fbinfo.size = 0;
-		p_fbinfo = &fbinfo;
-	}
-	addr = ((unsigned int)p_fbinfo)|VC_MMU_MAP;
+	fbinfo_t fb_info __attribute__ ((aligned(16)));
+	tags_info_t info;
+	/** get screen information */
+	mailbox_get_video_info(&info);
+	/** initialize fbinfo */
+	fb_info.height = info.fb_height;
+	fb_info.width = info.fb_width;
+	fb_info.vheight = VIDEO_HEIGHT;
+	fb_info.vwidth = VIDEO_WIDTH;
+	fb_info.pitch = 0;
+	fb_info.depth = VIDEO_PIXEL_BITS;
+	fb_info.xoffset = 0;
+	fb_info.yoffset = 0;
+	fb_info.pointer = 0;
+	fb_info.size = 0;
+	addr = ((unsigned int)&fb_info)|VC_MMU_MAP;
 	while(init>0)
 	{
 		memory_barrier();
@@ -42,22 +51,25 @@ int video_init(fbinfo_t *p_fbinfo)
 		test = mailbox_read(VIDEO_FB_CHANNEL);
 		memory_barrier();
 		if (test) test = VIDEO_ERROR_RETURN;
-		else if (p_fbinfo->pointer==0x0) test = VIDEO_ERROR_POINTER;
+		else if (fb_info.pointer==0x0) test = VIDEO_ERROR_POINTER;
 		else
 		{
 			/* fill in framebuffer info */
-			framebuff.screen.xres = p_fbinfo->width;
-			framebuff.screen.yres = p_fbinfo->height;
-			framebuff.screen.bpp = p_fbinfo->depth;
-			framebuff.screen.psize = p_fbinfo->depth/8;
-			framebuff.screen.pskip = p_fbinfo->pitch;
+			framebuff.screen.xres = fb_info.vwidth;
+			framebuff.screen.yres = fb_info.vheight;
+			framebuff.screen.xout = fb_info.width;
+			framebuff.screen.yout = fb_info.height;
+			framebuff.screen.depth = fb_info.depth;
+			framebuff.screen.pskip = fb_info.pitch;
+			framebuff.screen.xoff = fb_info.xoffset;
+			framebuff.screen.yoff = fb_info.yoffset;
+			framebuff.screen.fsize = fb_info.vwidth * fb_info.vheight;
 			framebuff.cursor.x = 0;
 			framebuff.cursor.y = 0;
-			framebuff.cursor.xmax = p_fbinfo->width / font_sys->width;
-			framebuff.cursor.ymax = p_fbinfo->height / font_sys->height;
-			framebuff.info = p_fbinfo;
+			framebuff.cursor.xmax = fb_info.vwidth / font_sys->width;
+			framebuff.cursor.ymax = fb_info.vheight / font_sys->height;
 			framebuff.font = font_sys;
-			framebuff.buff = (pix_t*) (p_fbinfo->pointer);
+			framebuff.buff = (rgb_t*) (fb_info.pointer);
 			framebuff.fgcol = COLOR_WHITE;
 			framebuff.bgcol = COLOR_BLACK;
 			test = VIDEO_INITIALIZED;
@@ -65,90 +77,24 @@ int video_init(fbinfo_t *p_fbinfo)
 		}
 		init--;
 	}
-	return test;
-}
-/*----------------------------------------------------------------------------*/
-fbinfo_t* video_get_fbinfo(void)
-{
-	return framebuff.info;
-}
-/*----------------------------------------------------------------------------*/
-screen_t* video_get_screen(void)
-{
-	return &framebuff.screen;
-}
-/*----------------------------------------------------------------------------*/
-cursor_t* video_get_cursor(void)
-{
-	return &framebuff.cursor;
-}
-/*----------------------------------------------------------------------------*/
-font_t* video_get_font(void)
-{
-	return framebuff.font;
-}
-/*----------------------------------------------------------------------------*/
-void rgb_split(rgb_t color, gry_t *red, gry_t *green, gry_t *blue)
-{
-	*red = (color&0xff0000)>>16;
-	*green = (color&0xff00)>>8;
-	*blue = (color&0xff);
-}
-/*----------------------------------------------------------------------------*/
-rgb_t rgb_merge(gry_t red, gry_t green, gry_t blue)
-{
-	rgb_t merge = blue;
-	merge |= green << 8;
-	merge |= red << 16;
-	return merge;
-}
-/*----------------------------------------------------------------------------*/
-int video_get_index(int y, int x)
-{
-	int index = y*framebuff.screen.pskip+framebuff.info->yoffset;
-	index += x*framebuff.screen.psize+framebuff.info->xoffset;
-	return index;
+	return test==VIDEO_INITIALIZED?&framebuff:0x0;
 }
 /*----------------------------------------------------------------------------*/
 void video_clear(void)
 {
-	int row, col, idx, dox, doy;
-	gry_t r,g,b;
-	rgb_split(framebuff.bgcol,&r,&g,&b);
-	doy = framebuff.info->yoffset;
-	for (row=0;row<framebuff.screen.yres;row++)
-	{
-		dox = framebuff.info->xoffset;
-		for (col=0;col<framebuff.screen.xres;col++)
-		{
-			idx = doy + dox;
-			framebuff.buff[idx++] = b;
-			framebuff.buff[idx++] = g;
-			framebuff.buff[idx++] = r;
-			dox += framebuff.screen.psize;
-		}
-		doy += framebuff.screen.pskip;
-	}
+	int loop;
+	for (loop=0;loop<framebuff.screen.fsize;loop++)
+		framebuff.buff[loop] = framebuff.bgcol;
 }
 /*----------------------------------------------------------------------------*/
 void video_set_pixel(int y, int x, rgb_t color)
 {
-	gry_t r,g,b;
-	int index = video_get_index(y,x);
-	rgb_split(color,&r,&g,&b);
-	framebuff.buff[index++] = b;
-	framebuff.buff[index++] = g;
-	framebuff.buff[index++] = r;
+	framebuff.buff[y*framebuff.screen.xres+x] = color;
 }
 /*----------------------------------------------------------------------------*/
 rgb_t video_get_pixel(int y, int x)
 {
-	gry_t r,g,b;
-	int index = video_get_index(y,x);
-	b = framebuff.buff[index++];
-	g = framebuff.buff[index++];
-	r = framebuff.buff[index++];
-	return rgb_merge(r,g,b);
+	return framebuff.buff[y*framebuff.screen.xres+x];
 }
 /*----------------------------------------------------------------------------*/
 void video_set_color(rgb_t color)

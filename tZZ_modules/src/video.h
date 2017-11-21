@@ -9,11 +9,10 @@
 #define VIDEO_ERROR_RETURN 1
 #define VIDEO_ERROR_POINTER 2
 /*----------------------------------------------------------------------------*/
-/* default video mode - VGA 24-bit RGB */
+/* default video mode - VGA 32-bit RGB */
 #define VIDEO_HEIGHT 480
 #define VIDEO_WIDTH 640
-#define VIDEO_PIXEL_BITS 24
-#define VIDEO_PIXEL_SIZE (VIDEO_PIXEL_BITS/8)
+#define VIDEO_PIXEL_BITS 32
 /*----------------------------------------------------------------------------*/
 /* constants for basic colors - http://www.w3.org/TR/CSS21/syndata.html */
 #define COLOR_WHITE			0xffffff /* ww3name */
@@ -39,21 +38,10 @@
 #define COLOR_LIME			0x00ff00 /* ww3name */
 #define COLOR_GREEN			0x008000 /* ww3name */
 /*----------------------------------------------------------------------------*/
-typedef struct __fbinfo_t
-{
-	unsigned int width, height;
-	unsigned int vwidth, vheight; /* virtual? */
-	unsigned int pitch; /* byte counts between rows */
-	unsigned int depth; /* bits per pixel (24-bits default?) */
-	unsigned int xoffset, yoffset;
-	unsigned int pointer, size;
-}
-fbinfo_t;
-/*----------------------------------------------------------------------------*/
 typedef struct __screen_t
 {
-	int xres, yres;
-	int bpp, psize, pskip;
+	int xres, yres, xout, yout, xoff, yoff;
+	int depth, pskip, fsize;
 }
 screen_t;
 /*----------------------------------------------------------------------------*/
@@ -78,18 +66,13 @@ typedef struct __fb_t
 {
 	screen_t screen;
 	cursor_t cursor;
-	fbinfo_t *info;
 	font_t *font;
-	pix_t *buff;
+	rgb_t *buff;
 	rgb_t fgcol, bgcol;
 }
 fb_t;
 /*----------------------------------------------------------------------------*/
-int video_init(fbinfo_t* p_fbinfo);
-fbinfo_t* video_get_fbinfo(void);
-screen_t* video_get_screen(void);
-cursor_t* video_get_cursor(void);
-font_t* video_get_font(void);
+fb_t* video_init(void);
 /* basic pixel operation */
 void video_clear(void);
 void video_set_pixel(int y, int x, rgb_t color);

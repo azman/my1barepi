@@ -98,7 +98,7 @@ void do_abort(void)
 void main(void)
 {
 	unsigned int initc = 0, okchk;
-	int count = 0, reset = 1, check;
+	int count = 0, reset = 1;
 	char buffer[BUFF_SIZE], *pbuff;
 	/** initialize stuffs */
 	gpio_init();
@@ -117,11 +117,10 @@ void main(void)
 	uartbb_init(UARTBB_RX_DEFAULT,UARTBB_TX_DEFAULT);
 	/** initialize video stuff - mailbox before that! */
 	mailbox_init();
-	check = video_init(0x0);
+	video_init();
 	video_clear();
 	/** send out the word! */
-	debug_print("\n\n");
-	debug_print("YAY! It is alive!\n");
+	debug_print("\n\nYAY! It is alive!\n");
 	/** update lcd! */
 	lcd_init();
 	lcd_send_command(LCD_POS_LINE1);
@@ -290,7 +289,7 @@ void main(void)
 			count = gsm_replies(buffer,count,0x0);
 			if (count)
 			{
-				do_debug(0x0,buffer,check);
+				do_debug(0x0,buffer,count);
 				do_print("@@",1);
 				do_print(buffer,0);
 				timer_wait(3*TIMER_S);
