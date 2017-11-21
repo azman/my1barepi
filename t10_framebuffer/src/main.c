@@ -4,26 +4,18 @@
 #include "mailbox.h"
 #include "barrier.h"
 /*----------------------------------------------------------------------------*/
-/** FRAMEBUFFFER MODULE BEGIN! */
+/** FRAMEBUFFER MODULE BEGIN! */
 /*----------------------------------------------------------------------------*/
 typedef struct __fbinfo
 {
 	unsigned int width, height;
 	unsigned int vwidth, vheight; /* virtual? */
-	unsigned int pitch; /* byte counts between rows */
-	unsigned int depth; /* bits per pixel (24-bits default?) */
+	unsigned int pitch; /* byte count in a row */
+	unsigned int depth; /* bits per pixel */
 	unsigned int xoffset, yoffset;
 	unsigned int pointer, size;
 }
 fbinfo_t;
-/*----------------------------------------------------------------------------*/
-/** L2 cache disabled => 0x40000000 if enabled */
-#define VC_MMU_MAP 0xC0000000
-/*----------------------------------------------------------------------------*/
-#define VIDEO_HEIGHT 480
-#define VIDEO_WIDTH 640
-#define VIDEO_PIXEL_BITS 24
-#define VIDEO_PIXEL_SIZE (VIDEO_PIXEL_BITS/8)
 /*----------------------------------------------------------------------------*/
 #define VIDEO_FB_CHANNEL MAIL_CH_FBUFF
 /*----------------------------------------------------------------------------*/
@@ -31,6 +23,8 @@ fbinfo_t;
 #define VIDEO_INITIALIZED 0
 #define VIDEO_ERROR_RETURN 1
 #define VIDEO_ERROR_POINTER 2
+/*----------------------------------------------------------------------------*/
+#define VC_MMU_MAP 0x40000000
 /*----------------------------------------------------------------------------*/
 int video_init(fbinfo_t *p_fbinfo)
 {
@@ -55,47 +49,46 @@ int video_init(fbinfo_t *p_fbinfo)
 /*----------------------------------------------------------------------------*/
 #define MY_LED 47
 /*----------------------------------------------------------------------------*/
-#define LED_ON gpio_set
-#define LED_OFF gpio_clr
-/*----------------------------------------------------------------------------*/
-#define BLINK_RATE (TIMER_S/2)
-/*----------------------------------------------------------------------------*/
 void blink(int gpio, int count)
 {
 	while(count>0)
 	{
-		LED_ON(gpio);
-		timer_wait(BLINK_RATE);
-		LED_OFF(gpio);
-		timer_wait(BLINK_RATE);
+		gpio_set(gpio);
+		timer_wait(TIMER_S/2);
+		gpio_clr(gpio);
+		timer_wait(TIMER_S/2);
 		count--;
 	}
 }
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
-	unsigned char *fb, dummy,chk_r=0xFF,chk_g=0x00,chk_b=0x00;
-	fbinfo_t *fb_info = (fbinfo_t*) (1<<22); /* 0x00400000 */
-	int loopx, loopy, chk_x, chk_y, psize;
+	unsigned int *fb, color = 0x00ff0000;
+	fbinfo_t fb_info __attribute__((aligned(16)));
+	tags_info_t info;
+	int loopy,loopx,index,check;
+	/** debug! */
+	enable_fpu();
 	/** initialize gpio */
 	gpio_init();
 	gpio_config(MY_LED,GPIO_OUTPUT);
-	LED_OFF(MY_LED);
+	gpio_clr(MY_LED);
 	timer_init();
-	/** initialize fbinfo */
-	fb_info->height = VIDEO_HEIGHT;
-	fb_info->width = VIDEO_WIDTH;
-	fb_info->vheight = VIDEO_HEIGHT;
-	fb_info->vwidth = VIDEO_WIDTH;
-	fb_info->pitch = 0;
-	fb_info->depth = VIDEO_PIXEL_BITS;
-	fb_info->xoffset = 0;
-	fb_info->yoffset = 0;
-	fb_info->pointer = 0;
-	fb_info->size = 0;
-	/* initialize video stuff */
+	/** initialize mailbox */
 	mailbox_init();
-	loopx = video_init(fb_info);
+	mailbox_get_video_info(&info);
+	/** initialize fbinfo */
+	fb_info.height = info.fb_height;
+	fb_info.width = info.fb_width;
+	fb_info.vheight = info.fb_height;
+	fb_info.vwidth = info.fb_width;
+	fb_info.pitch = 0;
+	fb_info.depth = 32;
+	fb_info.xoffset = 0;
+	fb_info.yoffset = 0;
+	fb_info.pointer = 0;
+	fb_info.size = 0;
+	loopx = video_init(&fb_info);
 	if (loopx)
 	{
 		/* on error, blink led and hang around */
@@ -103,26 +96,20 @@ void main(void)
 		while(1);
 	}
 	/** do the thing... */
-	psize = fb_info->depth/8; /* pixel size in bytes */
-	fb = (unsigned char*) (fb_info->pointer);
+	fb = (unsigned int*) (fb_info.pointer);
+	check = fb_info.pitch/sizeof(unsigned int);
 	while(1)
 	{
-		chk_y = fb_info->yoffset;
-		for (loopy=0;loopy<fb_info->height;loopy++)
+		index = 0;
+		for (loopy=0;loopy<fb_info.height;loopy++)
 		{
-			/** chk_y = loopy*fb_info->pitch + fb_info->yoffset; */
-			chk_x = fb_info->xoffset;
-			for (loopx=0;loopx<fb_info->width;loopx++)
+			for (loopx=0;loopx<fb_info.width||loopx<check;loopx++)
 			{
-				/** chk_x = loopx*psize + fb_info->xoffset; */
-				fb[chk_y+chk_x+0] = chk_b;
-				fb[chk_y+chk_x+1] = chk_g;
-				fb[chk_y+chk_x+2] = chk_r;
-				chk_x += psize;
+				fb[index++] = color;
 			}
-			chk_y += fb_info->pitch;
 		}
-		dummy = chk_b; chk_b = chk_g; chk_g = chk_r; chk_r = dummy;
+		color >>= 8;
+		if (!color) color = 0x00ff0000;
 		blink(MY_LED,3);
 	}
 }
