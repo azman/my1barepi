@@ -21,6 +21,7 @@
 #define INTR_OFFSET 0x0000B200
 #define AUX_OFFSET 0x00215000
 #define UART_OFFSET 0x00215040
+#define SPI0_OFFSET 0x00215080
 #define MAILBOX_OFFSET 0x0000B880
 /*----------------------------------------------------------------------------*/
 #endif
