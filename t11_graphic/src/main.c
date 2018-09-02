@@ -20,8 +20,8 @@ void blink_error(int count)
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
-	char buff[16];
-	fb_t* fbuff;
+	char temp[16];
+	fb_t* display;
 	/** initialize gpio */
 	gpio_init();
 	gpio_config(ERROR_LED,GPIO_OUTPUT);
@@ -32,9 +32,9 @@ void main(void)
 	{
 		blink_error(2);
 		timer_wait(TIMER_S);
-		fbuff = video_init();
+		display = video_init();
 	}
-	while (!fbuff);
+	while (!display);
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();
 	/** write something */
@@ -50,46 +50,46 @@ void main(void)
 	/* display info */
 	video_text_newline();
 	video_text_string("DISPX: ");
-	int2str(buff,fbuff->screen.xres);
-	video_text_string(buff);
+	int2str(temp,display->screen.xres);
+	video_text_string(temp);
 	video_text_string(", ");
 	video_text_string("DISPY: ");
-	int2str(buff,fbuff->screen.yres);
-	video_text_string(buff);
+	int2str(temp,display->screen.yres);
+	video_text_string(temp);
 	video_text_string(", ");
 	video_text_string("VDISPX: ");
-	int2str(buff,fbuff->screen.xout);
-	video_text_string(buff);
+	int2str(temp,display->screen.xout);
+	video_text_string(temp);
 	video_text_string(", ");
 	video_text_string("VDISPY: ");
-	int2str(buff,fbuff->screen.yout);
-	video_text_string(buff);
+	int2str(temp,display->screen.yout);
+	video_text_string(temp);
 	video_text_char('\n');
 	video_text_string("OFFX: ");
-	int2str(buff,fbuff->screen.xoff);
-	video_text_string(buff);
+	int2str(temp,display->screen.xoff);
+	video_text_string(temp);
 	video_text_string(", ");
 	video_text_string("OFFY: ");
-	int2str(buff,fbuff->screen.yoff);
-	video_text_string(buff);
+	int2str(temp,display->screen.yoff);
+	video_text_string(temp);
 	video_text_string(", ");
 	video_text_string("XMAX: ");
-	int2str(buff,fbuff->cursor.xmax);
-	video_text_string(buff);
+	int2str(temp,display->cursor.xmax);
+	video_text_string(temp);
 	video_text_string(", ");
 	video_text_string("YMAX: ");
-	int2str(buff,fbuff->cursor.ymax);
-	video_text_string(buff);
+	int2str(temp,display->cursor.ymax);
+	video_text_string(temp);
 	video_text_char('\n');
 	video_text_string("PITCH: ");
-	int2str(buff,fbuff->screen.pskip);
-	video_text_string(buff);
+	int2str(temp,display->screen.pskip);
+	video_text_string(temp);
 	video_text_string(", ");
 	video_text_string("DEPTH: ");
-	int2str(buff,fbuff->screen.depth);
-	video_text_string(buff);
+	int2str(temp,display->screen.depth);
+	video_text_string(temp);
 	/* test col overflow */
-	video_text_cursor(fbuff->cursor.y+1,fbuff->cursor.xmax-5);
+	video_text_cursor(display->cursor.y+1,display->cursor.xmax-5);
 	video_text_string("Continue next line!");
 	/* test line drawing */
 	video_draw_line(100,100,200,100);
@@ -98,7 +98,7 @@ void main(void)
 	video_text_string("\nWait for it...");
 	blink_error(3);
 	/* test row overflow */
-	video_text_cursor(fbuff->cursor.ymax-1,fbuff->cursor.xmax-5);
+	video_text_cursor(display->cursor.ymax-1,display->cursor.xmax-5);
 	video_text_string("Scroll this!");
 	/** sticking around */
 	while(1);
