@@ -54,15 +54,21 @@ void gpio_clr(int gpio_num)
 	gpio[GPIO_FCLR+(gpio_num/32)] = 1 << (gpio_num%32);
 }
 /*----------------------------------------------------------------------------*/
-void gpio_toggle(int gpio_num)
+void gpio_write(int gpio_num, int value)
 {
-	if(gpio_read(gpio_num)) gpio_clr(gpio_num);
-	else gpio_set(gpio_num);
+	if(value) gpio_set(gpio_num);
+	else gpio_clr(gpio_num);
 }
 /*----------------------------------------------------------------------------*/
 unsigned int gpio_read(int gpio_num)
 {
 	return gpio[GPIO_FGET+(gpio_num/32)] & (1<<(gpio_num%32));
+}
+/*----------------------------------------------------------------------------*/
+void gpio_toggle(int gpio_num)
+{
+	if(gpio_read(gpio_num)) gpio_clr(gpio_num);
+	else gpio_set(gpio_num);
 }
 /*----------------------------------------------------------------------------*/
 #define GPIO_PULL_WAIT 150
