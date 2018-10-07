@@ -9,7 +9,7 @@ The three files provided in this module:
 
 - makefile
   = contains the build method for bare-metal programming
-  = create kernel.img to be copied into (micro)SD card
+  = creates kernel.img to be copied into (micro)SD card
   = also creates LST and MAP file for detailed info on created binaries
 - kernel.ld
   = places 'code segment' at address 0x8000
@@ -17,7 +17,7 @@ The three files provided in this module:
 - main.c
   = an example for bare-metal code in C language
   = this one simply blinks the ACT LED (GPIO access)
-  = need to understand physical vs virtual address
+  = shows the use of physical address instead of virtual address
 
 The makefile in this module allows building kernel.img from any single-file
 C source code (e.g. type 'make test.img' to create kernel.img from
