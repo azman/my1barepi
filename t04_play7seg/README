@@ -39,7 +39,8 @@ it can display 0-9 when designated LEDs are turned on.
 Contents
 --------
 
-All codes related to 7-segment usage are in 'main.c'.
+Only the top-level codes are 'main.c'. The module-specific codes can be found
+in respective source files in tZZ_modules/src folder.
 
 -----------
 ThingsToTry

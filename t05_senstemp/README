@@ -24,9 +24,8 @@ Temperature/humidity sensors are among the most commonly used sensor.
 Contents
 --------
 
-Codes related to implement the protocol to read from AM2303 Temperature /
-Humidity sensor is in 'main.c'. The 7-segment interface code has been
-rewritten as a module in '7seg.c' source and '7seg.h' header files.
+Only the top-level codes are 'main.c'. The module-specific codes can be found
+in respective source files in tZZ_modules/src folder.
 
 -----------
 ThingsToTry
