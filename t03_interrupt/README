@@ -3,8 +3,7 @@ TUTORIAL 03
 -----------
 
 This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This module shows how to use the interrupt facility on BCM2835. It
-also shows a rewrite of the timer/gpio module in order to utilize interrupt.
+C language. This module shows how to use the interrupt facility on BCM2835.
 
 ---------
 Objective
@@ -29,17 +28,8 @@ different from the previous tutorials.
 Contents
 --------
 
-All codes related to interrupt configuration are in 'main.c'. The things that
-are specific to GPIO and timer can be found in respective source files in
-tZZ_modules/src folder.
-
-------------------
-ThingsToThinkAbout
-------------------
-
-An interrupt facility allows the concept of event-based processing. Looking
-at the BCM2835 controller, find all the hardware events that can be uniquely
-identified. How can a software event be introduced to  the system?
+Only the top-level codes are 'main.c'. The module-specific codes can be found
+in respective source files in tZZ_modules/src folder.
 
 -----------
 ThingsToTry
