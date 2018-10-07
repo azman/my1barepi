@@ -3,8 +3,8 @@ TUTORIAL 02
 -----------
 
 This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This module shows how to use the timer available on BCM2835. It
-also shows how the GPIO library module can be reused and included here.
+C language. This module shows how to use the timer available on BCM2835. Both
+gpio and timer modules are in library form.
 
 ---------
 Objective
@@ -43,7 +43,8 @@ for them to be included in the build.
 Contents
 --------
 
-All codes related to timer usage are in 'main.c'.
+Only the top-level codes are 'main.c'. The module-specific codes can be found
+in respective source files in tZZ_modules/src folder.
 
 -----------
 ThingsToTry
