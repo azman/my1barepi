@@ -1,0 +1,27 @@
+-----------
+TUTORIAL 20
+-----------
+
+This is an introduction to bare-metal programming on Raspberry Pi using
+C language. This module creates a program that interfaces with a C3038 camera
+module.
+
+---------
+Objective
+---------
+
+----------
+Background
+----------
+
+--------
+Contents
+--------
+
+------------------
+ThingsToThinkAbout
+------------------
+
+---------
+Challenge
+---------
