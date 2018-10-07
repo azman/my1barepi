@@ -52,10 +52,16 @@ unsigned int gpio_read(int gpio_num)
 #define MY_LED 2
 #define MY_SWITCH 3
 /*----------------------------------------------------------------------------*/
-#ifdef RASPI2
-#define COUNT_MAX 0x100000
+/** COUNT_MAX based on pi version (newer pi is faster!) */
+#if defined RASPI3
+/** v3 op freq is 1.2GHz (Cortex A53 quad core! => b+ @1.4GHz) */
+#define COUNT_MAX 0x00080000
+#elif defined RASPI2
+/** v2 op freq is 900MHz (Cortex A7 quad core!) */
+#define COUNT_MAX 0x00100000
 #else
-#define COUNT_MAX 0x200000
+/** v1 op freq is 700MHz (ARM11 single core!) */
+#define COUNT_MAX 0x00200000
 #endif
 /*----------------------------------------------------------------------------*/
 void main(void)
