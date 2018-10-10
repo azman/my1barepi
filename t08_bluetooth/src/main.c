@@ -8,54 +8,12 @@
 #include "utils.h"
 #include "mailbox.h"
 /*----------------------------------------------------------------------------*/
-void debug_char(char chk)
-{
-	uartbb_send(chk);
-}
-/*----------------------------------------------------------------------------*/
-void debug_hexbyte(unsigned char byte)
-{
-	debug_char(byte2hex(byte,1,1));
-	debug_char(byte2hex(byte,0,1));
-}
-/*----------------------------------------------------------------------------*/
-void debug_print(char *msg)
-{
-	uartbb_print(msg);
-}
-/*----------------------------------------------------------------------------*/
-void bt_hexbyte(unsigned char byte)
-{
-	bt_send(byte2hex(byte,1,1));
-	bt_send(byte2hex(byte,0,1));
-}
-/*----------------------------------------------------------------------------*/
-void bt_hexuint(unsigned int dwrd)
-{
-	int loop, pass = 32;
-	unsigned int temp;
-	for (loop=0;loop<4;loop++)
-	{
-		pass -= 8;
-		temp = dwrd;
-		temp >>= pass;
-		temp &= 0xff;
-		bt_hexbyte((unsigned char)temp);
-	}
-}
-/*----------------------------------------------------------------------------*/
-void bt_int(unsigned int dwrd)
-{
-	char buff[16];
-	int2str(buff,(int)dwrd);
-	bt_print(buff);
-}
-/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	btmodule_t btdev;
 	tags_info_t info;
-	char *pbuf, *ptmp, buff[32], copy[BT_BUFF_SIZE];
+	int temp;
+	char *pbuf, *ptmp, copy[BT_BUFF_SIZE];
 	/** initialize basics */
 	gpio_init();
 	timer_init();
@@ -63,7 +21,7 @@ void main(void)
 	uart_init(UART_BAUD_DEFAULT);
 	uartbb_init(UARTBB_RX_DEFAULT,UARTBB_TX_DEFAULT);
 	/** announce our presence */
-	debug_print("Testing bluetooth!\n\n");
+	uartbb_print("Testing bluetooth!\n\n");
 	/** prepare mailbox interface */
 	mailbox_init();
 	/** initialize bt structure */
@@ -75,13 +33,13 @@ void main(void)
 	/** check hc-06 interface */
 	while (1)
 	{
-		debug_print("Initializing HC-06... ");
+		uartbb_print("Initializing HC-06... ");
 		bt_init(&btdev);
 		if (btdev.status>0) break;
-		debug_print("fail!\n");
+		uartbb_print("fail!\n");
 		timer_wait(TIMER_S);
 	}
-	debug_print("Module ready!\n");
+	uartbb_print("Module ready!\n");
 	/** do the thing... */
 	btdev.bbsize = 0;
 	while (1)
@@ -97,21 +55,35 @@ void main(void)
 					btdev.buff[btdev.bbsize++] = 0x0;
 					strncpy(copy,(char*)btdev.buff,BT_BUFF_SIZE);
 					pbuf = copy;
-					trimws(pbuf,1);
+					temp = trimws(pbuf,1);
 					str2upper(pbuf);
-/*
-					int loop = 0;
-					while ((ptmp=strword(&pbuf," \n\r\t")))
+#if 0
 					{
-						loop++;
-						bt_print("[Found] Word#");
-						int2str(buff,loop);
-						bt_print(buff);
-						bt_print(": '");
-						bt_print(ptmp);
-						bt_print("'\n");
+						/* dummy block for debug! */
+						int loop = 0;
+						/* show the whole buffer */
+						bt_print("[Input] '");
+						bt_print(pbuf);
+						bt_print("' (");
+						bt_print_int(temp);
+						bt_print(")\n");
+						/* show each token detected */
+						while ((ptmp=strword(&pbuf," \n\r\t")))
+						{
+							loop++;
+							bt_print("[Found] Word#");
+							bt_print_int(loop);
+							bt_print(": '");
+							bt_print(ptmp);
+							bt_print("'\n");
+						}
+						/* reset buffer for processing */
+						strncpy(copy,(char*)btdev.buff,BT_BUFF_SIZE);
+						pbuf = copy;
+						trimws(pbuf,1);
+						str2upper(pbuf);
 					}
-*/
+#endif
 					ptmp = strword(&pbuf," \n\r\t");
 					if (!ptmp)
 					{
@@ -157,16 +129,14 @@ void main(void)
 								{
 									gpio_config(test,GPIO_INPUT);
 									bt_print("[GPIO] GPIO");
-									int2str(buff,test);
-									bt_print(buff);
+									bt_print_int(test);
 									bt_print(" configured as input!\n");
 								}
 								else if (strncmp(ptmp,"OUT",BT_BUFF_SIZE)==0)
 								{
 									gpio_config(test,GPIO_OUTPUT);
 									bt_print("[GPIO] GPIO");
-									int2str(buff,test);
-									bt_print(buff);
+									bt_print_int(test);
 									bt_print(" configured as output!\n");
 								}
 								else
@@ -180,23 +150,20 @@ void main(void)
 							{
 								gpio_set(test);
 								bt_print("[GPIO] GPIO");
-								int2str(buff,test);
-								bt_print(buff);
+								bt_print_int(test);
 								bt_print(" set to logic HI!\n");
 							}
 							else if (strncmp(ptmp,"CLR",BT_BUFF_SIZE)==0)
 							{
 								gpio_clr(test);
 								bt_print("[GPIO] GPIO");
-								int2str(buff,test);
-								bt_print(buff);
+								bt_print_int(test);
 								bt_print(" set to logic LO!\n");
 							}
 							else if (strncmp(ptmp,"STATUS",BT_BUFF_SIZE)==0)
 							{
 								bt_print("[GPIO] GPIO");
-								int2str(buff,test);
-								bt_print(buff);
+								bt_print_int(test);
 								bt_print(" status is at logic ");
 								if (gpio_read(test)) bt_print("HI");
 								else bt_print("LO");
@@ -225,64 +192,70 @@ void main(void)
 							}
 							else if (strncmp(ptmp,"BOARD",BT_BUFF_SIZE)==0)
 							{
+								bt_print("[WAIT] ");
+								bt_print("Gathering board info... ");
 								mailbox_get_board_info(&info);
+								bt_print("done.\n");
 								bt_print("[INFO] Hardware {0x");
-								bt_hexuint(info.info_status);
+								bt_print_hexuint(info.info_status);
 								bt_print("}\n");
 								bt_print("==> VideoCore Firmware: 0x");
-								bt_hexuint(info.vc_revision);
+								bt_print_hexuint(info.vc_revision);
 								bt_print("\n");
 								bt_print("==> Board Model: 0x");
-								bt_hexuint(info.board_model);
+								bt_print_hexuint(info.board_model);
 								bt_print("\n");
 								bt_print("==> Board Revision: 0x");
-								bt_hexuint(info.board_revision);
+								bt_print_hexuint(info.board_revision);
 								bt_print("\n");
 								bt_print("==> Board MAC Address: 0x");
-								bt_hexuint(info.board_mac_addrh);
+								bt_print_hexuint(info.board_mac_addrh);
 								bt_print(",0x");
-								bt_hexuint(info.board_mac_addrl);
+								bt_print_hexuint(info.board_mac_addrl);
 								bt_print("\n");
 								bt_print("==> Board Serial: 0x");
-								bt_hexuint(info.board_serial_h);
+								bt_print_hexuint(info.board_serial_h);
 								bt_print(",0x");
-								bt_hexuint(info.board_serial_l);
+								bt_print_hexuint(info.board_serial_l);
 								bt_print("\n");
 								bt_print("==> ARM Memory: 0x");
-								bt_hexuint(info.memory_arm_base);
+								bt_print_hexuint(info.memory_arm_base);
 								bt_print(" {Size:");
-								bt_int(info.memory_arm_size>>20);
+								bt_print_int(info.memory_arm_size>>20);
 								bt_print("MB}\n");
 								bt_print("==> VC Memory: 0x");
-								bt_hexuint(info.memory_vc_base);
+								bt_print_hexuint(info.memory_vc_base);
 								bt_print(" {Size:");
-								bt_int(info.memory_vc_size>>20);
+								bt_print_int(info.memory_vc_size>>20);
 								bt_print("MB}\n");
 							}
 							else if (strncmp(ptmp,"VIDEO",BT_BUFF_SIZE)==0)
 							{
+								bt_print("[WAIT] ");
+								bt_print("Gathering video graphics info... ");
 								mailbox_get_video_info(&info);
+								bt_print("done.\n");
 								bt_print("[INFO] Graphics {0x");
-								bt_hexuint(info.info_status);
+								bt_print_hexuint(info.info_status);
 								bt_print("}\n");
 								bt_print("==> Physical Dimension: ");
-								bt_int(info.fb_width);
+								bt_print_int(info.fb_width);
 								bt_print("x");
-								bt_int(info.fb_height);
+								bt_print_int(info.fb_height);
 								bt_print("\n");
 								bt_print("==> Virtual Dimension: ");
-								bt_int(info.fb_vwidth);
+								bt_print_int(info.fb_vwidth);
 								bt_print("x");
-								bt_int(info.fb_vheight);
+								bt_print_int(info.fb_vheight);
 								bt_print("\n");
 								bt_print("==> Depth: ");
-								bt_int(info.fb_depth);
+								bt_print_int(info.fb_depth);
 								bt_print(", Pixel Order: ");
 								if (info.fb_pixel_order) bt_print("RGB");
 								else bt_print("BGR");
 								bt_print("\n");
 								bt_print("==> Pitch: ");
-								bt_int(info.fb_pitch);
+								bt_print_int(info.fb_pitch);
 								bt_print(", Alpha Mode: ");
 								switch(info.fb_alpha_mode)
 								{
@@ -300,9 +273,9 @@ void main(void)
 								}
 								bt_print("\n");
 								bt_print("==> X-Offset: ");
-								bt_int(info.fb_vx_offset);
+								bt_print_int(info.fb_vx_offset);
 								bt_print(", Y-Offset: ");
-								bt_int(info.fb_vy_offset);
+								bt_print_int(info.fb_vy_offset);
 								bt_print("\n");
 							}
 							else

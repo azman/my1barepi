@@ -96,6 +96,8 @@ char is_whitespace(char achar)
 	{
 		case ' ':
 		case '\t':
+		case '\r':
+		case '\n':
 			break;
 		default:
 			achar = 0x0;
@@ -115,7 +117,7 @@ int trimws(char *astring, int norepeat)
 	while(is_whitespace(astring[count]))
 		count--;
 	/* replace null at last whitespace */
-	astring[count++] = 0x0;
+	astring[++count] = 0x0;
 	/* trim left */
 	loop = 0;
 	while(is_whitespace(astring[loop]))

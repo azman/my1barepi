@@ -2,6 +2,7 @@
 #include "bluez.h"
 #include "timer.h"
 #include "uart.h"
+#include "utils.h"
 /*----------------------------------------------------------------------------*/
 #define BLUEZ_WAIT_DELAY (3*TIMER_S)
 /*----------------------------------------------------------------------------*/
@@ -210,5 +211,32 @@ unsigned int bt_read(btmodule_t* btinfo)
 void bt_purge(void)
 {
 	while(uart_incoming()) uart_read();
+}
+/*----------------------------------------------------------------------------*/
+void bt_print_hexbyte(unsigned char byte)
+{
+	bt_send(byte2hex(byte,1,1));
+	bt_send(byte2hex(byte,0,1));
+}
+/*----------------------------------------------------------------------------*/
+void bt_print_hexuint(unsigned int dwrd)
+{
+	int loop, pass = 32;
+	unsigned int temp;
+	for (loop=0;loop<4;loop++)
+	{
+		pass -= 8;
+		temp = dwrd;
+		temp >>= pass;
+		temp &= 0xff;
+		bt_print_hexbyte((unsigned char)temp);
+	}
+}
+/*----------------------------------------------------------------------------*/
+void bt_print_int(int value)
+{
+	char buff[32];
+	int2str(buff,value);
+	bt_print(buff);
 }
 /*----------------------------------------------------------------------------*/

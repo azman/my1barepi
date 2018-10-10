@@ -30,6 +30,9 @@ void bt_print(char *message);
 unsigned int bt_scan(void);
 unsigned int bt_read(btmodule_t* btinfo);
 void bt_purge(void);
+void bt_print_hexbyte(unsigned char byte);
+void bt_print_hexuint(unsigned int dwrd);
+void bt_print_int(int value);
 /*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/
