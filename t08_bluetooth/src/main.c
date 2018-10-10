@@ -291,7 +291,9 @@ void main(void)
 					{
 						bt_print("[ERROR] Unknown command! {");
 						bt_print(ptmp);
-						bt_print("}\n");
+						bt_print("} (");
+						bt_print_int(temp);
+						bt_print(")\n");
 					}
 					btdev.bbsize = 0;
 				}
