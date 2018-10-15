@@ -72,7 +72,10 @@ typedef struct __fb_t
 }
 fb_t;
 /*----------------------------------------------------------------------------*/
-fb_t* video_init(void);
+#define VIDEO_RES_VGA 0
+#define VIDEO_RES_MAX 1
+/*----------------------------------------------------------------------------*/
+fb_t* video_init(int resolution);
 /* basic pixel operation */
 void video_clear(void);
 void video_set_pixel(int y, int x, rgb_t color);

@@ -24,7 +24,7 @@ extern font_t font_reg;
 extern font_t font_big;
 font_t* font_sys = &font_big;
 /*----------------------------------------------------------------------------*/
-fb_t* video_init(void)
+fb_t* video_init(int resolution)
 {
 	unsigned int init = VIDEO_INIT_RETRIES, test, addr;
 	fbinfo_t fb_info __attribute__ ((aligned(16)));
@@ -34,8 +34,8 @@ fb_t* video_init(void)
 	/** initialize fbinfo */
 	fb_info.height = info.fb_height;
 	fb_info.width = info.fb_width;
-	fb_info.vheight = VIDEO_HEIGHT;
-	fb_info.vwidth = VIDEO_WIDTH;
+	fb_info.vheight = resolution ? info.fb_height : VIDEO_HEIGHT;
+	fb_info.vwidth = resolution ? info.fb_width : VIDEO_WIDTH;
 	fb_info.pitch = 0;
 	fb_info.depth = VIDEO_PIXEL_BITS;
 	fb_info.xoffset = 0;

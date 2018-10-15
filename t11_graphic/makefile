@@ -12,7 +12,7 @@ all: $(TARGET)
 include ../makefile
 
 # in case we need customization
-CFLAGS += -O3
+#CFLAGS += -O3
 
 # specify additional module header location
 CFLAGS += -I../tZZ_modules/src/

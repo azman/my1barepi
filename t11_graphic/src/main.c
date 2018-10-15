@@ -32,7 +32,7 @@ void main(void)
 	{
 		blink_error(2);
 		timer_wait(TIMER_S);
-		display = video_init();
+		display = video_init(VIDEO_RES_VGA);
 	}
 	while (!display);
 	video_set_bgcolor(COLOR_BLUE);
