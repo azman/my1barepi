@@ -5,6 +5,9 @@
 /**
  * LCD Interface Library
  *   - for text lcd using HD44780U controller/driver
+ *   - 16-pin interface:
+ *     = gnd(gnd),vcc(5v),vl(n/c),rs(18),rw(19),e(17)
+ *     = d0-d7(20-27),ba(n/c),bk(n/c)
 **/
 /*----------------------------------------------------------------------------*/
 /** LCD_DATA: GPIO27-GPIO20 MSB is also the busy status line */

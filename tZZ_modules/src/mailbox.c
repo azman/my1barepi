@@ -22,7 +22,7 @@
 #define MAIL1_CONFIG  0xF
 /**
  * Mailbox (MB) 0: VC -> ARM, MB 1: ARM->VC
- * - write to MB1, read from mb0!
+ * - write to MB1, read from MB0!
 **/
 /*----------------------------------------------------------------------------*/
 #define MAIL_STATUS_FULL  0x80000000
@@ -59,7 +59,7 @@ void mailbox_write(unsigned int channel,unsigned int value)
 	value &= ~MAIL_CHANNEL_MASK;
 	value |= (channel&MAIL_CHANNEL_MASK);
 	/* wait if mailbox is full */
-	while (mailbox[MAIL0_STATUS]&MAIL_STATUS_FULL); /* not MAIL1_STATUS? */
+	while (mailbox[MAIL1_STATUS]&MAIL_STATUS_FULL);
 	/* read-write barrier */
 	memory_barrier();
 	/* send it to MB1! */

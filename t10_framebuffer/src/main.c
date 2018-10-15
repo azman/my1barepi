@@ -67,8 +67,6 @@ void main(void)
 	fbinfo_t fb_info __attribute__((aligned(16)));
 	tags_info_t info;
 	int loopy,loopx,index,check;
-	/** debug! */
-	enable_fpu();
 	/** initialize gpio */
 	gpio_init();
 	gpio_config(MY_LED,GPIO_OUTPUT);
