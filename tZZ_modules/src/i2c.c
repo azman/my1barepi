@@ -101,7 +101,7 @@ int i2c_do_read_byte(int ack)
 	return data;
 }
 /*----------------------------------------------------------------------------*/
-void i2c_init_bb(int sda, int scl)
+void i2c_init(int sda, int scl)
 {
 	i2c_sda = sda;
 	i2c_scl = scl;
