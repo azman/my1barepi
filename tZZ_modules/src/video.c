@@ -4,6 +4,7 @@
 #include "video.h"
 #include "mailbox.h"
 #include "barrier.h"
+#include "utils.h"
 /*----------------------------------------------------------------------------*/
 #define VIDEO_FB_CHANNEL MAIL_CH_FBUFF
 /*----------------------------------------------------------------------------*/
@@ -196,6 +197,33 @@ void video_text_string(char* str)
 	{
 		video_text_char(*str);
 		str++;
+	}
+}
+/*----------------------------------------------------------------------------*/
+void video_text_integer(int value)
+{
+	char temp[16];
+	int2str(temp,value);
+	video_text_string(temp);
+}
+/*----------------------------------------------------------------------------*/
+void video_text_hexbyte(unsigned char byte)
+{
+	video_text_char(byte2hex(byte,1,1));
+	video_text_char(byte2hex(byte,0,1));
+}
+/*----------------------------------------------------------------------------*/
+void video_text_hexuint(unsigned int dwrd)
+{
+	int loop, pass = 32;
+	unsigned int temp;
+	for (loop=0;loop<4;loop++)
+	{
+		pass -= 8;
+		temp = dwrd;
+		temp >>= pass;
+		temp &= 0xff;
+		video_text_hexbyte((unsigned char)temp);
 	}
 }
 /*----------------------------------------------------------------------------*/

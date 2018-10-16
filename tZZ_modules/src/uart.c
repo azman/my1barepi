@@ -51,12 +51,12 @@ void uart_init(int baudrate)
 	}
 	/** baudrate count = ((sys_clk/baudrate)/8)-1 */
 	uart[UART_BAUD_REG] = baudrate; /** 16-bit baudrate counter */
-	/* setup pins! */
-	gpio_config(UART_TXD_GPIO,GPIO_ALTF5);
-	gpio_config(UART_RXD_GPIO,GPIO_ALTF5);
 	/* disable pull-down default on tx/rx pins */
 	gpio_pull(UART_TXD_GPIO,GPIO_PULL_NONE);
 	gpio_pull(UART_RXD_GPIO,GPIO_PULL_NONE);
+	/* setup uart TX1/RX1 at pins 14/15 (ALTF5) */
+	gpio_config(UART_TXD_GPIO,GPIO_ALTF5);
+	gpio_config(UART_RXD_GPIO,GPIO_ALTF5);
 	/** ready to go? */
 	uart[UART_IIR_REG]  = 0xC6; /** clear TX/RX FIFO */
 	uart[UART_CNTL_REG] = 0x03; /** enable TX/RX */

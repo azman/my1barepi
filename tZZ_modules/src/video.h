@@ -90,6 +90,9 @@ void video_text_cursor(int y, int x);
 void video_text_newline(void);
 void video_text_char(char c);
 void video_text_string(char* str);
+void video_text_integer(int value);
+void video_text_hexbyte(unsigned char byte);
+void video_text_hexuint(unsigned int dwrd);
 /* graphics functions */
 void video_draw_line(int x1, int y1, int x2, int y2);
 /*----------------------------------------------------------------------------*/
