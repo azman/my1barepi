@@ -1,11 +1,11 @@
 #if defined RASPI3
 #define GPIO_BASE 0x3F200000
 /** v3 op freq is 1.2GHz (Cortex A53 quad core! => b+ @1.4GHz) */
-#define COUNT_MAX 0x080000
+#define COUNT_MAX 0x500000
 #elif defined RASPI2
 #define GPIO_BASE 0x3F200000
 /** v2 op freq is 900MHz (Cortex A7 quad core!) */
-#define COUNT_MAX 0x100000
+#define COUNT_MAX 0x300000
 #else
 #define GPIO_BASE 0x20200000
 /** v1 op freq is 700MHz (ARM11 single core!) */
