@@ -2,24 +2,11 @@
 TUTORIAL 04
 -----------
 
-This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This module creates a program that counts 0-9 on a 7-segment
-when a switch is pushed.
+This is a program that counts 0-9 on a 7-segment when the input logic is low.
 
----------
-Objective
----------
+Note:
 
-1- To understand how a 7-segment can be connected for a simple display
-
-----------
-Background
-----------
-
-For most simple embedded applications, using LCD displays can be an overkill.
-One of the most common display alternative (especially for numerical display)
-is a 7-segment. It is basically a set of LEDs that are arranged as such that
-it can display 0-9 when designated LEDs are turned on.
+- 7-segment pins
 
      g f x a b
      | | | | |
@@ -35,19 +22,8 @@ it can display 0-9 when designated LEDs are turned on.
 
     x = common
 
---------
-Contents
---------
-
-Only the top-level codes are 'main.c'. The module-specific codes can be found
-in respective source files in tZZ_modules/src folder.
-
------------
-ThingsToTry
------------
-
-* Responsive Button
+*Task* Responsive Button
   - Modify the given code so that counting can stop at any number
-* Up/down Counter
+*Task* Up/down Counter
   - Modify the given code so that the counting can be up OR down
-  - hint: need a switch!
+  - hint: need a switch for select
