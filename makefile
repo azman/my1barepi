@@ -17,8 +17,9 @@ LST ?= kernel.lst
 MAP ?= kernel.map
 
 # assembler option(s)
-AFLAGS +=
+AFLAGS += -I../tZZ_modules/src/
 # compiler option(s)
+CFLAGS += -I../tZZ_modules/src/
 ifeq ($(RASPI),3)
 # for raspberry pi 3 (2016)
 CFLAGS += -march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8
@@ -65,8 +66,17 @@ $(TOPELF): $(OBJLST) $(LINKER)
 %.o: src/%.s
 	$(TOOLPFIX)-as $(AFLAGS) $< -o $@
 
+%.o: ../tZZ_modules/src/%.s ../tZZ_modules/src/%.h
+	$(TOOLPFIX)-as $(AFLAGS) $< -o $@
+
+%.o: ../tZZ_modules/src/%.s
+	$(TOOLPFIX)-as $(AFLAGS) $< -o $@
+
 %.o: src/%.c src/%.h
 	$(TOOLPFIX)-gcc $(CFLAGS) -c $< -o $@
 
 %.o: src/%.c
+	$(TOOLPFIX)-gcc $(CFLAGS) -c $< -o $@
+
+%.o: ../tZZ_modules/src/%.c ../tZZ_modules/src/%.h
 	$(TOOLPFIX)-gcc $(CFLAGS) -c $< -o $@
