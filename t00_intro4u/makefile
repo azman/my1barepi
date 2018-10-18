@@ -2,7 +2,7 @@
 TARGET = kernel.img
 
 # multiple source files (list them here as object files!)
-OBJLST = boot-intro.o main.o
+OBJLST = boot.o main.o
 
 # default rule
 all: $(TARGET)

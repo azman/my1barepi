@@ -1,83 +1,37 @@
 /*----------------------------------------------------------------------------*/
-/** GPIO MODULE BEGIN - THESE FUNCTIONS WILL BE MADE INTO A LIBRARY! */
-/*----------------------------------------------------------------------------*/
-#include "raspi.h"
-/*----------------------------------------------------------------------------*/
-#define GPIO_BASE (PMAP_BASE|0x00200000)
-#define GPIO_FSEL 0x00
-#define GPIO_FSET 0x07
-#define GPIO_FCLR 0x0A
-#define GPIO_FGET 0x0D
-/*----------------------------------------------------------------------------*/
-#define GPIO_SELECT_BITS 3
-#define GPIO_SELECT 0x07
-/*----------------------------------------------------------------------------*/
-#define GPIO_INPUT  0x00
-#define GPIO_OUTPUT 0x01
-/*----------------------------------------------------------------------------*/
-volatile unsigned int *gpio;
-/*----------------------------------------------------------------------------*/
-void gpio_init(void)
-{
-	gpio = (unsigned int*) GPIO_BASE;
-}
-/*----------------------------------------------------------------------------*/
-void gpio_config(int gpio_num, int gpio_sel)
-{
-	unsigned int shift = (gpio_num%10)*GPIO_SELECT_BITS;
-	unsigned int index = (gpio_num/10)+GPIO_FSEL;
-	unsigned int mask = GPIO_SELECT << shift;
-	unsigned int value = gpio_sel << shift;
-	gpio[index] &= ~mask;
-	gpio[index] |= value;
-}
-/*----------------------------------------------------------------------------*/
-void gpio_set(int gpio_num)
-{
-	gpio[GPIO_FSET+(gpio_num/32)] = 1 << (gpio_num%32);
-}
-/*----------------------------------------------------------------------------*/
-void gpio_clr(int gpio_num)
-{
-	gpio[GPIO_FCLR+(gpio_num/32)] = 1 << (gpio_num%32);
-}
-/*----------------------------------------------------------------------------*/
-unsigned int gpio_read(int gpio_num)
-{
-	return gpio[GPIO_FGET+(gpio_num/32)] & (1<<(gpio_num%32));
-}
-/*----------------------------------------------------------------------------*/
-/** GPIO MODULE END */
+#include "gpio.h"
 /*----------------------------------------------------------------------------*/
 #define MY_LED 2
 #define MY_SWITCH 3
+#define MY_TESTPULL 4
 /*----------------------------------------------------------------------------*/
-/** COUNT_MAX based on pi version (newer pi is faster!) */
-#if defined RASPI3
-/** v3 op freq is 1.2GHz (Cortex A53 quad core! => b+ @1.4GHz) */
-#define COUNT_MAX 0x00080000
-#elif defined RASPI2
-/** v2 op freq is 900MHz (Cortex A7 quad core!) */
-#define COUNT_MAX 0x00100000
-#else
-/** v1 op freq is 700MHz (ARM11 single core!) */
-#define COUNT_MAX 0x00200000
-#endif
+#define COUNT_MAX 0x200000
+/*----------------------------------------------------------------------------*/
+/* function defined in boot-intro.s */
+void loopd(unsigned int);
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
-	volatile int loop; /** loop will be optimized OUT if NOT volatile */
+	unsigned int data = 0xAA;
 	gpio_init();
 	gpio_config(MY_LED,GPIO_OUTPUT);
 	gpio_config(MY_SWITCH,GPIO_INPUT);
+	gpio_config(MY_TESTPULL,GPIO_INPUT);
+	gpio_init_data(GPIO_OUTPUT);
 	gpio_clr(MY_LED);
+	gpio_pull(MY_TESTPULL,GPIO_PULL_DOWN);
+	gpio_put_data(data);
 	while(1)
 	{
 		if(gpio_read(MY_SWITCH)) continue;
 		gpio_set(MY_LED);
-		for(loop=0;loop<COUNT_MAX;loop++);
+		gpio_pull(MY_TESTPULL,GPIO_PULL_UP);
+		gpio_put_data((data^=0xFF)); /* toggle data */
+		loopd(COUNT_MAX);
 		gpio_clr(MY_LED);
-		for(loop=0;loop<COUNT_MAX;loop++);
+		gpio_pull(MY_TESTPULL,GPIO_PULL_DOWN);
+		gpio_put_data((data^=0xFF));
+		loopd(COUNT_MAX);
 	}
 }
 /*----------------------------------------------------------------------------*/
