@@ -2,40 +2,10 @@
 TUTORIAL 03
 -----------
 
-This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This module shows how to use the interrupt facility on BCM2835.
+This is a an event-triggered program that produces a squarewave signal, that
+can be stopped by an input logic.
 
----------
-Objective
----------
-
-1- To explore interrupt facilities available on BCM2835
-2- To understand how an interrupt can be used for event triggers (timer)
-3- To understand the need for low-level access for interrupt configuration
-
-----------
-Background
-----------
-
-Interrupts are very useful to have - many applications appreciate having the
-possibility of event-based implementation.
-
-Most of the time, configuring interrupt facilities can only be done using
-assembly. Notice that the code in 'boot.s' is significantly larger, and
-different from the previous tutorials.
-
---------
-Contents
---------
-
-Only the top-level codes are 'main.c'. The module-specific codes can be found
-in respective source files in tZZ_modules/src folder.
-
------------
-ThingsToTry
------------
-
-* Write a code to generate square-waves
+*Task* Write a code to generate square-waves
   - at different frequencies on three separate GPIO pins
   - simple form of multi-tasking (i.e. static scheduling)
   - verify the generated signal on an oscilloscope

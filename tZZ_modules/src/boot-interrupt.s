@@ -35,6 +35,23 @@ doit:
 here:
 	b here
 
+.global get32
+get32:
+	ldr r0,[r0]
+	bx lr
+
+.global put32
+put32:
+	str r1,[r0]
+	bx lr
+
+.global loopd
+loopd:
+	sub r0,#1
+	cmp r0,#0
+	bne loopd
+	bx lr
+
 .global enable_irq
 enable_irq:
 @ equivalent to 'cpsie i'? with 'mov pc,lr'?

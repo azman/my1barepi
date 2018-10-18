@@ -6,15 +6,15 @@
 /*----------------------------------------------------------------------------*/
 #include "timer.h"
 /*----------------------------------------------------------------------------*/
-#define TIMER_LOAD 0x00
-#define TIMER_DVAL 0x01
-#define TIMER_CTRL 0x02
-#define TIMER_IRQA 0x03
-#define TIMER_IRQR 0x04
-#define TIMER_IRQM 0x05
-#define TIMER_RLOD 0x06
-#define TIMER_PDIV 0x07
-#define TIMER_CVAL 0x08
+#define TIMER_LOAD (TIMER_BASE+0x00)
+#define TIMER_DVAL (TIMER_BASE+0x04)
+#define TIMER_CTRL (TIMER_BASE+0x08)
+#define TIMER_IRQA (TIMER_BASE+0x0C)
+#define TIMER_IRQR (TIMER_BASE+0x10)
+#define TIMER_IRQM (TIMER_BASE+0x14)
+#define TIMER_RLOD (TIMER_BASE+0x18)
+#define TIMER_PDIV (TIMER_BASE+0x1C)
+#define TIMER_CVAL (TIMER_BASE+0x20)
 /*----------------------------------------------------------------------------*/
 #define TIMER_BITS_16 0x00000000
 #define TIMER_BITS_23 0x00000002
@@ -23,6 +23,7 @@
 #define TIMER_PRESCALE_O256 0x00000008
 #define TIMER_PRESCALE_OVR1 0x0000000C
 /*----------------------------------------------------------------------------*/
+/** [TODO] check values for pi 2/3! */
 /** prescaler = 0xF9, freq=sys_clk/(prescaler+1)*/
 #define TIMER_FRC_SCALE_1MHZ 0x00F90000
 /** predivider = 0xF9 (10-bits), timer_clk=apb_clk/(predivider+1) */
@@ -46,19 +47,20 @@
 #define TIMER_SYS_MATCH2 0x00000004
 #define TIMER_SYS_MATCH3 0x00000008
 /*----------------------------------------------------------------------------*/
-volatile unsigned int *timer;
+/* functions defined in boot*.s */
+unsigned int get32(unsigned int);
+void put32(unsigned int,unsigned int);
 /*----------------------------------------------------------------------------*/
 void timer_init(void)
 {
-	timer = (unsigned int*) TIMER_BASE;
-	timer[TIMER_CTRL] = TIMER_BITS_23 | TIMER_PRESCALE_NONE |
-		TIMER_FRC_SCALE_1MHZ | TIMER_FRC_ENABLE;
-	timer[TIMER_PDIV] = TIMER_TMR_SCALE_1MHZ;
+	put32(TIMER_CTRL,TIMER_BITS_23 | TIMER_PRESCALE_NONE |
+		TIMER_FRC_SCALE_1MHZ | TIMER_FRC_ENABLE);
+	put32(TIMER_PDIV,TIMER_TMR_SCALE_1MHZ);
 }
 /*----------------------------------------------------------------------------*/
 unsigned int timer_read(void)
 {
-	return timer[TIMER_CVAL];
+	return get32(TIMER_CVAL);
 }
 /*----------------------------------------------------------------------------*/
 void timer_wait(unsigned int wait)
@@ -69,44 +71,49 @@ void timer_wait(unsigned int wait)
 /*----------------------------------------------------------------------------*/
 void timer_setirq(int enable)
 {
-	if(enable) timer[TIMER_CTRL] |= TIMER_IRQ_ENABLE;
-	else timer[TIMER_CTRL] &= ~TIMER_IRQ_ENABLE;
+	unsigned int data = get32(TIMER_CTRL);
+	if(enable) data |= TIMER_IRQ_ENABLE;
+	else data &= ~TIMER_IRQ_ENABLE;
+	put32(TIMER_CTRL,data);
 }
 /*----------------------------------------------------------------------------*/
 void timer_active(int enable)
 {
-	if(enable) timer[TIMER_CTRL] |= TIMER_TMR_ENABLE;
-	else timer[TIMER_CTRL] &= ~TIMER_TMR_ENABLE;
+	unsigned int data = get32(TIMER_CTRL);
+	if(enable) data |= TIMER_TMR_ENABLE;
+	else data &= ~TIMER_TMR_ENABLE;
+	put32(TIMER_CTRL,data);
 }
 /*----------------------------------------------------------------------------*/
 void timer_load(unsigned int value)
 {
-	timer[TIMER_LOAD] = value;
+	put32(TIMER_LOAD,value);
 }
 /*----------------------------------------------------------------------------*/
 void timer_reload(unsigned int value)
 {
 	/** copy of timer load reg - does not immediately write to timer value */
-	timer[TIMER_RLOD] = value;
+	put32(TIMER_RLOD,value);
 }
 /*----------------------------------------------------------------------------*/
 void timer_irq_clear(void)
 {
-	timer[TIMER_IRQA] = 0; /* write any value? must it be zero? */
+	put32(TIMER_IRQA,0); /* write any value? must it be zero? */
+
 }
 /*----------------------------------------------------------------------------*/
 unsigned int timer_value(void)
 {
-	return timer[TIMER_DVAL];
+	return get32(TIMER_DVAL);
 }
 /*----------------------------------------------------------------------------*/
 unsigned int timer_irq_raw(void)
 {
-	return timer[TIMER_IRQR];
+	return get32(TIMER_IRQR);
 }
 /*----------------------------------------------------------------------------*/
 unsigned int timer_irq_masked(void)
 {
-	return timer[TIMER_IRQM];
+	return get32(TIMER_IRQM);
 }
 /*----------------------------------------------------------------------------*/

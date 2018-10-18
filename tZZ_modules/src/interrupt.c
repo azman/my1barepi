@@ -5,30 +5,36 @@
 /*----------------------------------------------------------------------------*/
 #include "interrupt.h"
 /*----------------------------------------------------------------------------*/
-#define INTR_PENDING_BASE 0x00
-#define INTR_FIQ_CTRL 0x03
-#define INTR_ENABLE_BASE 0x04
-#define INTR_DISABLE_BASE 0x07
+#define INTR_PENDING_BASE (INTR_BASE+0x00)
+#define INTR_FIQ_CTRL     (INTR_BASE+0x0C)
+#define INTR_ENABLE_BASE  (INTR_BASE+0x10)
+#define INTR_DISABLE_BASE (INTR_BASE+0x1C)
 /*----------------------------------------------------------------------------*/
-volatile unsigned int *interrupt;
+/* functions defined in boot*.s */
+unsigned int get32(unsigned int);
+void put32(unsigned int,unsigned int);
 /*----------------------------------------------------------------------------*/
 void interrupt_init(void)
 {
-	interrupt = (unsigned int*) INTR_BASE;
+	/* nothing to do! */
 }
 /*----------------------------------------------------------------------------*/
 void interrupt_enable(int set,unsigned int sel)
 {
-	interrupt[INTR_ENABLE_BASE+set] |= sel;
+	unsigned addr = INTR_ENABLE_BASE+(set<<2);
+	unsigned data = get32(addr);
+	put32(addr,data|sel);
 }
 /*----------------------------------------------------------------------------*/
 void interrupt_disable(int set,unsigned int sel)
 {
-	interrupt[INTR_DISABLE_BASE+set] |= sel;
+	unsigned addr = INTR_DISABLE_BASE+(set<<2);
+	unsigned data = get32(addr);
+	put32(addr,data|sel);
 }
 /*----------------------------------------------------------------------------*/
 unsigned int interrupt_pending(int set,unsigned int mask)
 {
-	return (interrupt[INTR_PENDING_BASE+set]&mask);
+	return get32((INTR_PENDING_BASE+(set<<2))&mask);
 }
 /*----------------------------------------------------------------------------*/
