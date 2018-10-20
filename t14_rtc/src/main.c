@@ -24,10 +24,14 @@ void main(void)
 	mailbox_init();
 	/** initialize video */
 	display = video_init(VIDEO_RES_VGA);
-	/* blink ERROR_LED indefintely if failed to init */
+	/* blink ERROR_LED indefinitely if failed to init */
 	if (!display)
 	{
-		while(1) { gpio_toggle(ERROR_LED); timer_wait(TIMER_S/2); }
+		while(1)
+		{
+			gpio_toggle(ERROR_LED);
+			timer_wait(TIMER_S/2);
+		}
 	}
 	/* setup screen */
 	video_set_bgcolor(COLOR_BLUE);
