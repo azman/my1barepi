@@ -10,36 +10,35 @@
 #define UART_BASE (PMAP_BASE|UART_OFFSET)
 /*----------------------------------------------------------------------------*/
 #include "uart.h"
+#include "boot.h"
+#include "gpio.h"
 /*----------------------------------------------------------------------------*/
-#define AUX_IRQ 0x00
-#define AUX_ENABLES 0x01
+#define AUX_IRQ     (AUX_BASE+0x00)
+#define AUX_ENABLES (AUX_BASE+0x04)
 /*----------------------------------------------------------------------------*/
 #define UART_AUX_ENABLE 0x01
 /*----------------------------------------------------------------------------*/
-#define UART_IO_REG   0x00
-#define UART_IER_REG  0x01
-#define UART_IIR_REG  0x02
-#define UART_LCR_REG  0x03
-#define UART_MCR_REG  0x04
-#define UART_LSR_REG  0x05
-#define UART_MSR_REG  0x06
-#define UART_SCRATCH  0x07
-#define UART_CNTL_REG 0x08
-#define UART_STAT_REG 0x09
-#define UART_BAUD_REG 0x0A
-/*----------------------------------------------------------------------------*/
-volatile unsigned int *uart;
-/*----------------------------------------------------------------------------*/
-#include "gpio.h"
+#define UART_IO_REG   (UART_BASE+0x00)
+#define UART_IER_REG  (UART_BASE+0x04)
+#define UART_IIR_REG  (UART_BASE+0x08)
+#define UART_LCR_REG  (UART_BASE+0x0C)
+#define UART_MCR_REG  (UART_BASE+0x10)
+#define UART_LSR_REG  (UART_BASE+0x14)
+#define UART_MSR_REG  (UART_BASE+0x18)
+#define UART_SCRATCH  (UART_BASE+0x1C)
+#define UART_CNTL_REG (UART_BASE+0x20)
+#define UART_STAT_REG (UART_BASE+0x24)
+#define UART_BAUD_REG (UART_BASE+0x28)
 /*----------------------------------------------------------------------------*/
 void uart_init(int baudrate)
 {
-	uart = (unsigned int*) AUX_BASE;
-	uart[AUX_ENABLES] |= UART_AUX_ENABLE;
-	uart = (unsigned int*) UART_BASE;
-	uart[UART_LCR_REG]  = 0x03; /** 8-bit data (errata in manual 0x01) */
-	uart[UART_MCR_REG]  = 0x00;
-	uart[UART_IER_REG]  = 0x00; /** no need interrupt */
+	unsigned int data = get32(AUX_ENABLES);
+	/* enable uart */
+	put32(AUX_ENABLES,data|UART_AUX_ENABLE);
+	/* configure uart */
+	put32(UART_LCR_REG,0x03); /** 8-bit data (errata in manual 0x01) */
+	put32(UART_MCR_REG,0x00);
+	put32(UART_IER_REG,0x00); /** no need interrupt */
 	/** check requested baudrate **/
 	switch (baudrate)
 	{
@@ -50,7 +49,7 @@ void uart_init(int baudrate)
 			baudrate = UART_BAUD_DEFAULT;
 	}
 	/** baudrate count = ((sys_clk/baudrate)/8)-1 */
-	uart[UART_BAUD_REG] = baudrate; /** 16-bit baudrate counter */
+	put32(UART_BAUD_REG,baudrate); /** 16-bit baudrate counter */
 	/* disable pull-down default on tx/rx pins */
 	gpio_pull(UART_TXD_GPIO,GPIO_PULL_NONE);
 	gpio_pull(UART_RXD_GPIO,GPIO_PULL_NONE);
@@ -58,12 +57,8 @@ void uart_init(int baudrate)
 	gpio_config(UART_TXD_GPIO,GPIO_ALTF5);
 	gpio_config(UART_RXD_GPIO,GPIO_ALTF5);
 	/** ready to go? */
-	uart[UART_IIR_REG]  = 0xC6; /** clear TX/RX FIFO */
-	uart[UART_CNTL_REG] = 0x03; /** enable TX/RX */
-/*
-	uart[UART_IIR_REG]  |= 0x06;
-	uart[UART_CNTL_REG] |= 0x03;
-*/
+	put32(UART_IIR_REG,0xC6); /** clear TX/RX FIFO */
+	put32(UART_CNTL_REG,0x03); /** enable TX/RX */
 }
 /*----------------------------------------------------------------------------*/
 #define UART_TXFIFO_EMPTY 0x20
@@ -71,19 +66,19 @@ void uart_init(int baudrate)
 /*----------------------------------------------------------------------------*/
 void uart_send(unsigned int data)
 {
-	while(!(uart[UART_LSR_REG]&UART_TXFIFO_EMPTY));
-	uart[UART_IO_REG] = data;
+	while(!(get32(UART_LSR_REG)&UART_TXFIFO_EMPTY));
+	put32(UART_IO_REG,data);
 }
 /*----------------------------------------------------------------------------*/
 unsigned int uart_incoming(void)
 {
-	return uart[UART_LSR_REG]&UART_RXFIFO_AVAIL;
+	return get32(UART_LSR_REG)&UART_RXFIFO_AVAIL;
 }
 /*----------------------------------------------------------------------------*/
 unsigned int uart_read(void)
 {
-	while(!(uart[UART_LSR_REG]&UART_RXFIFO_AVAIL));
-	return uart[UART_IO_REG]&0xFF;
+	while(!(get32(UART_LSR_REG)&UART_RXFIFO_AVAIL));
+	return get32(UART_IO_REG)&0xFF;
 }
 /*----------------------------------------------------------------------------*/
 void uart_purge(void)
