@@ -9,10 +9,13 @@
 #define VIDEO_ERROR_RETURN 1
 #define VIDEO_ERROR_POINTER 2
 /*----------------------------------------------------------------------------*/
-/* default video mode - VGA 32-bit RGB */
+/* VGA mode, 32-bit RGB */
 #define VIDEO_HEIGHT 480
 #define VIDEO_WIDTH 640
 #define VIDEO_PIXEL_BITS 32
+/*----------------------------------------------------------------------------*/
+#define VIDEO_RES_VGA 0
+#define VIDEO_RES_MAX 1
 /*----------------------------------------------------------------------------*/
 /* constants for basic colors - http://www.w3.org/TR/CSS21/syndata.html */
 #define COLOR_WHITE			0xffffff /* ww3name */
@@ -71,9 +74,6 @@ typedef struct __fb_t
 	rgb_t fgcol, bgcol;
 }
 fb_t;
-/*----------------------------------------------------------------------------*/
-#define VIDEO_RES_VGA 0
-#define VIDEO_RES_MAX 1
 /*----------------------------------------------------------------------------*/
 fb_t* video_init(int resolution);
 /* basic pixel operation */
