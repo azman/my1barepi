@@ -5,6 +5,7 @@
 #define TIMER_SYS_BASE (PMAP_BASE|TIMER_SYS_OFFSET)
 /*----------------------------------------------------------------------------*/
 #include "timer.h"
+#include "boot.h"
 /*----------------------------------------------------------------------------*/
 #define TIMER_LOAD (TIMER_BASE+0x00)
 #define TIMER_DVAL (TIMER_BASE+0x04)
@@ -46,10 +47,6 @@
 #define TIMER_SYS_MATCH1 0x00000002
 #define TIMER_SYS_MATCH2 0x00000004
 #define TIMER_SYS_MATCH3 0x00000008
-/*----------------------------------------------------------------------------*/
-/* functions defined in boot*.s */
-unsigned int get32(unsigned int);
-void put32(unsigned int,unsigned int);
 /*----------------------------------------------------------------------------*/
 void timer_init(void)
 {

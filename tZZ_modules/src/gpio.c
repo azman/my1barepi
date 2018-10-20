@@ -4,6 +4,7 @@
 #define GPIO_BASE (PMAP_BASE|GPIO_OFFSET)
 /*----------------------------------------------------------------------------*/
 #include "gpio.h"
+#include "boot.h"
 /*----------------------------------------------------------------------------*/
 #define GPIO_FSEL (GPIO_BASE+0x00)
 #define GPIO_FSET (GPIO_BASE+0x1C)
@@ -26,11 +27,6 @@
 /** 0010_0100_1001_0010_0100_1001 */
 #define GPIO_DATA_OUTPUT 0x00249249
 #define GPIO_DATA_DOMASK 0x00FFFFFF
-/*----------------------------------------------------------------------------*/
-/* functions defined in boot*.s */
-unsigned int get32(unsigned int);
-void put32(unsigned int,unsigned int);
-void loopd(unsigned int);
 /*----------------------------------------------------------------------------*/
 void gpio_init(void)
 {

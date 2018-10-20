@@ -13,7 +13,7 @@
 /* GPIO interrupts @IRQ49-52 => BIT17-20 */
 #define INTR_PEND2_GPIOS 0x001E0000
 /*----------------------------------------------------------------------------*/
-/** make sure this is defined in boot.s */
+/** make sure to use boot-interrupt.s */
 extern void enable_irq(void);
 /*----------------------------------------------------------------------------*/
 void interrupt_init(void);

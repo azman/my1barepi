@@ -4,15 +4,12 @@
 #define INTR_BASE (PMAP_BASE|INTR_OFFSET)
 /*----------------------------------------------------------------------------*/
 #include "interrupt.h"
+#include "boot.h"
 /*----------------------------------------------------------------------------*/
 #define INTR_PENDING_BASE (INTR_BASE+0x00)
 #define INTR_FIQ_CTRL     (INTR_BASE+0x0C)
 #define INTR_ENABLE_BASE  (INTR_BASE+0x10)
 #define INTR_DISABLE_BASE (INTR_BASE+0x1C)
-/*----------------------------------------------------------------------------*/
-/* functions defined in boot*.s */
-unsigned int get32(unsigned int);
-void put32(unsigned int,unsigned int);
 /*----------------------------------------------------------------------------*/
 void interrupt_init(void)
 {
