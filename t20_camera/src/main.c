@@ -5,62 +5,87 @@
 #include "video.h"
 #include "utils.h"
 #include "font.h"
+#include "i2c.h"
 /*----------------------------------------------------------------------------*/
 #define ERROR_LED 47
 #define PIN_HREF 5
 #define PIN_VSYN 6
 #define PIN_PCLK 13
 /*----------------------------------------------------------------------------*/
-void blink_error(int count)
-{
-	while(count>0)
-	{
-		gpio_toggle(ERROR_LED); timer_wait(TIMER_S/2);
-		gpio_toggle(ERROR_LED); timer_wait(TIMER_S/2);
-		count--;
-	}
-}
+#define CAM_I2C_ADDR 0x60
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
 	fb_t* display;
-	char temp[16];
 	int pcnt = 0, hcnt = 0, htmp = 0, vcnt = 0, flag = 0;
-	int init = 0;
+	int init = 0, data;
 	/** initialize gpio */
 	gpio_init();
 	gpio_config(ERROR_LED,GPIO_OUTPUT);
 	/** initialize timer */
 	timer_init();
+	/** initialize i2c */
+	i2c_init(I2C_SDA1_GPIO,I2C_SCL1_GPIO);
 	/** initialize mailbox */
 	mailbox_init();
-	/** initialize video wait till ok? */
-	do
+	/** initialize video */
+	display = video_init(VIDEO_RES_VGA);
+	/* blink ERROR_LED indefinitely if failed to init */
+	if (!display)
 	{
-		blink_error(2);
-		timer_wait(TIMER_S);
-		display = video_init();
+		while(1)
+		{
+			gpio_toggle(ERROR_LED);
+			timer_wait(TIMER_S/2);
+		}
 	}
-	while (!display);
+	/* setup screen */
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();
 	video_text_string("------------\n");
 	video_text_string("Camera Test!\n");
 	video_text_string("------------\n\n");
-	video_text_cursor(5,1);
+	/* original param */
+	video_text_string("COMA: 0x");
+	data = i2c_getb(CAM_I2C_ADDR,0x12);
+	video_text_hexbyte((unsigned char)data);
+	video_text_string(", COMH: 0x");
+	data = i2c_getb(CAM_I2C_ADDR,0x28);
+	video_text_hexbyte((unsigned char)data);
+	video_text_string(", CLKRC: 0x");
+	data = i2c_getb(CAM_I2C_ADDR,0x11);
+	video_text_hexbyte((unsigned char)data);
+	video_text_string("\n");
+	/* reset camera */
+	i2c_putb(CAM_I2C_ADDR,0x12,0x80);
+	/* adjust clock prescaler clk=main/((prc+1)*2) */
+	i2c_putb(CAM_I2C_ADDR,0x11,0x0f); /* clk=main/32? */
+	/* enable rgb (default 16-bit mode) */
+	i2c_putb(CAM_I2C_ADDR,0x12,0x2C);
+	/* select 1-line rgb */
+	i2c_putb(CAM_I2C_ADDR,0x28,0x81);
+	/* adjusted param */
+	video_text_string("COMA: 0x");
+	data = i2c_getb(CAM_I2C_ADDR,0x12);
+	video_text_hexbyte((unsigned char)data);
+	video_text_string(", COMH: 0x");
+	data = i2c_getb(CAM_I2C_ADDR,0x28);
+	video_text_hexbyte((unsigned char)data);
+	video_text_string(", CLKRC: 0x");
+	data = i2c_getb(CAM_I2C_ADDR,0x11);
+	video_text_hexbyte((unsigned char)data);
+	video_text_string("\n");
+	/* initial data */
+	video_text_cursor(10,1);
 	video_text_string("Width: ");
-	int2str(temp,hcnt);
-	video_text_string(temp);
+	video_text_integer(hcnt);
 	video_text_string(", ");
 	video_text_string("Height: ");
-	int2str(temp,vcnt);
-	video_text_string(temp);
+	video_text_integer(vcnt);
 	video_text_string(" (");
-	int2str(temp,pcnt);
-	video_text_string(temp);
+	video_text_integer(pcnt);
 	video_text_string(":");
-	int2str(temp,flag);
-	video_text_string(temp);
+	video_text_integer(flag);
 	video_text_string(")");
 	/** do initialization */
 	gpio_config(PIN_HREF,GPIO_INPUT);
@@ -114,23 +139,18 @@ void main(void)
 		if (gpio_chkevent(PIN_VSYN))
 		{
 			/* show all */
-			video_text_cursor(5,1);
+			video_text_cursor(10,1);
 			video_text_string("Width: ");
-			int2str(temp,hcnt);
-			video_text_string(temp);
+			video_text_integer(hcnt);
 			video_text_string(", ");
 			video_text_string("Height: ");
-			int2str(temp,vcnt);
-			video_text_string(temp);
+			video_text_integer(vcnt);
 			video_text_string(" (");
-			int2str(temp,pcnt);
-			video_text_string(temp);
+			video_text_integer(pcnt);
 			video_text_string(":");
-			int2str(temp,htmp);
-			video_text_string(temp);
+			video_text_integer(htmp);
 			video_text_string(":");
-			int2str(temp,flag);
-			video_text_string(temp);
+			video_text_integer(flag);
 			video_text_string(")    ");
 			hcnt = 0; vcnt = 0; pcnt = 0;
 			gpio_rstevent(PIN_VSYN);
