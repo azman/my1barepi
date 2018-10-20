@@ -2,34 +2,4 @@
 TUTORIAL 10
 -----------
 
-This is an introduction to bare-metal programming on Raspberry Pi using C
-language. This module shows how to utilize the video graphics using frame
-buffers. The ARM core needs to communicate with the GPU core through a
-mailbox.
-
----------
-Objective
----------
-
-1- To understand how video graphics interface can be implemented
-2- To understand how mailbox communications between ARM-VC work.
-
-----------
-Background
-----------
-
---------
-Contents
---------
-
-All codes required to communicate using the mailbox is in 'main.c'.
-
-Some assembly codes are required to create memory barrier.
-
-------------------
-ThingsToThinkAbout
-------------------
-
----------
-Challenge
----------
+This is a program that shows basic framebuffer programming.

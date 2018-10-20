@@ -160,11 +160,11 @@ void main(void)
 								bt_print_int(test);
 								bt_print(" set to logic LO!\n");
 							}
-							else if (strncmp(ptmp,"STATUS",BT_BUFF_SIZE)==0)
+							else if (strncmp(ptmp,"READ",BT_BUFF_SIZE)==0)
 							{
 								bt_print("[GPIO] GPIO");
 								bt_print_int(test);
-								bt_print(" status is at logic ");
+								bt_print(" is at logic ");
 								if (gpio_read(test)) bt_print("HI");
 								else bt_print("LO");
 								bt_print("!\n");
