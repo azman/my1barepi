@@ -153,6 +153,7 @@ void gpio_rstevent(int gpio_num)
 /*----------------------------------------------------------------------------*/
 unsigned int gpio_chkevent(int gpio_num)
 {
-	return get32(GPIO_EVDS+((gpio_num/32)<<2));
+	unsigned int mask = 1 << (gpio_num%32);
+	return get32(GPIO_EVDS+((gpio_num/32)<<2))&mask;
 }
 /*----------------------------------------------------------------------------*/

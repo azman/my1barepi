@@ -1,8 +1,8 @@
 .section .text
 .global memory_barrier
 memory_barrier:
-	mov	r4, #0 @ <Rd> should be zero (SBZ) for this
-	mcr	p15, 0, r4, c7, c10, 5 @ data memory barrier
+	mov	r0, #0 @ <Rd> should be zero (SBZ) for this
+	mcr	p15, 0, r0, c7, c10, 5 @ data memory barrier
 	mov	pc, lr
 
 @note: c7 is cache operation register
@@ -11,6 +11,6 @@ memory_barrier:
 
 .global mmsync_barrier
 mmsync_barrier:
-	mov	r4, #0 @ <Rd> should be zero (SBZ) for this
-	mcr	p15, 0, r4, c7, c10, 4 @ data synchronization barrier
+	mov	r0, #0 @ <Rd> should be zero (SBZ) for this
+	mcr	p15, 0, r0, c7, c10, 4 @ data synchronization barrier
 	mov	pc, lr
