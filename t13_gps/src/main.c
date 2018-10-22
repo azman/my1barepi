@@ -19,7 +19,7 @@ void main(void)
 	uart_init(UART_BAUD_DEFAULT);
 	/** initialize mailbox */
 	mailbox_init();
-	video_init();
+	video_init(VIDEO_RES_VGA);
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();
 	/** send out the word! */

@@ -19,7 +19,7 @@ void main(void)
 	/** initialize timer */
 	timer_init();
 	/** initialize i2c */
-	i2c_init_bb(I2C_SDA1_GPIO,I2C_SCL1_GPIO);
+	i2c_init(I2C_SDA1_GPIO,I2C_SCL1_GPIO);
 	/** initialize mailbox */
 	mailbox_init();
 	/** initialize video */
