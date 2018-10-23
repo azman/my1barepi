@@ -8,14 +8,20 @@
 #include "i2c.h"
 /*----------------------------------------------------------------------------*/
 #define ERROR_LED 47
+#define ENABLE_PIN 4
+#define RTC_I2C_ADDR 0x68
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
 	fb_t* display;
-	int loop, test, data[8], next = 0;
+	int loop, test, data[8], next = 0, flag = 1;
 	/** initialize gpio */
 	gpio_init();
 	gpio_config(ERROR_LED,GPIO_OUTPUT);
+	gpio_config(ENABLE_PIN,GPIO_INPUT);
+	gpio_pull(ENABLE_PIN,GPIO_PULL_UP);
+	gpio_setevent(ENABLE_PIN,GPIO_EVENT_AEDGR);
+	gpio_rstevent(ENABLE_PIN);
 	/** initialize timer */
 	timer_init();
 	/** initialize i2c */
@@ -36,11 +42,7 @@ void main(void)
 	/* setup screen */
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();
-	/** do initialization */
-	data[0] = 0x50; /* ssec=50 */
-	data[1] = 0x48; /* mmin=48 */
-	data[2] = 0x57; /* hour=17 */
-	i2c_puts(0x68,0x00,data,3);
+	/** say something... */
 	video_text_string("---------\n");
 	video_text_string("I2C Test!\n");
 	video_text_string("---------\n");
@@ -48,7 +50,7 @@ void main(void)
 	while(1)
 	{
 		video_text_cursor(5,0);
-		test = i2c_gets(0x68,0x00,data,8);
+		test = i2c_gets(RTC_I2C_ADDR,0x00,data,8);
 		for (loop=0;loop<8;loop++)
 		{
 			video_text_string("Location");
@@ -61,9 +63,15 @@ void main(void)
 		}
 		video_text_string("\nNext: ");
 		video_text_integer(next++);
-		video_text_string("\nTest: ");
-		video_text_integer(i2c_getb(0x68,0x00));
-		video_text_string("\n");
+		video_text_string("            \n");
+		if (gpio_chkevent(ENABLE_PIN))
+		{
+			if (flag) data[0] |= 0x80;
+			else data[0] &= 0x7F;
+			flag = !flag;
+			i2c_puts(RTC_I2C_ADDR,0x00,data,1);
+			gpio_rstevent(ENABLE_PIN);
+		}
 	}
 }
 /*----------------------------------------------------------------------------*/
