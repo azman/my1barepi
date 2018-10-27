@@ -19,9 +19,11 @@
 #define TIMER_OFFSET 0x0000B400
 #define TIMER_SYS_OFFSET 0x00003000
 #define INTR_OFFSET 0x0000B200
+#define SPI0_OFFSET 0x00204000
 #define AUX_OFFSET 0x00215000
 #define UART_OFFSET 0x00215040
-#define SPI0_OFFSET 0x00215080
+#define SPI1_OFFSET 0x00215080
+#define SPI2_OFFSET 0x002150C0
 #define MAILBOX_OFFSET 0x0000B880
 /*----------------------------------------------------------------------------*/
 #endif
