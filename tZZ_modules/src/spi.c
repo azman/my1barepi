@@ -58,7 +58,7 @@ void spi_init(int clk_divide)
 	/* set largest clock divider */
 	clk_divide &= SPI_CLK_DIVIDE_MASK; /* 16-bit value */
 	put32(SPI_CLK_REG,clk_divide); /** 0=65536, power of 2, rounded down */
-	/* setup spi pins (ALTF5) */
+	/* setup spi pins (ALTF0) */
 	gpio_config(SPI_SCLK,GPIO_ALTF0);
 	gpio_config(SPI_MOSI,GPIO_ALTF0);
 	gpio_config(SPI_MISO,GPIO_ALTF0);
