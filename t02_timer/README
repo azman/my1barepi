@@ -4,9 +4,8 @@ TUTORIAL 02
 
 This is a program that produces a squarewave signal with microsecond precision.
 
-
-*Task* Create another square-wave signal on another GPIO:
-  - with the same frequency and phase
-  - with the same frequency at 180 degrees phase shift
-  - with half frequency but same phase
-  - with half frequency at 180 degrees phase shift
+*Task* Create another square-wave signal on another GPIO
+- with the same frequency and phase
+- with the same frequency at 180 degrees phase shift
+- with half frequency but same phase
+- with half frequency at 180 degrees phase shift
