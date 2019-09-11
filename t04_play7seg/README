@@ -23,7 +23,7 @@ Note:
     x = common
 
 *Task* Responsive Button
-  - Modify the given code so that counting can stop at any number
+- Modify the given code so that counting can stop at any number
 *Task* Up/down Counter
-  - Modify the given code so that the counting can be up OR down
-  - hint: need a switch for select
+- Modify the given code so that the counting can be up OR down
+- hint: need a switch for select

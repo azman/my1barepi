@@ -6,6 +6,6 @@ This is a an event-triggered program that produces a squarewave signal, that
 can be stopped by an input logic.
 
 *Task* Write a code to generate square-waves
-  - at different frequencies on three separate GPIO pins
-  - simple form of multi-tasking (i.e. static scheduling)
-  - verify the generated signal on an oscilloscope
+- at different frequencies on three separate GPIO pins
+- simple form of multi-tasking (i.e. static scheduling)
+- verify the generated signal on an oscilloscope
