@@ -2,27 +2,26 @@
 #include "gpio.h"
 #include "7seg.h"
 /*----------------------------------------------------------------------------*/
-void seven_init(seven_seg_t *segment, int *pattern)
+void seven_init(seven_seg_t *segment)
 {
-	volatile unsigned int loop;
-	/* assign pattern if not already assigned */
-	if (!segment->pattern) segment->pattern = pattern;
-	/* gpio pins should be assigned/validated externally */
+	int loop;
+	/* gpio pins should be assigned prior to this */
 	for (loop=0;loop<SEGMENT_COUNT;loop++)
 		gpio_config(segment->gpio_num[loop],GPIO_OUTPUT);
-	gpio_config(segment->gpio_dp,GPIO_OUTPUT);
+	if (segment->gpio_dp!=NOT_CONNECTED)
+		gpio_config(segment->gpio_dp,GPIO_OUTPUT);
 	/* check segment type - default is SEGMENT_COMMON_ANODE */
 	switch (segment->type)
 	{
-		case SEGMENT_COMMON_CATHODE: break;
-		case SEGMENT_COMMON_ANODE: break;
-		default: segment->type = SEGMENT_COMMON_ANODE;
+		case COMMON_CATHODE: break;
+		case COMMON_ANODE: break;
+		default: segment->type = COMMON_ANODE;
 	}
 }
 /*----------------------------------------------------------------------------*/
 void seven_show(seven_seg_t *segment,int number)
 {
-	volatile unsigned int loop;
+	int loop;
 	for(loop=0;loop<SEGMENT_COUNT;loop++)
 	{
 		if(segment->pattern[number*SEGMENT_COUNT+loop]!=segment->type)

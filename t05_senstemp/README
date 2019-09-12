@@ -6,4 +6,4 @@ This is a program that reads raw data from AM2302 temperature/humidity sensor
 and dislay temperature value using a pair of 7-segments.
 
 *Task* Simple 'Alarm' Indicator
-  - modify the code so that an LED will be lit up when temperature is >28deg
+- modify the code so that an LED will be lit up when temperature is >28deg
