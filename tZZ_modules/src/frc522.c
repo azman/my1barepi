@@ -3,6 +3,27 @@
 #include "timer.h"
 #include "spi.h"
 /*----------------------------------------------------------------------------*/
+#define FRC522_ADDRESS_MASK 0x7E
+#define FRC522_READ_MASK 0x80
+/*----------------------------------------------------------------------------*/
+void frc522_reg_write(int addr,int value)
+{
+	spi_activate(SPI_ACTIVATE);
+	spi_transfer((addr<<1)&FRC522_ADDRESS_MASK);
+	spi_transfer(value);
+	spi_activate(SPI_DEACTIVATE);
+}
+/*----------------------------------------------------------------------------*/
+int frc522_reg_read(int addr)
+{
+	int data;
+	spi_activate(SPI_ACTIVATE);
+	spi_transfer(((addr<<1)&FRC522_ADDRESS_MASK)|FRC522_READ_MASK);
+	data = (int) spi_transfer(0x00);
+	spi_activate(SPI_DEACTIVATE);
+	return data;
+}
+/*----------------------------------------------------------------------------*/
 #define TIMER_AUTO 0x80
 #define TIMER_MASK_PRESCALERH 0x0F
 #define TIMER_6780KHZ_PRESCALEH 0x0D
@@ -42,27 +63,6 @@ void frc522_init(void)
 void frc522_reset(void)
 {
 	frc522_reg_write(FRC522_P0_COMMAND_REG,FRC522_SOFT_RESET);
-}
-/*----------------------------------------------------------------------------*/
-#define FRC522_ADDRESS_MASK 0x7E
-#define FRC522_READ_MASK 0x80
-/*----------------------------------------------------------------------------*/
-void frc522_reg_write(int addr,int value)
-{
-	spi_activate(SPI_ACTIVATE);
-	spi_transfer((addr<<1)&FRC522_ADDRESS_MASK);
-	spi_transfer(value);
-	spi_activate(SPI_DEACTIVATE);
-}
-/*----------------------------------------------------------------------------*/
-int frc522_reg_read(int addr)
-{
-	int data;
-	spi_activate(SPI_ACTIVATE);
-	spi_transfer(((addr<<1)&FRC522_ADDRESS_MASK)|FRC522_READ_MASK);
-	data = (int) spi_transfer(0x00);
-	spi_activate(SPI_DEACTIVATE);
-	return data;
 }
 /*----------------------------------------------------------------------------*/
 void frc522_bitmask_set(int addr,int mask)
@@ -377,5 +377,12 @@ int frc522_halt_tag(void)
 	frc522_bitmask_clr(FRC522_P0_STATUS2_REG,MFCRYPTO_ON);
 	flag = frc522_cmdtag(FRC522_TRANSCEIVE,buff,4,buff,&rlen);
 	return flag;
+}
+/*----------------------------------------------------------------------------*/
+int frc522_get_card_id(unsigned char *id)
+{
+	int flag = frc522_reqtag(MF1_REQIDL,id);
+	if (flag) return flag;
+	return frc522_anti_collision(id);
 }
 /*----------------------------------------------------------------------------*/

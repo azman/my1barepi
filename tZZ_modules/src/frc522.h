@@ -19,19 +19,19 @@
 #define FRC522_SOFT_RESET   0x0F
 /*----------------------------------------------------------------------------*/
 /** mifare 1 tag commands */
-#define MF1_REQIDL    0x26 // find the antenna area does not enter hibernation
-#define MF1_REQALL    0x52 // find all the tags antenna area
-#define MF1_ANTICOLL  0x93 // anti-collision
-#define MF1_SELECTTAG 0x93 // election tag
-#define MF1_AUTHENT1A 0x60 // authentication key A
-#define MF1_AUTHENT1B 0x61 // authentication key B
-#define MF1_READ      0x30 // Read Block
-#define MF1_WRITE     0xA0 // write block
-#define MF1_DECREMENT 0xC0 // debit
-#define MF1_INCREMENT 0xC1 // recharge
-#define MF1_RESTORE   0xC2 // transfer block data to the buffer
-#define MF1_TRANSFER  0xB0 // save the data in the buffer
-#define MF1_HALT      0x50 // Sleep
+#define MF1_REQIDL    0x26 /* find the antenna area */
+#define MF1_REQALL    0x52 /* find all the tags antenna area */
+#define MF1_ANTICOLL  0x93 /* anti-collision */
+#define MF1_SELECTTAG 0x93 /* election tag */
+#define MF1_AUTHENT1A 0x60 /* authentication key A */
+#define MF1_AUTHENT1B 0x61 /* authentication key B */
+#define MF1_READ      0x30 /* read Block */
+#define MF1_WRITE     0xA0 /* write block */
+#define MF1_DECREMENT 0xC0 /* debit */
+#define MF1_INCREMENT 0xC1 /* recharge */
+#define MF1_RESTORE   0xC2 /* transfer block data to the buffer */
+#define MF1_TRANSFER  0xB0 /* save the data in the buffer */
+#define MF1_HALT      0x50 /* sleep */
 /*----------------------------------------------------------------------------*/
 /** page 0 regs: command & status */
 #define FRC522_P0_RESERVED0 0x00
@@ -102,10 +102,11 @@
 #define FRC522_P3_RESERVED3 0x3E
 #define FRC522_P3_RESERVED4 0x3F
 /*----------------------------------------------------------------------------*/
-void frc522_init(void);
-void frc522_reset(void);
 void frc522_reg_write(int addr,int value);
 int frc522_reg_read(int addr);
+/*----------------------------------------------------------------------------*/
+void frc522_init(void);
+void frc522_reset(void);
 void frc522_bitmask_set(int addr,int mask);
 void frc522_bitmask_clr(int addr,int mask);
 int frc522_get_firmware_version(void);
@@ -121,4 +122,7 @@ int frc522_authenticate(int mode, int block, unsigned char *key,
 int frc522_tag_read(int block, unsigned char *data);
 int frc522_tag_write(int block, unsigned char *data);
 int frc522_halt_tag(void);
+/*----------------------------------------------------------------------------*/
+/* make a wrapper module? or, publish only functions like this? */
+int frc522_get_card_id(unsigned char *id);
 /*----------------------------------------------------------------------------*/

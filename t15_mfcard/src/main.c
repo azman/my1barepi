@@ -61,12 +61,13 @@ void main(void)
 	}
 	video_text_string("FRC522 found. Firmware version is 0x");
 	video_text_hexuint(loop);
-	video_text_string(".\n");
+	video_text_string(".\n-- ");
 	loop = frc522_digital_self_test();
 	if (!loop)
 		video_text_string("Digital self test passed.\n");
 	else if (loop<0)
-		video_text_string("Unknown firmware version.\n");
+		video_text_string("Unknown firmware version "
+			"(But may still work!).\n");
 	else
 	{
 		video_text_string("Digital self test failed @");
@@ -76,23 +77,22 @@ void main(void)
 	/** main loop */
 	while(1)
 	{
-		if (frc522_reqtag(MF1_REQIDL,data)==FRC522_OK)
+		if (frc522_get_card_id(data)==FRC522_OK)
 		{
-			if (frc522_anti_collision(data)==FRC522_OK)
-			{
-				for (loop=0;loop<MIFARE_UID_SIZE;loop++)
-					if (data[loop]!=save[loop]) break;
-				if (loop==MIFARE_UID_SIZE)
-					if ((timer_read()-last)<2*TIMER_S)
-						continue;
-				video_text_string("ID: ");
-				for (loop=0;loop<MIFARE_UID_SIZE;loop++)
-					video_text_hexbyte(data[loop]);
-				video_text_string("\n");
-				for (loop=0;loop<MIFARE_UID_SIZE;loop++)
-					save[loop]=data[loop];
-				last = timer_read();
-			}
+			/* check if we got the same id again... */
+			for (loop=0;loop<MIFARE_UID_SIZE;loop++)
+				if (data[loop]!=save[loop]) break;
+			if (loop==MIFARE_UID_SIZE)
+				if ((timer_read()-last)<2*TIMER_S)
+					continue; /* skip if within lapse */
+			/* show id! */
+			video_text_string("ID: ");
+			for (loop=0;loop<MIFARE_UID_SIZE;loop++)
+				video_text_hexbyte(data[loop]);
+			video_text_string("\n");
+			for (loop=0;loop<MIFARE_UID_SIZE;loop++)
+				save[loop]=data[loop];
+			last = timer_read();
 		}
 	}
 }
