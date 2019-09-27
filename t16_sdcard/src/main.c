@@ -294,7 +294,7 @@ void main(void)
 	video_text_string(").\n");
 	sdcard_doflush(SDCARD_FLUSH_R1,0x0);
 	/* change speed - can get up to 12MHz? */
-	/** initialize spi */
+	/** read a sector... */
 	video_text_string("Reading first sector... ");
 	card = sdcard_read_block(0,sector);
 	video_text_string("done. (");
