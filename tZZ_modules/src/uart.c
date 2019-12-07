@@ -43,12 +43,12 @@ void uart_init(int baudrate)
 	switch (baudrate)
 	{
 		case UART_BAUD_115200:
+		case UART_BAUD_57600:
 		case UART_BAUD_9600:
 			break;
 		default:
 			baudrate = UART_BAUD_DEFAULT;
 	}
-	/** baudrate count = ((sys_clk/baudrate)/8)-1 */
 	put32(UART_BAUD_REG,baudrate); /** 16-bit baudrate counter */
 	/* disable pull-down default on tx/rx pins */
 	gpio_pull(UART_TXD_GPIO,GPIO_PULL_NONE);
