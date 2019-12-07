@@ -31,6 +31,7 @@ fb_t* video_init(int resolution)
 	fbinfo_t fb_info __attribute__ ((aligned(16)));
 	tags_info_t info;
 	/** get screen information */
+	mailbox_init();
 	mailbox_get_video_info(&info);
 	/** initialize fbinfo */
 	fb_info.height = info.fb_height;

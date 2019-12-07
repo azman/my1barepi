@@ -96,7 +96,6 @@ void timer_reload(unsigned int value)
 void timer_irq_clear(void)
 {
 	put32(TIMER_IRQA,0); /* write any value? must it be zero? */
-
 }
 /*----------------------------------------------------------------------------*/
 unsigned int timer_value(void)

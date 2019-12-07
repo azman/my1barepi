@@ -15,6 +15,7 @@
 #else
 #define PMAP_BASE 0x20000000
 #endif
+/*----------------------------------------------------------------------------*/
 #define GPIO_OFFSET 0x00200000
 #define TIMER_OFFSET 0x0000B400
 #define TIMER_SYS_OFFSET 0x00003000
