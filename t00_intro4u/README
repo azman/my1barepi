@@ -2,9 +2,9 @@
 TUTORIAL 00
 -----------
 
-This is a program that blinks the ACT LED.
+This is a program that blinks the ACT LED. It uses the assembly-coded functions
+provided in boot.s (put32 and loopd).
 
-Note:
-- using assembly based peripheral memory access
-  = check boot.s in modules folder
-- no longer need to 'see' a pointer in c code
+*Task* Rewrite the code in main.c to blink an LED connected to GPIO pin 2.
+- requirement: remove the #incude "raspi.h" line from the code
+- your instructor will guide you on how to write the code

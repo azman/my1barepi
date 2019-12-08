@@ -28,11 +28,6 @@
 #define GPIO_DATA_OUTPUT 0x00249249
 #define GPIO_DATA_DOMASK 0x00FFFFFF
 /*----------------------------------------------------------------------------*/
-void gpio_init(void)
-{
-	/* nothing to do? will be deprecated? */
-}
-/*----------------------------------------------------------------------------*/
 void gpio_config(int gpio_num, int gpio_sel)
 {
 	unsigned int raddr = GPIO_FSEL+((gpio_num/10)<<2);
@@ -55,7 +50,7 @@ void gpio_clr(int gpio_num)
 	put32(GPIO_FCLR+((gpio_num/32)<<2),1<<(gpio_num%32));
 }
 /*----------------------------------------------------------------------------*/
-void gpio_write(int gpio_num, int value)
+void gpio_write(int gpio_num, unsigned int value)
 {
 	if(value) gpio_set(gpio_num);
 	else gpio_clr(gpio_num);

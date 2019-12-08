@@ -7,7 +7,6 @@
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
-	gpio_init();
 	timer_init();
 	gpio_config(TEST_PIN,GPIO_OUTPUT);
 	while(1)

@@ -25,11 +25,10 @@
 #define GPIO_EVENT_AEDGR 0x10
 #define GPIO_EVENT_AEDGF 0x20
 /*----------------------------------------------------------------------------*/
-void gpio_init(void);
 void gpio_config(int gpio_num, int gpio_sel);
 void gpio_set(int gpio_num);
 void gpio_clr(int gpio_num);
-void gpio_write(int gpio_num, int value);
+void gpio_write(int gpio_num, unsigned int value);
 unsigned int gpio_read(int gpio_num);
 void gpio_toggle(int gpio_num);
 void gpio_pull(int gpio_num, int pull_dir);

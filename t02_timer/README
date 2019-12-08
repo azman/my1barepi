@@ -9,3 +9,7 @@ This is a program that produces a squarewave signal with microsecond precision.
 - with the same frequency at 180 degrees phase shift
 - with half frequency but same phase
 - with half frequency at 180 degrees phase shift
+
+*Task* Add code to have a button control/switch signal ON/OFF
+
+*Task* Add code to have buttons to control pulse width

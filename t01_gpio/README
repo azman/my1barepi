@@ -6,7 +6,10 @@ This is a program that produces a squarewave signal, that can be
 stopped/started by an input logic.
 
 *Task* Modify the code to ignore the switch
+
 *Task* Modify the code to blink the led faster
+
 *Task* Modify the code to blink the led slower
+
 *Task* Modify the code to stop the instance button is pushed
 - hint: gpio_toggle
