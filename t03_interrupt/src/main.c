@@ -29,7 +29,6 @@ void main(void)
 {
 	interrupt_init();
 	interrupt_disable(INTR_IRQSET0,INTR_BASIC_TIMER);
-	gpio_init();
 	gpio_config(TEST_PIN,GPIO_OUTPUT);
 	gpio_config(INTR_PIN,GPIO_INPUT);
 	gpio_pull(INTR_PIN,GPIO_PULL_UP);
