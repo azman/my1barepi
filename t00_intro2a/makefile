@@ -19,6 +19,7 @@ help:
 	@echo "Targets: help clean pi <filename>.img"
 
 pi: main.img
+	mv main.img kernel.img
 
 clean:
 	rm -rf *.img *.lst *.map
@@ -28,7 +29,6 @@ new: clean pi
 
 %.img: %.elf
 	$(TOOLPFIX)objcopy $< -O binary $@
-	$(TOOLPFIX)objcopy $< -O binary $(TARGET)
 
 %.elf: %.o $(LINKER)
 	$(TOOLPFIX)ld $(LFLAGS) $< -Map $(MAP) -o $@ -T $(LINKER)
