@@ -9,7 +9,6 @@ void main(void)
 {
 	char fillo = '.'; int check = 0;
 	/** do initialization */
-	gpio_init();
 	gpio_config(GPIO_ACT_LED,GPIO_OUTPUT);
 	gpio_set(GPIO_ACT_LED);
 	timer_init();
