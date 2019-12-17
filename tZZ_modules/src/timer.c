@@ -34,20 +34,6 @@
 #define TIMER_TMR_ENABLE 0x00000080
 #define TIMER_IRQ_ENABLE 0x00000020
 /*----------------------------------------------------------------------------*/
-#define TIMER_SYS_CTRL 0
-#define TIMER_SYS_STAT 0
-#define TIMER_SYS_CNTL 1
-#define TIMER_SYS_CNTH 2
-#define TIMER_SYS_CMP0 3
-#define TIMER_SYS_CMP1 4
-#define TIMER_SYS_CMP2 5
-#define TIMER_SYS_CMP3 6
-/*----------------------------------------------------------------------------*/
-#define TIMER_SYS_MATCH0 0x00000001
-#define TIMER_SYS_MATCH1 0x00000002
-#define TIMER_SYS_MATCH2 0x00000004
-#define TIMER_SYS_MATCH3 0x00000008
-/*----------------------------------------------------------------------------*/
 void timer_init(void)
 {
 	put32(TIMER_CTRL,TIMER_BITS_23 | TIMER_PRESCALE_NONE |
@@ -112,4 +98,19 @@ unsigned int timer_irq_masked(void)
 {
 	return get32(TIMER_IRQM);
 }
+/*----------------------------------------------------------------------------*/
+/* prepate for codes using system timer... more accurate? */
+#define TIMER_SYS_CTRL 0
+#define TIMER_SYS_STAT 0
+#define TIMER_SYS_CNTL 1
+#define TIMER_SYS_CNTH 2
+#define TIMER_SYS_CMP0 3
+#define TIMER_SYS_CMP1 4
+#define TIMER_SYS_CMP2 5
+#define TIMER_SYS_CMP3 6
+/*----------------------------------------------------------------------------*/
+#define TIMER_SYS_MATCH0 0x00000001
+#define TIMER_SYS_MATCH1 0x00000002
+#define TIMER_SYS_MATCH2 0x00000004
+#define TIMER_SYS_MATCH3 0x00000008
 /*----------------------------------------------------------------------------*/

@@ -23,7 +23,8 @@
 #define GPIO_SELECT 0x07
 /*----------------------------------------------------------------------------*/
 #define GPIO_DATA_OFFSET 20
-#define GPIO_DATA_DECADE (GPIO_BASE+(2<<2))
+#define GPIO_DATA_DECADE (GPIO_DATA_OFFSET/10)
+#define GPIO_DATA_SELECT (GPIO_BASE+(GPIO_DATA_DECADE<<2))
 /** 0010_0100_1001_0010_0100_1001 */
 #define GPIO_DATA_OUTPUT 0x00249249
 #define GPIO_DATA_DOMASK 0x00FFFFFF
@@ -83,11 +84,11 @@ void gpio_pull(int gpio_num, int pull_dir)
 /*----------------------------------------------------------------------------*/
 void gpio_init_data(int gpio_sel)
 {
-	unsigned int conf = get32(GPIO_DATA_DECADE);
-	conf &= ~GPIO_DATA_DOMASK;
+	unsigned int conf = get32(GPIO_DATA_SELECT);
+	conf &= ~GPIO_DATA_DOMASK; /* clear - assume 8-bit input */
 	if(gpio_sel==GPIO_OUTPUT)
-		conf |= GPIO_DATA_OUTPUT;
-	put32(GPIO_DATA_DECADE,conf);
+		conf |= GPIO_DATA_OUTPUT; /* configure 8-bit output */
+	put32(GPIO_DATA_SELECT,conf);
 }
 /*----------------------------------------------------------------------------*/
 void gpio_put_data(unsigned int data)
@@ -108,33 +109,32 @@ void gpio_setevent(int gpio_num,int events)
 	unsigned int index = (gpio_num/32);
 	unsigned int mask = 1 << shift;
 	unsigned int data;
-	/* clear by default, set only if requested */
-	/* enable rising edge detect status */
+	/* rising edge detect status */
 	data = get32(GPIO_EREN+(index<<2));
-	data &= ~mask;
-	if(events&GPIO_EVENT_EDGER) data |= mask;
+	data &= ~mask; /* clear by default */
+	if(events&GPIO_EVENT_EDGER) data |= mask; /* set only if requested */
 	put32((GPIO_EREN+(index<<2)),data);
-	/* enable falling edge detect status */
+	/* falling edge detect status */
 	data = get32(GPIO_EFEN+(index<<2));
 	data &= ~mask;
 	if(events&GPIO_EVENT_EDGEF) data |= mask;
 	put32((GPIO_EFEN+(index<<2)),data);
-	/* enable high level detect status */
+	/* high level detect status */
 	data = get32(GPIO_LHEN+(index<<2));
 	data &= ~mask;
 	if(events&GPIO_EVENT_LVLHI) data |= mask;
 	put32((GPIO_LHEN+(index<<2)),data);
-	/* enable low level detect status */
+	/* low level detect status */
 	data = get32(GPIO_LLEN+(index<<2));
 	data &= ~mask;
 	if(events&GPIO_EVENT_LVLLO) data |= mask;
 	put32((GPIO_LLEN+(index<<2)),data);
-	/* enable asynchronous rising edge detect status */
+	/* asynchronous rising edge detect status */
 	data = get32(GPIO_AREN+(index<<2));
 	data &= ~mask;
 	if(events&GPIO_EVENT_AEDGR) data |= mask;
 	put32((GPIO_AREN+(index<<2)),data);
-	/* enable asynchronous falling edge detect status */
+	/* asynchronous falling edge detect status */
 	data = get32(GPIO_AFEN+(index<<2));
 	data &= ~mask;
 	if(events&GPIO_EVENT_AEDGF) data |= mask;
