@@ -1,0 +1,10 @@
+- make textled available earlier
+  = after senstemp - so, it is the new t06
+- combine uart libraries
+  = uart stuff now becomes t07
+- simplify video tutorial
+  = keep framebuffer as reference
+- add tutorial on simple input detection
+  = detect edges on a signal
+  = measure pulse width, frequency
+  = detect edges on 2 signals
