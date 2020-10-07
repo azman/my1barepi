@@ -27,7 +27,6 @@ void main(void)
 	unsigned char buff[XMODEM_BUFF_SIZE];
 	unsigned char *pbase;
 	char mesg[] = "\nMY1 R-PI LOADER\n";
-	gpio_init();
 	uart_init(UART_BAUD_115200);
 	timer_init();
 	/** send out the word! */

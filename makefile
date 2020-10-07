@@ -57,7 +57,7 @@ $(TARGET): $(TOPELF)
 	$(TOOLPFIX)-objcopy $< -O binary $@
 
 $(TOPELF): $(OBJLST) $(LINKER)
-	$(TOOLPFIX)-ld $(LFLAGS) $^ -Map $(MAP) -o $@ -T $(LINKER)
+	$(TOOLPFIX)-ld $(LFLAGS) $(OBJLST) -Map $(MAP) -o $@ -T $(LINKER)
 	$(TOOLPFIX)-objdump -d $@ > $(LST)
 
 %.o: src/%.s src/%.h
