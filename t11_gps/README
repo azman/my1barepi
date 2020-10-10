@@ -1,6 +1,9 @@
 -----------
-TUTORIAL 13
+TUTORIAL 11
 -----------
+
+**INCOMPLETE!**
 
 This is a program that reads data from a GPS module and sends them to PC
 through UART.
+
