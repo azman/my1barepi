@@ -2,7 +2,7 @@
 TARGET = kernel.img
 
 # multiple source files (list them here as object files!)
-OBJLST = boot.o main.o gpio.o timer.o uartbb.o
+OBJLST = boot.o main.o gpio.o uart.o
 
 # default rule
 all: $(TARGET)

@@ -1,7 +1,4 @@
-- make textled available earlier
-  = after senstemp - so, it is the new t06
-- combine uart libraries
-  = uart stuff now becomes t07
+- combine uart libraries (use interrupt for bit-bang)
 - simplify video tutorial
   = keep framebuffer as reference
 - add tutorial on simple input detection
