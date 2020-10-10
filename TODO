@@ -1,6 +1,4 @@
 - combine uart libraries (use interrupt for bit-bang)
-- simplify video tutorial
-  = keep framebuffer as reference
 - add tutorial on simple input detection
   = detect edges on a signal
   = measure pulse width, frequency
