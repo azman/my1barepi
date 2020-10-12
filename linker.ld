@@ -2,6 +2,7 @@ SECTIONS {
 	. = 0x8000;
 	.text : { /** code segment */
 		KEEP(*(.boot))
+		KEEP(*(.load))
 		KEEP(*(.text.startup))
 		*(.text)
 		*(.rodata*)
