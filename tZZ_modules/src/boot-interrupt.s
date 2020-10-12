@@ -1,5 +1,8 @@
+.ifndef BOOTSECT
+.equ BOOTSECT,1
 .section .boot
 boot:
+.endif
 @ these are actually jump instructions
 	ldr pc,reset_handler
 	ldr pc,undef_handler
@@ -29,19 +32,11 @@ init:
 	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
 @ continue with the program
-	mov sp,#0x00008000
-	bl main
-here:
-	b here
-.include "boot-libfunc.s"
-@ this is needed by boot-libirqh.s
-irqh:
-@ do we need to save lr? in irq mode lr is banked!
-	push {r0-r12,lr}
-	bl irq_handler
-	pop  {r0-r12,lr}
-	subs pc,lr,#4
-@ duh!
+	b load
+.section .load
+load:
+.include "boot.s"
+@ duh! call this to enable interrupt
 .global enable_irq
 enable_irq:
 @ equivalent to 'cpsie i'? with 'mov pc,lr'?
@@ -49,3 +44,21 @@ enable_irq:
 	bic r0,r0,#0x80
 	msr cpsr_c,r0
 	bx lr
+@ user-defined irq handler
+user_irqh: .word 0
+@ call this to assign interrupt hanler
+.global handle_irq
+handle_irq:
+	str r0,user_irqh
+	bx lr
+@ low-level irq handler
+irqh:
+	ldr r0,user_irqh
+	cmp r0,#0
+	beq irqh_done
+@ do we need to save lr? in irq mode lr is banked!
+	push {r0-r12,lr}
+	blx r0
+	pop  {r0-r12,lr}
+irqh_done:
+	subs pc,lr,#4

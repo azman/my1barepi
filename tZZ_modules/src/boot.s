@@ -1,10 +1,10 @@
+.ifndef STACK_INIT
+.equ STACK_INIT,0x00008000
+.endif
 .ifndef BOOTSECT
 .equ BOOTSECT,1
 .section .boot
 boot:
-.endif
-.ifndef STACK_INIT
-.equ STACK_INIT,0x00008000
 .endif
 	mov sp,#STACK_INIT
 	bl main
