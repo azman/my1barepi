@@ -22,11 +22,16 @@
 /*----------------------------------------------------------------------------*/
 /** gpio 19 */
 #define RESET_PIN 19
+#define CHECK_PIN 26
+#define DUMMY_PIN 13
+/*----------------------------------------------------------------------------*/
+typedef void (*ihandler_t)(void);
 /*----------------------------------------------------------------------------*/
 /** decribed in assembly */
-void exec_this(unsigned int);
-void reset_bootload(void);
-void enable_irq(void);
+extern void exec_this(unsigned int);
+extern void reset_bootload(void);
+extern void set_user_irqh(ihandler_t);
+extern void run_user_irqh(void);
 /*----------------------------------------------------------------------------*/
 void irq_handler(void)
 {
@@ -35,6 +40,16 @@ void irq_handler(void)
 	{
 		gpio_rstevent(RESET_PIN);
 		reset_bootload();
+	}
+	run_user_irqh();
+}
+/*----------------------------------------------------------------------------*/
+void chk_handler(void)
+{
+	if(gpio_chkevent(DUMMY_PIN))
+	{
+		gpio_rstevent(DUMMY_PIN);
+		gpio_toggle(CHECK_PIN);
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -52,11 +67,18 @@ void main(void)
 	index = 0; check = 1; pbase = (unsigned char*) ARM_INIT;
 	prev = timer_read();
 	/* setup interrpt */
+	gpio_config(CHECK_PIN,GPIO_OUTPUT);
+	gpio_write(CHECK_PIN,1);
+	set_user_irqh(chk_handler);
 	interrupt_init();
 	gpio_config(RESET_PIN,GPIO_INPUT);
 	gpio_pull(RESET_PIN,GPIO_PULL_UP);
 	gpio_rstevent(RESET_PIN);
 	gpio_setevent(RESET_PIN,GPIO_EVENT_AEDGF);
+	gpio_config(DUMMY_PIN,GPIO_INPUT);
+	gpio_pull(DUMMY_PIN,GPIO_PULL_UP);
+	gpio_rstevent(DUMMY_PIN);
+	gpio_setevent(DUMMY_PIN,GPIO_EVENT_AEDGF);
 	enable_irq();
 	interrupt_enable(INTR_IRQSET2,INTR_PEND2_GPIOS);
 	while(1)
