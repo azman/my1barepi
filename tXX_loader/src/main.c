@@ -2,6 +2,7 @@
 #include "gpio.h"
 #include "uart.h"
 #include "timer.h"
+#include "interrupt.h"
 /*----------------------------------------------------------------------------*/
 #define ARM_INIT 0x8000
 /*----------------------------------------------------------------------------*/
@@ -19,7 +20,23 @@
 #define ASCII_EOT 0x04
 #define ASCII_CR  0x0D
 /*----------------------------------------------------------------------------*/
-void exec_this(unsigned int); /** decribed in assembly */
+/** gpio 19 */
+#define RESET_PIN 19
+/*----------------------------------------------------------------------------*/
+/** decribed in assembly */
+void exec_this(unsigned int);
+void reset_bootload(void);
+void enable_irq(void);
+/*----------------------------------------------------------------------------*/
+void irq_handler(void)
+{
+	/* how do i allow user interrupt handler?? */
+	if(gpio_chkevent(RESET_PIN))
+	{
+		gpio_rstevent(RESET_PIN);
+		reset_bootload();
+	}
+}
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
@@ -34,6 +51,14 @@ void main(void)
 	/** do the thing... */
 	index = 0; check = 1; pbase = (unsigned char*) ARM_INIT;
 	prev = timer_read();
+	/* setup interrpt */
+	interrupt_init();
+	gpio_config(RESET_PIN,GPIO_INPUT);
+	gpio_pull(RESET_PIN,GPIO_PULL_UP);
+	gpio_rstevent(RESET_PIN);
+	gpio_setevent(RESET_PIN,GPIO_EVENT_AEDGF);
+	enable_irq();
+	interrupt_enable(INTR_IRQSET2,INTR_PEND2_GPIOS);
 	while(1)
 	{
 		/** implement timeout?  */
