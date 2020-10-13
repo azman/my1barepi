@@ -51,6 +51,7 @@ user_irqh: .word 0
 handle_irq:
 	str r0,user_irqh
 	bx lr
+.ifndef BOOTIRQH
 @ low-level irq handler
 irqh:
 	ldr r0,user_irqh
@@ -62,3 +63,4 @@ irqh:
 	pop  {r0-r12,lr}
 irqh_done:
 	subs pc,lr,#4
+.endif

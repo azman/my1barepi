@@ -1,20 +1,7 @@
------------
-TUTORIAL XX
------------
-
-This is an introduction to bare-metal programming on Raspberry Pi using
-C language. This module creates a bootloader program so that we do not have
-to rewrite that kernel.img so many times. We need an RS232 port on the PC
-in order to use this. File transfer is done using XMODEM protocol.
-
----------
-Objective
----------
-
 ----------
-Background
+BOOTLOADER
 ----------
 
---------
-Contents
---------
+This module creates a bootloader program so that we do not have to rewrite that
+kernel.img so many times. We need an RS232 port on the PC in order to use this.
+File transfer is done using XMODEM protocol.
