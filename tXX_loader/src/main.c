@@ -20,10 +20,8 @@
 #define ASCII_EOT 0x04
 #define ASCII_CR  0x0D
 /*----------------------------------------------------------------------------*/
-/** gpio 19 */
-#define RESET_PIN 19
-#define CHECK_PIN 26
-#define DUMMY_PIN 13
+#define RESET_PIN 16
+#define CHECK_PIN 12
 /*----------------------------------------------------------------------------*/
 /** decribed in assembly */
 extern void exec_this(unsigned int);
@@ -36,15 +34,6 @@ void irq_handler(void)
 	{
 		gpio_rstevent(RESET_PIN);
 		exec_boot();
-	}
-}
-/*----------------------------------------------------------------------------*/
-void chk_handler(void)
-{
-	if(gpio_chkevent(DUMMY_PIN))
-	{
-		gpio_toggle(CHECK_PIN);
-		gpio_rstevent(DUMMY_PIN);
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -68,11 +57,6 @@ void main(void)
 	gpio_pull(RESET_PIN,GPIO_PULL_UP);
 	gpio_rstevent(RESET_PIN);
 	gpio_setevent(RESET_PIN,GPIO_EVENT_AEDGF);
-	gpio_config(DUMMY_PIN,GPIO_INPUT);
-	gpio_pull(DUMMY_PIN,GPIO_PULL_UP);
-	gpio_rstevent(DUMMY_PIN);
-	gpio_setevent(DUMMY_PIN,GPIO_EVENT_AEDGF);
-	handle_irq(chk_handler);
 	enable_irq();
 	interrupt_enable(INTR_IRQSET2,INTR_PEND2_GPIOS);
 	while(1)
@@ -96,6 +80,7 @@ void main(void)
 				{
 					uart_send(ASCII_ACK);
 					uart_print("\nXMODEM TRANSFER COMPLETE! EXECUTING...\n");
+					gpio_write(CHECK_PIN,0);
 					exec_this(ARM_INIT);
 					/* WILL NOT PASS THIS! */
 				}
