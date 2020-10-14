@@ -68,7 +68,6 @@ void main(void)
 	tags_info_t info;
 	int loopy,loopx,index,check;
 	/** initialize gpio */
-	gpio_init();
 	gpio_config(MY_LED,GPIO_OUTPUT);
 	gpio_clr(MY_LED);
 	timer_init();

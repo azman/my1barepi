@@ -15,7 +15,6 @@ void main(void)
 	int temp;
 	char *pbuf, *ptmp, copy[BT_BUFF_SIZE];
 	/** initialize basics */
-	gpio_init();
 	timer_init();
 	/** initialize uart with default baudrate */
 	uart_init(UART_BAUD_DEFAULT);
