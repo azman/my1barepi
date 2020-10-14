@@ -5,5 +5,11 @@ TUTORIAL 05
 This is a program that reads raw data from AM2302 temperature/humidity sensor
 and dislay temperature value using a pair of 7-segments.
 
+*Task* More Data
+- show both temperature and humidity
+
 *Task* Simple 'Alarm' Indicator
 - modify the code so that an LED will be lit up when temperature is >28deg
+
+*Task* Better precision
+- how can we show decimals? without using float!
