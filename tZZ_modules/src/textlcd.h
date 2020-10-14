@@ -44,5 +44,9 @@ void lcd_send_command(lcdbyte command);
 void lcd_send_data(lcdbyte asciidat);
 void lcd_print(char* message);
 /*----------------------------------------------------------------------------*/
+/** useful macro */
+#define lcd_goto_line1() lcd_send_command(LCD_POS_LINE1)
+#define lcd_goto_line2() lcd_send_command(LCD_POS_LINE2)
+/*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/
