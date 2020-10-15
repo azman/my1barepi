@@ -74,7 +74,6 @@ void main(void)
 	int count = 0, reset = 1;
 	char buffer[BUFF_SIZE], *pbuff;
 	/** initialize stuffs */
-	gpio_init();
 	gpio_config(MESG_GPIO,GPIO_INPUT);
 	gpio_pull(MESG_GPIO,GPIO_PULL_UP);
 	gpio_setevent(MESG_GPIO,GPIO_EVENT_AEDGR);
