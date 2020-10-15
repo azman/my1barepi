@@ -33,7 +33,6 @@ char* strword(char** src, char* del)
 int strncmp(char* src1, char* src2, int size)
 {
 	int loop, stat = 0;
-
 	/* strncmp has a size limit */
 	for (loop=0;loop<size;loop++)
 	{
@@ -66,28 +65,14 @@ int strncmp(char* src1, char* src2, int size)
 /*----------------------------------------------------------------------------*/
 int strncpy(char* dst, char* src, int size)
 {
-	int temp = sizeof(unsigned int);
-	int test = size/temp, init = 0, loop;
-	unsigned int* chk1 = (unsigned int*) src;
-	unsigned int* chk2 = (unsigned int*) dst;
-	// just in case!
-	if(size<=0) return 0;
-	// start with 32-bit transfer -> sizeof(unsigned int)
-	for(loop=0;loop<test;loop++)
+	int loop;
+	for(loop=0;loop<size;loop++)
 	{
-		*chk2 = *chk1;
-		chk2++; chk1++;
-		init += temp;
+		dst[loop] = src[loop];
+		if (!src[loop]) break;
 	}
-	// remaining with 8-bit transfer
-	test = size%temp;
-	for(loop=0;loop<test;loop++)
-	{
-		*dst = *src;
-		dst++; src++;
-		init++;
-	}
-	return init;
+	if (loop==size) dst[loop-1] = 0x0;
+	return loop;
 }
 /*----------------------------------------------------------------------------*/
 char is_whitespace(char achar)
