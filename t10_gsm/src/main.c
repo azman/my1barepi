@@ -87,7 +87,6 @@ void main(void)
 	/** initialize uart with default baudrate */
 	uart_init(UART_BAUD_DEFAULT);
 	/** initialize video stuff - mailbox before that! */
-	mailbox_init();
 	video_init(VIDEO_RES_VGA);
 	video_clear();
 	/** send out the word! */
