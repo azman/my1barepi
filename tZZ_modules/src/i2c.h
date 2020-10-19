@@ -13,6 +13,14 @@
 #define I2C_READ_STOP_ENABLE 1
 #define I2C_READ_STOP_DEFAULT I2C_READ_STOP_DISABLE
 /*----------------------------------------------------------------------------*/
+/** base routines for i2c */
+void i2c_do_start(void);
+void i2c_do_stop(void);
+void i2c_do_write_bit(int data);
+int i2c_do_read_bit(void);
+int i2c_do_write_byte(int data);
+int i2c_do_read_byte(int ack);
+/*----------------------------------------------------------------------------*/
 void i2c_init(int sda_gpio, int scl_gpio);
 void i2c_set_wait_time(unsigned int wait_time);
 void i2c_set_free_time(unsigned int free_time);
