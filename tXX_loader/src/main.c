@@ -67,7 +67,8 @@ void main(void)
 		{
 			uart_send(ASCII_NAK);
 			prev = test;
-			/* should we reset all counts? */
+			/* reset for a new code! */
+			index = 0; check = 1; pbase = (unsigned char*) ARM_INIT;
 		}
 		if(!uart_incoming()) continue;
 		buff[index] = uart_read();
