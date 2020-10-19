@@ -1,5 +1,6 @@
 /*----------------------------------------------------------------------------*/
 #include "oled1306.h"
+#include "utils.h"
 /*----------------------------------------------------------------------------*/
 void oled1306_command(oled1306_t* oled, unsigned char command)
 {
@@ -135,9 +136,22 @@ void oled1306_char(oled1306_t* oled, char show)
 	oled1306_cursor_next(oled);
 }
 /*----------------------------------------------------------------------------*/
+void oled1306_text_hexbyte(oled1306_t* oled, unsigned char byte)
+{
+	oled1306_char(oled,byte2hex(byte,1,1));
+	oled1306_char(oled,byte2hex(byte,0,1));
+}
+/*----------------------------------------------------------------------------*/
 void oled1306_text(oled1306_t* oled, char* text)
 {
 	while (*text) oled1306_char(oled,*text++);
+}
+/*----------------------------------------------------------------------------*/
+void oled1306_text_integer(oled1306_t* oled, int value)
+{
+	char temp[16];
+	int2str(temp,value);
+	oled1306_text(oled,temp);
 }
 /*----------------------------------------------------------------------------*/
 void oled1306_update(oled1306_t* oled)

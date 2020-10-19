@@ -43,7 +43,9 @@ void oled1306_draw_pixel(oled1306_t* oled, int y, int x, int z);
 void oled1306_cursor_next(oled1306_t* oled);
 void oled1306_cursor_endl(oled1306_t* oled);
 void oled1306_char(oled1306_t* oled, char show);
+void oled1306_text_hexbyte(oled1306_t* oled, unsigned char byte);
 void oled1306_text(oled1306_t* oled, char* text);
+void oled1306_text_integer(oled1306_t* oled, int value);
 void oled1306_update(oled1306_t* oled);
 /*----------------------------------------------------------------------------*/
 #endif
