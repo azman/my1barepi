@@ -142,6 +142,20 @@ void oled1306_text_hexbyte(oled1306_t* oled, unsigned char byte)
 	oled1306_char(oled,byte2hex(byte,0,1));
 }
 /*----------------------------------------------------------------------------*/
+void oled1306_text_hexuint(oled1306_t* oled, unsigned int dwrd)
+{
+	int loop, pass = 32;
+	unsigned int temp;
+	for (loop=0;loop<4;loop++)
+	{
+		pass -= 8;
+		temp = dwrd;
+		temp >>= pass;
+		temp &= 0xff;
+		oled1306_text_hexbyte(oled,(unsigned char)temp);
+	}
+}
+/*----------------------------------------------------------------------------*/
 void oled1306_text(oled1306_t* oled, char* text)
 {
 	while (*text) oled1306_char(oled,*text++);
