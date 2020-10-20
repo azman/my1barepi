@@ -26,7 +26,6 @@
 /** decribed in assembly */
 extern void exec_this(unsigned int);
 extern void exec_boot(void);
-extern void set_sysflag(unsigned int,unsigned int);
 /*----------------------------------------------------------------------------*/
 void irq_handler(void)
 {
@@ -45,7 +44,7 @@ void main(void)
 	unsigned char *pbase;
 	char mesg[] = "\nMY1 R-PI LOADER\n";
 	/** setup stuffs */
-	set_sysflag(1,0x544F4F42); /* BOOT */
+	set_sysflag(1,BOOTLOADER_ID);
 	uart_init(UART_BAUD_115200);
 	timer_init();
 	/** send out the word! */
