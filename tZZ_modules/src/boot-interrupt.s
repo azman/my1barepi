@@ -31,7 +31,7 @@ sys3flag: .word 0
 sys4flag: .word 0
 sys5flag: .word 0
 sys6flag: .word 0
-sys7flag: .word 0
+sys7flag: .word user_irqh
 init:
 @ will skip interrupt vector table if one is already there...
 	ldr r0,=0x0000
