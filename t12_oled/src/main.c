@@ -2,6 +2,7 @@
 #include "timer.h"
 #include "i2c.h"
 #include "oled1306.h"
+#include "boot-interrupt.h"
 /*----------------------------------------------------------------------------*/
 #define VIEW_DELAY 2000000
 /*----------------------------------------------------------------------------*/
@@ -37,6 +38,8 @@ void main(void)
 	timer_wait(VIEW_DELAY);
 	oled1306_cursor(&oled,4,0);
 	oled1306_text(&oled,"Init PGT302");
+	oled1306_cursor(&oled,6,0);
+	oled1306_text_hexuint(&oled,get_sysflag(1));
 	oled1306_update(&oled);
 	/** hangin' around */
 	while (1) {}
