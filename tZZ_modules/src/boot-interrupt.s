@@ -3,6 +3,7 @@
 .section .boot
 boot:
 .endif
+.equ SYS_ID,0x0031594D
 that:
 @ these are actually jump instructions
 	ldr pc,reset_handler
@@ -23,7 +24,7 @@ resvd_handler: .word here
 doirq_handler: .word irqh
 dofiq_handler: .word here
 @ system flag starts with "MY1\0"
-sys0flag: .word 0x0031594D
+sys0flag: .word SYS_ID
 sys1flag: .word 0
 sys2flag: .word 0
 sys3flag: .word 0
@@ -35,7 +36,7 @@ init:
 @ will skip interrupt vector table if one is already there...
 	ldr r0,=0x0000
 	ldr r0,[r0,#((sys0flag-that)<<2)]
-	ldr r1,sys0flag
+	ldr r1,=SYS_ID
 	cmp r0,r1
 	beq next
 @ moving (overriding) interrupt vector table
@@ -45,6 +46,9 @@ init:
 	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
 @ copying the jmp targets (hint: r0 & r1 incremented!)
+	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
+	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
+@ copying the system flags
 	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
 next:
