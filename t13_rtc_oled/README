@@ -3,3 +3,5 @@ TUTORIAL 13
 -----------
 
 This is a program that interfaces with a DC1307 RTC module using I2C library.
+
+It also uses an OLED display module on the same I2C bus.
