@@ -164,7 +164,7 @@ int i2c_getb(int addr, int regs)
 	return data & 0xff;
 }
 /*----------------------------------------------------------------------------*/
-int i2c_puts(int addr, int regs, int* pdat, int size)
+int i2c_puts(int addr, int regs, unsigned char* pdat, int size)
 {
 	int loop, test = 0;
 	addr <<= 1;
@@ -172,12 +172,12 @@ int i2c_puts(int addr, int regs, int* pdat, int size)
 	test |= i2c_do_write_byte(addr);
 	test |= i2c_do_write_byte(regs);
 	for (loop=0;loop<size;loop++)
-		test |= i2c_do_write_byte(pdat[loop]);
+		test |= i2c_do_write_byte((int)pdat[loop]);
 	i2c_do_stop();
 	return test;
 }
 /*----------------------------------------------------------------------------*/
-int i2c_gets(int addr, int regs, int* pdat, int size)
+int i2c_gets(int addr, int regs, unsigned char* pdat, int size)
 {
 	int loop, test = 0;
 	addr <<= 1;
@@ -188,7 +188,7 @@ int i2c_gets(int addr, int regs, int* pdat, int size)
 	i2c_do_start();
 	test |= i2c_do_write_byte(addr|0x01); /* activate read bit */
 	for (loop=0;loop<size-1;loop++)
-		pdat[loop] = i2c_do_read_byte(1);
+		pdat[loop] = (unsigned char)i2c_do_read_byte(1);
 	pdat[loop] = i2c_do_read_byte(0);
 	i2c_do_stop();
 	return test;

@@ -27,8 +27,8 @@ void i2c_set_free_time(unsigned int free_time);
 void i2c_set_stop_read(int enable);
 void i2c_putb(int addr, int regs, int data);
 int i2c_getb(int addr, int regs);
-int i2c_puts(int addr, int regs, int* pdat, int size);
-int i2c_gets(int addr, int regs, int* pdat, int size);
+int i2c_puts(int addr, int regs, unsigned char* pdat, int size);
+int i2c_gets(int addr, int regs, unsigned char* pdat, int size);
 /*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/

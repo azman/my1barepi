@@ -14,7 +14,8 @@
 void main(void)
 {
 	fb_t* display;
-	int loop, test, data[8], next = 0, flag = 1;
+	int loop, test, next = 0, flag = 1;
+	unsigned char data[8];
 	/** initialize gpio */
 	gpio_config(ERROR_LED,GPIO_OUTPUT);
 	gpio_config(ENABLE_PIN,GPIO_INPUT);
@@ -55,7 +56,7 @@ void main(void)
 			video_text_string("Location");
 			video_text_integer(loop);
 			video_text_string(": 0x");
-			video_text_hexbyte((unsigned char)data[loop]);
+			video_text_hexbyte(data[loop]);
 			video_text_string(" {");
 			video_text_integer(test);
 			video_text_string("}        \n");
