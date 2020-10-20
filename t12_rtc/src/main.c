@@ -16,7 +16,6 @@ void main(void)
 	fb_t* display;
 	int loop, test, data[8], next = 0, flag = 1;
 	/** initialize gpio */
-	gpio_init();
 	gpio_config(ERROR_LED,GPIO_OUTPUT);
 	gpio_config(ENABLE_PIN,GPIO_INPUT);
 	gpio_pull(ENABLE_PIN,GPIO_PULL_UP);
