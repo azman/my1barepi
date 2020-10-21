@@ -1,5 +1,5 @@
 # to generate raspberry pi bare-metal code (kernel.img)
-TARGET = kernel.img
+TARGET = kernel_boot.img
 
 # multiple source files (list them here as object files!)
 OBJLST = boot.o gpio.o timer.o interrupt.o uart.o main.o

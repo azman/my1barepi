@@ -4,7 +4,6 @@
 #define GPIO_BASE (PMAP_BASE|GPIO_OFFSET)
 /*----------------------------------------------------------------------------*/
 #include "gpio.h"
-#include "boot.h"
 /*----------------------------------------------------------------------------*/
 #define GPIO_FSEL (GPIO_BASE+0x00)
 #define GPIO_FSET (GPIO_BASE+0x1C)

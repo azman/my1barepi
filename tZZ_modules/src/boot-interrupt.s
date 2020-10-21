@@ -42,10 +42,10 @@ init:
 @ moving (overriding) interrupt vector table
 	mov r0,#0x8000
 	mov r1,#0x0000
-@ copying the jmp instructions
+@ copying the jmp instructions  (*ia r*! => reg Incremented After use)
 	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
-@ copying the jmp targets (hint: r0 & r1 incremented!)
+@ copying the jmp targets
 	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
 @ copying the system flags
@@ -79,14 +79,6 @@ set_sysflag:
 	str r1,[r0]
 set_sysflag_done:
 	bx lr
-@ duh! call this to enable interrupt
-.global enable_irq
-enable_irq:
-@ equivalent to 'cpsie i'? with 'mov pc,lr'?
-	mrs r0,cpsr
-	bic r0,r0,#0x80
-	msr cpsr_c,r0
-	bx lr
 @ user-defined irq handler
 user_irqh: .word 0
 @ call this to assign interrupt hanler
@@ -94,16 +86,34 @@ user_irqh: .word 0
 handle_irq:
 	str r0,user_irqh
 	bx lr
+@ duh! call this to enable interrupt
+.global enable_irq
+enable_irq:
+	mrs r0,cpsr
+	@ BIt-Clear => disable IRQ MASK
+	bic r0,r0,#0x80
+	@ Move-to-Status-Register from ARM reg (_c control field only?)
+	msr cpsr_c,r0
+	mov pc,lr
+@ duh!
+.global disable_irq
+disable_irq:
+	mrs r0,cpsr
+	orr r0,r0,#0x80
+	msr cpsr_c,r0
+	mov pc,lr
 .ifndef BOOTIRQH
 @ low-level irq handler
 irqh:
+	push {r0-r12,lr}
+	@stmfd sp!,{r0-r12,lr}
 	ldr r0,user_irqh
 	cmp r0,#0
 	beq irqh_done
-@ do we need to save lr? in irq mode lr is banked!
-	push {r0-r12,lr}
-	blx r0
-	pop  {r0-r12,lr}
+	ldr lr,=irqh_done
+	mov pc,r0
 irqh_done:
+	pop {r0-r12,lr}
+	@ldmfd sp!,{r0-r12,lr}
 	subs pc,lr,#4
 .endif

@@ -42,7 +42,7 @@ void oled1306_init(oled1306_t* oled, int addr, int type, font_oled_t* font)
 	oled1306_command(oled,0xDA); /** set com pins hw config */
 	oled1306_command(oled,0x12); /* sample use 0x12? datasheet use 0x02 */
 	oled1306_command(oled,0x81); /** set contrast control */
-	oled1306_command(oled,0x7F); /* sample use 0xCF? datasheet use 0x7F */
+	oled1306_command(oled,0xCF); /* sample use 0xCF? datasheet use 0x7F */
 	oled1306_command(oled,0xA4); /** disable 'entire display on' - o/p ram */
 	oled1306_command(oled,0xA6); /** set normal display */
 	oled1306_command(oled,0xD5); /** set clock divider ratio & osc freq */
@@ -56,6 +56,7 @@ void oled1306_init(oled1306_t* oled, int addr, int type, font_oled_t* font)
 	oled1306_command(oled,0xF1);
 	oled1306_command(oled,0xDB); /** set vcom deselect */
 	oled1306_command(oled,0x40);
+	oled1306_command(oled,0x2E); /** STOP SCROLLING? */
 	oled1306_command(oled,0xAF); /** display on */
 	oled->font = font;
 	oled->xpos = 0;
@@ -172,17 +173,13 @@ void oled1306_update(oled1306_t* oled)
 {
 	int loop;
 	i2c_do_start();
+	i2c_do_write_byte(oled->addr<<1);
 	i2c_do_write_byte(SSD1306_COMMAND);
 	i2c_do_write_byte(0x22); /* set page */
-	i2c_do_write_byte(SSD1306_COMMAND);
 	i2c_do_write_byte(0); /* page 0 */
-	i2c_do_write_byte(SSD1306_COMMAND);
 	i2c_do_write_byte(7); /* page 7 */
-	i2c_do_write_byte(SSD1306_COMMAND);
 	i2c_do_write_byte(0x21); /* set cols */
-	i2c_do_write_byte(SSD1306_COMMAND);
 	i2c_do_write_byte(0); /* column 0 */
-	i2c_do_write_byte(SSD1306_COMMAND);
 	i2c_do_write_byte(127); /* column 127 */
 	i2c_do_stop();
 	i2c_do_start();
