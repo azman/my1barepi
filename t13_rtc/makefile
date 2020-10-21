@@ -2,8 +2,13 @@
 TARGET = kernel.img
 
 # multiple source files (list them here as object files!)
-OBJLST = boot.o main.o gpio.o timer.o
-OBJLST += mailbox.o barrier.o utils.o font.o video.o i2c.o
+OBJLST = boot.o main.o gpio.o timer.o i2c.o utils.o
+ifeq ($(USE_OLED),yes)
+	CFLAGS += -DUSE_OLED
+	OBJLST += font_oled.o oled1306.o
+else
+	OBJLST += mailbox.o barrier.o font.o video.o
+endif
 
 # default rule
 all: $(TARGET)
