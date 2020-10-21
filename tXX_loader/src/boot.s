@@ -18,14 +18,6 @@ exec_this:
 irqh:
 @ do we need to save lr? in irq mode lr is banked!
 	push {r0-r12,lr}
-	bl disable_irq
 	bl irq_handler
-	ldr r0,user_irqh
-	cmp r0,#0
-	beq irqh_done
-	ldr lr,=irqh_done
-	mov pc,r0
-irqh_done:
-	bl enable_irq
 	pop {r0-r12,lr}
 	subs pc,lr,#4

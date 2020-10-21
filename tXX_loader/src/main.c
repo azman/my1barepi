@@ -27,14 +27,18 @@
 extern void exec_this(unsigned int);
 extern void exec_boot(void);
 /*----------------------------------------------------------------------------*/
+irqhandler_t irqh;
+volatile unsigned int *pirq;
+/*----------------------------------------------------------------------------*/
 void irq_handler(void)
 {
-	/* how do i allow user interrupt handler?? */
 	if(gpio_chkevent(RESET_PIN))
 	{
 		gpio_rstevent(RESET_PIN);
 		exec_boot();
 	}
+	irqh = (irqhandler_t) *pirq;
+	if (irqh) irqh();
 }
 /*----------------------------------------------------------------------------*/
 void main(void)
@@ -44,6 +48,9 @@ void main(void)
 	unsigned char *pbase;
 	char mesg[] = "\nMY1 R-PI LOADER\n";
 	/** setup stuffs */
+	irqh = 0x0;
+	pirq = (unsigned int*)SYS7FLAG_ADDR;
+	pirq = (unsigned int*)(*pirq); /* should get user_irqh */
 	set_sysflag(1,BOOTLOADER_ID);
 	uart_init(UART_BAUD_115200);
 	timer_init();
