@@ -6,7 +6,6 @@
 #include "oled1306.h"
 #else
 #include "video.h"
-#include "utils.h"
 #endif
 /*----------------------------------------------------------------------------*/
 #define RTC_I2C_ADDR 0x68
