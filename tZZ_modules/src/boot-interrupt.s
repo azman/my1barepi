@@ -23,6 +23,7 @@ edata_handler: .word here
 resvd_handler: .word here
 doirq_handler: .word irqh
 dofiq_handler: .word here
+@ fiq handler should be here! :p
 @ system flag starts with "MY1\0"
 sys0flag: .word SYS_ID
 sys1flag: .word 0
@@ -33,12 +34,6 @@ sys5flag: .word 0
 sys6flag: .word 0
 sys7flag: .word user_irqh
 init:
-@ will skip interrupt vector table if one is already there...
-	ldr r0,=0x0000
-	ldr r0,[r0,#((sys0flag-that)<<2)]
-	ldr r1,=SYS_ID
-	cmp r0,r1
-	beq next
 @ moving (overriding) interrupt vector table
 	mov r0,#0x8000
 	mov r1,#0x0000
@@ -51,7 +46,6 @@ init:
 @ copying the system flags
 	ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
-next:
 @ continue with the program
 	b load
 .section .load
