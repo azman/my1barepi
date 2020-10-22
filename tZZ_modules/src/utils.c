@@ -149,7 +149,7 @@ float str2float(char* str)
 	while(dot<len)
 	{
 		dot++;
-		calc = calc + (float)(str[len]-0x30)/divs;
+		calc = calc + (float)(str[dot]-0x30)/divs;
 		divs *= 10.0;
 	}
 	/** add up and apply sign flag */
