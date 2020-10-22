@@ -22,16 +22,20 @@ AFLAGS += -I../tZZ_modules/src/
 CFLAGS += -I../tZZ_modules/src/
 ifeq ($(RASPI),3)
 # for raspberry pi 3 (2016)
+AFLAGS += -mfpu=crypto-neon-fp-armv8
 CFLAGS += -march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8
 CFLAGS += -DRASPI3
 else ifeq ($(RASPI),2)
 # for raspberry pi 2 (2015)
+AFLAGS += -mfpu=neon-vfpv4
 CFLAGS += -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4
 CFLAGS += -DRASPI2
 else
+AFLAGS += -mfpu=vfp
 CFLAGS += -march=armv6zk -mtune=arm1176jzf-s -mfpu=vfp
 endif
-CFLAGS += -mfloat-abi=hard
+AFLAGS += -mfloat-abi=hard
+CFLAGS += -mfloat-abi=hard -mhard-float
 CFLAGS += -nostdlib -nostartfiles -ffreestanding -Wall
 # linker option(s)
 LFLAGS += --no-undefined
