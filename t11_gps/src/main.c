@@ -10,8 +10,6 @@
 #else
 #include "video.h"
 #endif
-/* NEED TO DEBUG THIS!!! */
-#include "fpu.h"
 /*----------------------------------------------------------------------------*/
 #define BUFF_SIZE 128
 /*----------------------------------------------------------------------------*/
@@ -22,6 +20,7 @@ typedef struct _gps_data_t
 {
 	char *plat, *plon, *dutc, *tutc, *pvel, *pang;
 	char *pchk, *p_ns, *p_ew, *psum, *buff, *pmag;
+	char conv[32];
 	float vlat, vlon;
 	int wait, skip;
 #ifdef USE_OLED
@@ -53,6 +52,15 @@ void show_gpsdata(gps_data_t* gpsd)
 			oled1306_cursor(gpsd->oled,6,0);
 			oled1306_text(gpsd->oled,"# ");
 			oled1306_text(gpsd->oled,gpsd->dutc);
+			oled1306_cursor(gpsd->oled,7,0);
+			oled1306_text(gpsd->oled,"# ");
+			gpsd->vlat = str2float(gpsd->plat);
+			float2str(gpsd->conv,gpsd->vlat,4);
+			oled1306_text(gpsd->oled,gpsd->conv);
+			//gpsd->vlon = str2float(gpsd->plon);
+			//float2str(gpsd->conv,gpsd->vlon,4);
+			//oled1306_text(gpsd->oled,gpsd->conv);
+
 			oled1306_update(gpsd->oled);
 #else
 			video_text_string("FOUND => ");
@@ -94,7 +102,7 @@ void show_gpsdata(gps_data_t* gpsd)
 	{
 #ifdef USE_OLED
 		oled1306_cursor(gpsd->oled,2,2);
-		oled1306_text(gpsd->oled,"*");
+		oled1306_text(gpsd->oled,"* ");
 		oled1306_update(gpsd->oled);
 #else
 		video_text_string("HUH?!\n@@ Buff:{");
@@ -115,7 +123,6 @@ void main(void)
 	gps_data_t gpsd;
 	int test, temp, size;
 	/** initialize stuffs */
-	//enable_fpu();
 	timer_init();
 	/** initialize uartbb */
 	uartbb_init(26,19); /** gpio26=rx, gpio19=tx */
@@ -152,19 +159,14 @@ void main(void)
 	{
 		if (!gpsd.wait)
 		{
-			//gpsd.vlat = 1.0;
-			//float2str(copy,gpsd.vlat,2);
 #ifdef USE_OLED
 			oled1306_cursor(&oled,2,0);
 			if (prompt[0]=='>') prompt[0] = '|';
 			else prompt[0] = '>';
 			oled1306_text(&oled,prompt);
-			//oled1306_text(&oled,copy);
 			oled1306_update(&oled);
 #else
 			video_text_string("Waiting... ");
-			//video_text_string(copy);
-			//video_text_string(" => ");
 #endif
 			gpsd.wait = 1;
 		}
@@ -175,7 +177,7 @@ void main(void)
 			buff[size] = 0x0;
 #ifdef USE_OLED
 			oled1306_cursor(&oled,2,2);
-			oled1306_text(&oled,"?");
+			oled1306_text(&oled,"? ");
 			oled1306_update(&oled);
 #else
 			video_text_string("MISSED!\n** Buff:{");
@@ -196,7 +198,7 @@ void main(void)
 			buff[BUFF_SIZE-1] = 0x0;
 #ifdef USE_OLED
 			oled1306_cursor(&oled,2,2);
-			oled1306_text(&oled,"$");
+			oled1306_text(&oled,"$ ");
 			oled1306_update(&oled);
 #else
 			video_text_string("OVERFLOW!\n** Buff:{");
