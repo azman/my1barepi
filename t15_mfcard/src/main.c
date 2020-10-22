@@ -1,27 +1,19 @@
 /*----------------------------------------------------------------------------*/
-#include "gpio.h"
 #include "timer.h"
-#include "mailbox.h"
 #include "video.h"
 #include "utils.h"
-#include "font.h"
 #include "spi.h"
 #include "frc522.h"
 /*----------------------------------------------------------------------------*/
-#define ERROR_LED 47
 #define SPI_CLK_DIVIDE_TEST 26
 #define MIFARE_UID_SIZE 5
 /*----------------------------------------------------------------------------*/
 void main(void)
 {
-	fb_t* display;
 	int loop;
 	unsigned char save[MIFARE_UID_SIZE];
 	unsigned char data[MAX_SIZE];
 	unsigned int last = 0;
-	/** initialize gpio */
-	gpio_init();
-	gpio_config(ERROR_LED,GPIO_OUTPUT);
 	/** initialize timer */
 	timer_init();
 	/** initialize spi */
@@ -29,20 +21,8 @@ void main(void)
 	spi_select(SPI_SELECT_1); /* just for fun :p */
 	/* initialize mf contactless card reader */
 	frc522_init();
-	/** initialize mailbox */
-	mailbox_init();
 	/** initialize video */
-	display = video_init(VIDEO_RES_VGA);
-	/* blink ERROR_LED indefinitely if failed to init */
-	if (!display)
-	{
-		while(1)
-		{
-			gpio_toggle(ERROR_LED);
-			timer_wait(TIMER_S/2);
-		}
-	}
-	/* setup screen */
+	video_init(VIDEO_RES_VGA);
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();
 	/** say something... */
@@ -53,11 +33,7 @@ void main(void)
 	if (!loop)
 	{
 		video_text_string("Cannot find FRC522 hardware! Aborting!\n");
-		while(1)
-		{
-			gpio_toggle(ERROR_LED);
-			timer_wait(TIMER_S);
-		}
+		while(1);
 	}
 	video_text_string("FRC522 found. Firmware version is 0x");
 	video_text_hexuint(loop);

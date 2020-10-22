@@ -167,7 +167,6 @@ void main(void)
 	unsigned char sector[SDCARD_SECTOR_SIZE];
 	int loop;
 	/** initialize gpio */
-	gpio_init();
 	gpio_config(ERROR_LED,GPIO_OUTPUT);
 	/** initialize timer */
 	timer_init();
