@@ -5,10 +5,10 @@ TUTORIAL 15
 This is a program that interfaces with an SD Card Reader with SPI interface.
 
 RFID-RC522 pins:
-- SDA (SPI-SS)
-- SCK (SPI_SCK)
-- MOSI (SPI_MOSI)
-- MISO (SPI_MISO)
+- SDA (SPI_CE1_N - GPIO7)
+- SCK (SPI_SCK - GPIO11)
+- MOSI (SPI_MOSI - GPIO10)
+- MISO (SPI_MISO - GPIO09)
 - IRQ
 - GND (GND)
 - RST
