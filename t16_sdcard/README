@@ -3,3 +3,11 @@ TUTORIAL 16
 -----------
 
 This is a program that interfaces with an SD Card Reader with SPI interface.
+
+SDCARD reader pins:
+- SDA (SPI_CE_N - GPIO7)
+- SCK (SPI_SCK - GPIO11)
+- MOSI (SPI_MOSI - GPIO10)
+- MISO (SPI_MISO - GPIO09)
+- GND (GND)
+- 3.3V (3.3V)

@@ -170,11 +170,8 @@ void main(void)
 	gpio_config(ERROR_LED,GPIO_OUTPUT);
 	/** initialize timer */
 	timer_init();
-	/** initialize mailbox */
-	mailbox_init();
 	/** initialize video */
 	video_init(VIDEO_RES_VGA);
-	/* setup screen */
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();
 	/* say something... */
