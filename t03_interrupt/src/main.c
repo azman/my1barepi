@@ -3,9 +3,9 @@
 #include "timer.h"
 #include "interrupt.h"
 /*----------------------------------------------------------------------------*/
-#define TEST_PIN 2
+#define TEST_PIN 26
 #define TEST_DELAY 500
-#define INTR_PIN 3
+#define INTR_PIN 19
 /*----------------------------------------------------------------------------*/
 /* global parameter */
 int pause = 0;

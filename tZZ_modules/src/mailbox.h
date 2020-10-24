@@ -2,6 +2,9 @@
 #ifndef __MY1MAILBOXH__
 #define __MY1MAILBOXH__
 /*----------------------------------------------------------------------------*/
+#include "raspi.h"
+#include "boot.h"
+/*----------------------------------------------------------------------------*/
 #define MAIL_CHANNEL_MASK 0x0000000F
 #define MAIL_CH_POWER 0x00000000
 #define MAIL_CH_FBUFF 0x00000001

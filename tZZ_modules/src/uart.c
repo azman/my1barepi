@@ -4,14 +4,11 @@
  *   = part of auxiliary peripheral (along with 2 SPI master)
 **/
 /*----------------------------------------------------------------------------*/
-#include "raspi.h"
+#include "uart.h"
+#include "gpio.h"
 /*----------------------------------------------------------------------------*/
 #define AUX_BASE (PMAP_BASE|AUX_OFFSET)
 #define UART_BASE (PMAP_BASE|UART_OFFSET)
-/*----------------------------------------------------------------------------*/
-#include "uart.h"
-#include "boot.h"
-#include "gpio.h"
 /*----------------------------------------------------------------------------*/
 #define AUX_IRQ     (AUX_BASE+0x00)
 #define AUX_ENABLES (AUX_BASE+0x04)

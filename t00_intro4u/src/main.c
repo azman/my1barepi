@@ -2,6 +2,8 @@
 #include "raspi.h"
 #include "boot.h"
 /*----------------------------------------------------------------------------*/
+#define GPIO_OFFSET 0x00200000
+/*----------------------------------------------------------------------------*/
 #define GPIO_BASE (PMAP_BASE|GPIO_OFFSET)
 #define GPIO_FSEL (GPIO_BASE+0x00)
 #define GPIO_FSET (GPIO_BASE+0x1C)

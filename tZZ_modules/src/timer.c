@@ -1,11 +1,8 @@
 /*----------------------------------------------------------------------------*/
-#include "raspi.h"
+#include "timer.h"
 /*----------------------------------------------------------------------------*/
 #define TIMER_BASE (PMAP_BASE|TIMER_OFFSET)
 #define TIMER_SYS_BASE (PMAP_BASE|TIMER_SYS_OFFSET)
-/*----------------------------------------------------------------------------*/
-#include "timer.h"
-#include "boot.h"
 /*----------------------------------------------------------------------------*/
 #define TIMER_LOAD (TIMER_BASE+0x00)
 #define TIMER_DVAL (TIMER_BASE+0x04)

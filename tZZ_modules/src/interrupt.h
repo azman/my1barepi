@@ -2,6 +2,7 @@
 #ifndef __MY1INTERRUPTH__
 #define __MY1INTERRUPTH__
 /*----------------------------------------------------------------------------*/
+#include "raspi.h"
 /** make sure to use boot-interrupt.s */
 #include "boot-interrupt.h"
 /*----------------------------------------------------------------------------*/
