@@ -37,6 +37,7 @@ loopd:
 	bx lr
 @ apply enabling-bits to given 32-bit address
 .global setbit32
+setbit32:
 	mov r2,r0
 	ldr r0,[r2]
 	orr r0,r0,r1
@@ -44,6 +45,7 @@ loopd:
 	mov pc,lr
 @ apply disabling-bits to given 32-bit address
 .global clrbit32
+clrbit32:
 	mov r2,r0
 	ldr r0,[r2]
 	bic r0,r0,r1
@@ -51,6 +53,7 @@ loopd:
 	mov pc,lr
 @ get masked bits for a given 32-bit address
 .global getbit32
+getbit32:
 	ldr r0,[r0]
 	and r0,r0,r1
 	mov pc,lr
