@@ -8,6 +8,15 @@
  *  - 0.5ms => 0deg
  *  - 1.5ms => 90deg
  *  - 2.5ms => 180deg
+ * Operating voltage range: 4.8 V to 7.2 V
+ * Stall torque: 9.4kg/cm (4.8v); 11kg/cm (6v)
+ * Operating speed: 0.2 s/60º (4.8 V), 0.16 s/60º (6 V)
+ * Rotational degree: 180º
+ * Dead band width: 5 μs
+ * Operating temperature range: 0ºC to +55ºC
+ * Current draw at idle: 10mA
+ * No load operating current draw: 170mA
+ * Current at maximum load: 1200mA
 **/
 /*----------------------------------------------------------------------------*/
 void main(void)
