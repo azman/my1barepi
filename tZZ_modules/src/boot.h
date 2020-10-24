@@ -17,6 +17,9 @@
 unsigned int get32(unsigned int addr);
 void put32(unsigned int addr,unsigned int data);
 void loopd(unsigned int wait);
+unsigned int setbit32(unsigned int addr,unsigned int pick);
+unsigned int clrbit32(unsigned int addr,unsigned int pick);
+unsigned int getbit32(unsigned int addr,unsigned int pick);
 /*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/
