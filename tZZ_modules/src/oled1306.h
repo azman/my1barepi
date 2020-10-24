@@ -23,7 +23,7 @@
 typedef struct _oled1306_t
 {
 	int addr, type, flag, temp;
-	/* buffer is pages of 128 columns x 8 rows */
+	/* buffer is pages of 128 columns (1 page=8 rows) */
 	/* - for 128x64 module => 8 pages! */
 	/* - for 128x32 module => 4 pages! */
 	unsigned char buff[128*8]; /* 1024 */
