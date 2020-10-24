@@ -26,6 +26,7 @@
 #define SPI1_OFFSET 0x00215080
 #define SPI2_OFFSET 0x002150C0
 #define MAILBOX_OFFSET 0x0000B880
+#define CLKMAN_OFFSET 0x00101000
 #define PWM_OFFSET 0x0020C000
 /*----------------------------------------------------------------------------*/
 #endif
