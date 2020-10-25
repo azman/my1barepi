@@ -47,7 +47,7 @@
 /** clock manager: should put in its own module? for now, just dump it here! */
 #define CM_BASE (PMAP_BASE|CLKMAN_OFFSET)
 #define CM_GP0CTL (CM_BASE+0x70)
-#define CM_GP0DIV (CM_BASE+0x70)
+#define CM_GP0DIV (CM_BASE+0x74)
 #define CM_PWMCTL (CM_BASE+0xA0)
 #define CM_PWMDIV (CM_BASE+0xA4)
 /*----------------------------------------------------------------------------*/
