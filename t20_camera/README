@@ -2,4 +2,6 @@
 TUTORIAL 20
 -----------
 
+INCOMPLETE! Work in progress...
+
 This is a program that interfaces with a C3038 camera module using raw GPIO.
