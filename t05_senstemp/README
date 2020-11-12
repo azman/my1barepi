@@ -13,3 +13,13 @@ and dislay temperature value using a pair of 7-segments.
 
 *Task* Better precision
 - how can we show decimals? without using float!
+
+  -------
+  |     |
+  |     |
+  |     |
+  -------
+   | | |
+   3 o G
+   . u N
+   3 t D
