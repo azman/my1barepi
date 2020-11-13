@@ -96,33 +96,40 @@
 #define ARG_RESP_136B    0x00010000
 #define ARG_RESP_48B     0x00020000
 #define ARG_RESP_48BB    0x00030000
+#define TM_DATA_H2C      0x00000000
+#define TM_DATA_C2H      TM_DAT_DIR
 #define AUTOCMD_NONE     0x00000000
 #define AUTOCMD_CMD12    0x00000004
 #define AUTOCMD_CMD23    0x00000008
 /*----------------------------------------------------------------------------*/
+#define CMD0  0x00000000
+#define CMD2  0x02000000
+#define CMD3  0x03000000
+#define CMD7  0x07000000
+#define CMD8  0x08000000
+#define CMD17 0x11000000
+#define CMD23 0x17000000
+#define CMD24 0x18000000
+#define CMD41 0x29000000
+#define CMD55 0x37000000
+#define CMD58 0x3a000000
+/*----------------------------------------------------------------------------*/
 /* commands */
-/** CMD0 */
-#define CMD_GO_IDLE         0x00000000
-/** CMD8 */
-#define CMD_SEND_IF_COND    0x08020000
-/** CMD58 - read OperatingConditionsRegister (OCR) */
-#define CMD_READ_OCR        0x3a020000
-/** CMD55 - marker for application command */
-#define CMD_APP_CMD         0x37000000
-/** ACMD41 */
-#define ACMD_SEND_OP_COND   0x29020000
-/**CMD17 */
-#define CMD_READ_SINGLE     0x11220010
-/**CMD18 */
-#define CMD_READ_MULTI      0x12220032
-/** CMD2 - get card id */
-#define CMD_ALL_SEND_CID    0x02010000
-/** CMD3 - get relative card address */
-#define CMD_SEND_REL_ADDR   0x03020000
-/** CMD7 */
-#define CMD_CARD_SELECT     0x07030000
-/** CMD23 */
-#define CMD_SET_BLOCKCNT    0x17020000
+#define CMD_GO_IDLE         (CMD0)
+#define CMD_SEND_IF_COND    (CMD8|ARG_RESP_48B)
+/** read OperatingConditionsRegister (OCR) */
+#define CMD_READ_OCR        (CMD58|ARG_RESP_48B)
+/** marker for application command */
+#define CMD_APP_CMD         (CMD55)
+#define ACMD_SEND_OP_COND   (CMD41|ARG_RESP_48B)
+#define CMD_READ_SINGLE     (CMD17|CMD_ISDATA|ARG_RESP_48B|TM_DATA_C2H)
+/** get card id */
+#define CMD_ALL_SEND_CID    (CMD2|ARG_RESP_136B)
+/** get relative card address */
+#define CMD_SEND_REL_ADDR   (CMD3|ARG_RESP_48B)
+#define CMD_CARD_SELECT     (CMD7|ARG_RESP_48BB)
+#define CMD_SET_BLOCKCNT    (CMD23|ARG_RESP_48B)
+#define CMD_WRITE_SINGLE    (CMD24|CMD_ISDATA|ARG_RESP_48B)
 /*----------------------------------------------------------------------------*/
 #define ARG1_IF_COND 0x000001AA
 /*----------------------------------------------------------------------------*/
@@ -134,6 +141,10 @@
 /*----------------------------------------------------------------------------*/
 #define ACMD41_XPC_BIT 0x01000000
 #define ACMD41_ARG (OCR_CCAP_STATUS|OCR_VOLTAGE_LVL|ACMD41_XPC_BIT)
+/*----------------------------------------------------------------------------*/
+#ifndef SECTOR_SIZE
+#define SECTOR_SIZE 512
+#endif
 /*----------------------------------------------------------------------------*/
 static sdmmc_t keep;
 /*----------------------------------------------------------------------------*/
@@ -365,7 +376,7 @@ int sdmmc_readblock(unsigned int lba, unsigned char *buffer)
 		return 0;
 	}
 	/* just in case */
-	put32(EMMC_BLKSIZECNT,(1 << 16)|512);
+	put32(EMMC_BLKSIZECNT,(1 << 16)|SECTOR_SIZE);
 	/* request data */
 	test = sdmmc_command(CMD_READ_SINGLE,lba);
 	if (test)
@@ -381,6 +392,41 @@ int sdmmc_readblock(unsigned int lba, unsigned char *buffer)
 	}
 	for (loop=0;loop<128;loop++)
 		buf[loop] = get32(EMMC_DATA);
+	return loop;
+}
+/*----------------------------------------------------------------------------*/
+int sdmmc_writeblock(unsigned int lba, unsigned char *buffer)
+{
+	int test, loop;
+	unsigned int *buf = (unsigned int*)buffer;
+	if (sdmmc_status(EMMC_DAT_INHIBIT))
+	{
+		keep.stat = SDMMC_TIMEOUT<<1;
+		return 0;
+	}
+	/* just in case */
+	put32(EMMC_BLKSIZECNT,(1 << 16)|SECTOR_SIZE);
+	/* request data */
+	test = sdmmc_command(CMD_WRITE_SINGLE,lba);
+	if (test)
+	{
+		keep.stat = test;
+		return 0;
+	}
+	test = sdmmc_interrupt(EMMC_WRITE_RDY);
+	if (test)
+	{
+		keep.stat = test;
+		return 0;
+	}
+	for (loop=0;loop<128;loop++)
+		put32(EMMC_DATA,buf[loop]);
+	test = sdmmc_interrupt(EMMC_DATA_DONE);
+	if (test)
+	{
+		keep.stat = test;
+		return 0;
+	}
 	return loop;
 }
 /*----------------------------------------------------------------------------*/

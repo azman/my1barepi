@@ -43,6 +43,7 @@ sdmmc_t* get_keep(void);
 /*----------------------------------------------------------------------------*/
 int sdmmc_init(void);
 int sdmmc_readblock(unsigned int lba, unsigned char *buf);
+int sdmmc_writeblock(unsigned int lba, unsigned char *buf);
 /*----------------------------------------------------------------------------*/
 #endif
 /*----------------------------------------------------------------------------*/
