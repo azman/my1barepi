@@ -23,7 +23,7 @@ edata_handler: .word here
 resvd_handler: .word here
 doirq_handler: .word irqh
 dofiq_handler: .word here
-@ fiq handler should be here! :p
+@ fiq handler can be placed here for faster reponse!
 @ system flag starts with "MY1\0"
 sys0flag: .word SYS_ID
 sys1flag: .word 0

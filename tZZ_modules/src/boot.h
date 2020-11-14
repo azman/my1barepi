@@ -1,7 +1,8 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1BOOTH__
-#define __MY1BOOTH__
+#ifndef __MY1BOOT_H__
+#define __MY1BOOT_H__
 /*----------------------------------------------------------------------------*/
+/* these are defined in boot-interrupt.s */
 #define SYS0FLAG_ADDR 0x40
 #define SYS1FLAG_ADDR 0x44
 #define SYS2FLAG_ADDR 0x48
@@ -21,5 +22,5 @@ unsigned int setbit32(unsigned int addr,unsigned int pick);
 unsigned int clrbit32(unsigned int addr,unsigned int pick);
 unsigned int getbit32(unsigned int addr,unsigned int pick);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1BOOT_H__ */
 /*----------------------------------------------------------------------------*/
