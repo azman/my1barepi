@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1INTERRUPTH__
-#define __MY1INTERRUPTH__
+#ifndef __MY1INTERRUPT_H__
+#define __MY1INTERRUPT_H__
 /*----------------------------------------------------------------------------*/
 #include "raspi.h"
 /** make sure to use boot-interrupt.s */
@@ -30,5 +30,5 @@ void interrupt_enable(int set,unsigned int sel);
 void interrupt_disable(int set,unsigned int sel);
 unsigned int interrupt_pending(int set,unsigned int mask);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1INTERRUPT_H__ */
 /*----------------------------------------------------------------------------*/

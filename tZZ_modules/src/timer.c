@@ -97,6 +97,7 @@ unsigned int timer_irq_masked(void)
 }
 /*----------------------------------------------------------------------------*/
 /* prepate for codes using system timer... more accurate? */
+/* i may never implement this :p */
 #define TIMER_SYS_CTRL 0
 #define TIMER_SYS_STAT 0
 #define TIMER_SYS_CNTL 1

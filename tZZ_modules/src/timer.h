@@ -1,11 +1,11 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1TIMERH__
-#define __MY1TIMERH__
+#ifndef __MY1TIMER_H__
+#define __MY1TIMER_H__
 /*----------------------------------------------------------------------------*/
 #include "raspi.h"
 #include "boot.h"
 /*----------------------------------------------------------------------------*/
-void timer_init(void);
+void timer_init(void); /* configure timer for 1mhz */
 unsigned int timer_read(void);
 /*----------------------------------------------------------------------------*/
 /* timer_wait is usleep equivalent */
@@ -24,5 +24,5 @@ unsigned int timer_value(void);
 unsigned int timer_irq_raw(void); /** returns pending irq bit */
 unsigned int timer_irq_masked(void); /** returns pending irq bit & enable bit */
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1TIMER_H__ */
 /*----------------------------------------------------------------------------*/

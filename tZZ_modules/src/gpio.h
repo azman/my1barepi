@@ -5,6 +5,7 @@
 #include "raspi.h"
 #include "boot.h"
 /*----------------------------------------------------------------------------*/
+/* on pi, physical gpio pins are gpio2 - gpio27 (26 total) */
 #define GPIO_COUNT 54
 /*----------------------------------------------------------------------------*/
 #define GPIO_INPUT  0x00
