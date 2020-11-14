@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1STRING_H
-#define __MY1STRING_H
+#ifndef __MY1STRING_H__
+#define __MY1STRING_H__
 /*----------------------------------------------------------------------------*/
 char* strword(char** src, char* del);
 int strncmp(char* src1, char* src2, int size);
@@ -14,5 +14,5 @@ char* str2upper(char *astring);
 char lowercase(char *achar);
 char* str2lower(char *astring);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1STRING_H__ */
 /*----------------------------------------------------------------------------*/

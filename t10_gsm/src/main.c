@@ -4,8 +4,6 @@
 #include "uart.h"
 #include "gsm.h"
 #include "string.h"
-#include "mailbox.h"
-#include "barrier.h"
 #include "utils.h"
 #include "video.h"
 /*----------------------------------------------------------------------------*/

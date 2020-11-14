@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1BLUEZ_H
-#define __MY1BLUEZ_H
+#ifndef __MY1BLUEZ_H__
+#define __MY1BLUEZ_H__
 /*----------------------------------------------------------------------------*/
 /** HC-06 (slave-only) module
  *  - baudrate always 9600?
@@ -34,5 +34,5 @@ void bt_print_hexbyte(unsigned char byte);
 void bt_print_hexuint(unsigned int dwrd);
 void bt_print_int(int value);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1BLUEZ_H__ */
 /*----------------------------------------------------------------------------*/

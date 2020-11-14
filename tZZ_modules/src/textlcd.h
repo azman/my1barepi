@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1TEXTLCD_H
-#define __MY1TEXTLCD_H
+#ifndef __MY1TEXTLCD_H__
+#define __MY1TEXTLCD_H__
 /*----------------------------------------------------------------------------*/
 /**
  * LCD Interface Library
@@ -48,5 +48,5 @@ void lcd_print(char* message);
 #define lcd_goto_line1() lcd_send_command(LCD_POS_LINE1)
 #define lcd_goto_line2() lcd_send_command(LCD_POS_LINE2)
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1TEXTLCD_H__ */
 /*----------------------------------------------------------------------------*/

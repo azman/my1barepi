@@ -1,16 +1,15 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1FONTH__
-#define __MY1FONTH__
+#ifndef __MY1FONT_H__
+#define __MY1FONT_H__
 /*----------------------------------------------------------------------------*/
 typedef struct font_desc
 {
-	int idx;
 	const char *name;
-	int width, height;
 	const void *data;
-	int pref;
+	int width, height;
+	int idx, pref;
 }
 font_t;
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1FONT_H__ */
 /*----------------------------------------------------------------------------*/

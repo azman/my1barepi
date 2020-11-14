@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __UTILS_H
-#define __UTILS_H
+#ifndef __MY1UTILS_H__
+#define __MY1UTILS_H__
 /*----------------------------------------------------------------------------*/
 /**
  * These are needed for integer division (no hardware for this).
@@ -17,5 +17,5 @@ float str2float(char* str); /** convert string to float */
 int int2str(char* str, int val); /** convert integer to string */
 int float2str(char* str, float val, int dpc); /** convert float to string */
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1UTILS_H__ */
 /*----------------------------------------------------------------------------*/

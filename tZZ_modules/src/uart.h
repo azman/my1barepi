@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1UARTH__
-#define __MY1UARTH__
+#ifndef __MY1UART_H__
+#define __MY1UART_H__
 /*----------------------------------------------------------------------------*/
 #include "raspi.h"
 #include "boot.h"
@@ -24,5 +24,5 @@ void uart_print_hex_byte(unsigned char byte);
 void uart_print_hex_uint(unsigned int value);
 void uart_print(char *message);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1UART_H__ */
 /*----------------------------------------------------------------------------*/

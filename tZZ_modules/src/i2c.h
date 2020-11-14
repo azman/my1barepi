@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1I2CH__
-#define __MY1I2CH__
+#ifndef __MY1I2C_H__
+#define __MY1I2C_H__
 /*----------------------------------------------------------------------------*/
 #define I2C_SDA1_GPIO 2
 #define I2C_SCL1_GPIO 3
@@ -30,5 +30,5 @@ int i2c_getb(int addr, int regs);
 int i2c_puts(int addr, int regs, unsigned char* pdat, int size);
 int i2c_gets(int addr, int regs, unsigned char* pdat, int size);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1I2C_H__ */
 /*----------------------------------------------------------------------------*/

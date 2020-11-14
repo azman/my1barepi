@@ -185,5 +185,5 @@ tags_info_t;
 unsigned int* mailbox_get_board_info(tags_info_t* info);
 unsigned int* mailbox_get_video_info(tags_info_t* info);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1MAILBOX_H__ */
 /*----------------------------------------------------------------------------*/

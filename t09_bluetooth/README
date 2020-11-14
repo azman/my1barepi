@@ -13,8 +13,6 @@ Note:
   = control (and get status of) gpio pins
   = sub-command: gpio <num> config <in|out>
 
-*Task* Reduce code
-- simplify the code so that only gpio commands are available
-
 *Task* Adding more command(s)
 - modify the code to have another command for i/o toggle
+- modify the code to have another command for i/o blink (3x)
