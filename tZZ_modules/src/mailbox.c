@@ -26,11 +26,6 @@
 #define MAIL_STATUS_FULL  0x80000000
 #define MAIL_STATUS_EMPTY 0x40000000
 /*----------------------------------------------------------------------------*/
-void mailbox_init(void)
-{
-	/* nothing to do! */
-}
-/*----------------------------------------------------------------------------*/
 unsigned int mailbox_read(unsigned int channel)
 {
 	unsigned int value;

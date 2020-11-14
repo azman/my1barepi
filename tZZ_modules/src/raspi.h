@@ -1,13 +1,13 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __RASPI_H
-#define __RASPI_H
+#ifndef __MY1RASPI_H__
+#define __MY1RASPI_H__
 /*----------------------------------------------------------------------------*/
-#define VC_MMU_MAP_L2_ENABLED  0x40000000
-#define VC_MMU_MAP_L2_DISABLED 0xC0000000
-#define VC_MMU_MAP_DEFAULT VC_MMU_MAP_L2_ENABLED
-#define VC_MMU_MAP VC_MMU_MAP_DEFAULT
+/**
+ *  address map setup for pi
+ *  - these are physical addresses as seen by arm cpu!
+ *  - on VideoCore (gpu) memory map, it is 0x7e000000 (BCM2835 @PiV1)
+**/
 /*----------------------------------------------------------------------------*/
-/* on VideoCore memory map, it is 0x7e000000 (BCM2835 @PiV1) */
 #if defined RASPI3
 #define PMAP_BASE 0x3F000000
 #elif defined RASPI2
@@ -30,5 +30,11 @@
 #define PWM_OFFSET 0x0020C000
 #define EMMC_OFFSET 0x00300000
 /*----------------------------------------------------------------------------*/
-#endif
+/* used in cpu-gpu comm => mailbox, framebuffer */
+#define VC_MMU_MAP_L2_ENABLED  0x40000000
+#define VC_MMU_MAP_L2_DISABLED 0xC0000000
+#define VC_MMU_MAP_DEFAULT VC_MMU_MAP_L2_ENABLED
+#define VC_MMU_MAP VC_MMU_MAP_DEFAULT
+/*----------------------------------------------------------------------------*/
+#endif /* __MY1RASPI_H__ */
 /*----------------------------------------------------------------------------*/

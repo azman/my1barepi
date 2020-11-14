@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1VIDEOH__
-#define __MY1VIDEOH__
+#ifndef __MY1VIDEO_H__
+#define __MY1VIDEO_H__
 /*----------------------------------------------------------------------------*/
 #include "raspi.h"
 #include "boot.h"
@@ -46,7 +46,7 @@
 typedef struct __screen_t
 {
 	int xres, yres, xout, yout, xoff, yoff;
-	int depth, pskip, fsize;
+	int depth, pskip, fsize, dopad;
 }
 screen_t;
 /*----------------------------------------------------------------------------*/
@@ -98,5 +98,5 @@ void video_text_hexuint(unsigned int dwrd);
 /* graphics functions */
 void video_draw_line(int x1, int y1, int x2, int y2);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1VIDEO_H__ */
 /*----------------------------------------------------------------------------*/

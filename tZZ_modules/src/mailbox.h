@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1MAILBOXH__
-#define __MY1MAILBOXH__
+#ifndef __MY1MAILBOX_H__
+#define __MY1MAILBOX_H__
 /*----------------------------------------------------------------------------*/
 #include "raspi.h"
 #include "boot.h"
@@ -30,7 +30,6 @@
 9: Property tags (VC -> ARM)
 **/
 /*----------------------------------------------------------------------------*/
-void mailbox_init(void);
 unsigned int mailbox_read(unsigned int channel);
 void mailbox_write(unsigned int channel,unsigned int value);
 /*----------------------------------------------------------------------------*/

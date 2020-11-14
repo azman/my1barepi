@@ -324,8 +324,7 @@ void main(void)
 	timer_init();
 	/** initialize uart with default baudrate */
 	uart_init(UART_BAUD_DEFAULT);
-	/** prepare mailbox interface */
-	/**mailbox_init(); video_init calls this? */
+	/** video display */
 	video_init(VIDEO_RES_VGA);
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();

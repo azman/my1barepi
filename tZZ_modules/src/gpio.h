@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1GPIOH__
-#define __MY1GPIOH__
+#ifndef __MY1GPIO_H__
+#define __MY1GPIO_H__
 /*----------------------------------------------------------------------------*/
 #include "raspi.h"
 #include "boot.h"
@@ -45,5 +45,5 @@ void gpio_setevent(int gpio_num,int events); /** enable gpio events detection */
 void gpio_rstevent(int gpio_num); /** clears event status */
 unsigned int gpio_chkevent(int gpio_num); /** check event status */
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1GPIO_H__ */
 /*----------------------------------------------------------------------------*/

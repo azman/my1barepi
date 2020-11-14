@@ -24,8 +24,6 @@ fbinfo_t;
 #define VIDEO_ERROR_RETURN 1
 #define VIDEO_ERROR_POINTER 2
 /*----------------------------------------------------------------------------*/
-#define VC_MMU_MAP 0x40000000
-/*----------------------------------------------------------------------------*/
 int video_init(fbinfo_t *p_fbinfo)
 {
 	unsigned int init = VIDEO_INIT_RETRIES;
@@ -71,8 +69,7 @@ void main(void)
 	gpio_config(MY_LED,GPIO_OUTPUT);
 	gpio_clr(MY_LED);
 	timer_init();
-	/** initialize mailbox */
-	mailbox_init();
+	/** use mailbox to get video info! */
 	mailbox_get_video_info(&info);
 	/** initialize fbinfo */
 	fb_info.height = info.fb_height;

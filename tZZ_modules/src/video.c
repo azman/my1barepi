@@ -25,11 +25,11 @@ font_t* font_sys = &font_big;
 /*----------------------------------------------------------------------------*/
 fb_t* video_init(int resolution)
 {
-	unsigned int init = VIDEO_INIT_RETRIES, test, addr;
 	fbinfo_t fb_info __attribute__ ((aligned(16)));
 	tags_info_t info;
+	unsigned int init, test, addr;
+	init = VIDEO_INIT_RETRIES;
 	/** get screen information */
-	mailbox_init();
 	mailbox_get_video_info(&info);
 	/** initialize fbinfo */
 	fb_info.height = info.fb_height;
@@ -136,7 +136,7 @@ void video_text_newline(void)
 		/* assume auto-scroll */
 		framebuff.cursor.y = framebuff.cursor.ymax - 1;
 		ypart = framebuff.cursor.y * framebuff.font->height;
-		/* browse pixels */
+		/* browse pixels - TODO: do this in assembly?!! make it faster! */
 		for (ytemp=0;ytemp<framebuff.screen.yres;ytemp++)
 		{
 			for (xtemp=0;xtemp<framebuff.screen.xres;xtemp++)
