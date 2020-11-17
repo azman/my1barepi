@@ -2,7 +2,7 @@
 TARGET = kernel.img
 
 # multiple source files (list them here as object files!)
-OBJLST = boot.o gpio.o timer.o uartbb.o string.o main.o utils.o
+OBJLST = boot.o gpio.o timer.o uart.o string.o main.o utils.o
 ifeq ($(USE_OLED),yes)
 	CFLAGS += -DUSE_OLED
 	OBJLST += i2c.o font_oled.o oled1306.o

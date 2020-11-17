@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*/
 #include "gpio.h"
 #include "timer.h"
-#include "uartbb.h"
+#include "uart.h"
 #include "string.h"
 #include "utils.h"
 #ifdef USE_OLED
@@ -124,8 +124,8 @@ void main(void)
 	int test, temp, size;
 	/** initialize stuffs */
 	timer_init();
-	/** initialize uartbb */
-	uartbb_init(26,19); /** gpio26=rx, gpio19=tx */
+	/** initialize uart for 9600bps */
+	uart_init(UART_BAUD_DEFAULT);
 #ifdef USE_OLED
 	/** initialize i2c */
 	i2c_init(I2C_SDA1_GPIO,I2C_SCL1_GPIO);
@@ -170,7 +170,7 @@ void main(void)
 #endif
 			gpsd.wait = 1;
 		}
-		test = uartbb_read();
+		test = uart_read();
 		if (!size&&test!='$') continue;
 		if (!test)
 		{
@@ -213,7 +213,7 @@ void main(void)
 			gpsd.wait = 0;
 			continue;
 		}
-		if (test!='\n') continue;
+		if (test!=(int)'\n') continue;
 		buff[size-1] = 0x0;
 		size = 0;
 		/** process */
