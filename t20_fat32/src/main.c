@@ -1,8 +1,6 @@
 /*----------------------------------------------------------------------------*/
 #include "video.h"
-#include "sdmmc.h"
-#include "fat32.h"
-#include "mbr.h"
+#include "sdmmc_fat32.h"
 /*----------------------------------------------------------------------------*/
 #define LOG_FILE "DATA.LOG"
 #define LOG_DATA "I AM LEGEND!\r\n"
@@ -13,23 +11,6 @@
 word32_t sector4cluster(word32_t clus)
 {
 	return fat32_cl2sect(clus);
-}
-/*----------------------------------------------------------------------------*/
-int sector_read(word32_t offs)
-{
-	part.sect.offs = offs;
-	offs *= SECTOR_SIZE;
-	part.sect.fill = sdmmc_readblock(offs,part.sect.data);
-	if (part.sect.fill) part.sect.fill <<= 2;
-	return part.sect.fill;
-}
-/*----------------------------------------------------------------------------*/
-int sector_write(void)
-{
-	word32_t offs = part.sect.offs*SECTOR_SIZE;
-	offs = sdmmc_writeblock(offs,part.sect.data);
-	if (offs) offs = part.sect.fill;
-	return (int) offs;
 }
 /*----------------------------------------------------------------------------*/
 void sector_show(my1sector_t* sector)
@@ -66,54 +47,6 @@ void sector_show(my1sector_t* sector)
 	video_text_string("\n");
 }
 /*----------------------------------------------------------------------------*/
-int sector_find_fat32(void)
-{
-	mbr_t* pmbr;
-	int loop, pick;
-	/* read first sector - look for partition table */
-	if ((loop=sector_read(0))!=SECTOR_SIZE)
-	{
-		video_text_string("\n** Cannot read MBR! (");
-		video_text_integer(loop);
-		video_text_string(")");
-		return -1;
-	}
-	pmbr = (mbr_t*)part.sect.data;
-	if (pmbr->ends[0]!=0x55||pmbr->ends[1]!=0xaa)
-	{
-		video_text_string("\n** Invalid MBR signature => [");
-		video_text_hexbyte(pmbr->ends[0]);
-		video_text_string("][");
-		video_text_hexbyte(pmbr->ends[1]);
-		video_text_string("]");
-		return -1;
-	}
-	/* check all primary partitions */
-	for (loop=0,pick=-1;loop<4;loop++)
-	{
-		if (!pmbr->ptab[loop].sysid) continue;
-		if (pmbr->ptab[loop].sysid==PARTID_FAT32||
-			pmbr->ptab[loop].sysid==PARTID_FAT32_LBA)
-		{
-			pick = loop;
-			break;
-		}
-	}
-	if (pick<0)
-	{
-		video_text_string("\n** Cannot find FAT32 partition!");
-		return -1;
-	}
-	if ((loop=sector_read(pmbr->ptab[pick].rsect))<=0)
-	{
-		video_text_string("\n** Cannot read VBR! (");
-		video_text_integer(loop);
-		video_text_string(")");
-		return -1;
-	}
-	return 0;
-}
-/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	fat32_vbr_t save;
@@ -127,15 +60,37 @@ void main(void)
 	{
 		video_text_string("MY1BAREPI FAT32 LIBRARY\n\n");
 		test = sdmmc_init();
-		video_text_string("Init=");
+		video_text_string("EMMC Init=");
 		video_text_integer(test);
 		video_text_string("\n");
 		if (test) break;
-		video_text_string("Find=");
+		video_text_string("Find Part=");
 		test = sector_find_fat32();
 		video_text_integer(test);
 		video_text_string("\n");
-		if (test) break;
+		if (test)
+		{
+			switch (test)
+			{
+				case FFAT32_MBR_FAILED:
+					video_text_string("** Cannot read MBR!\n)");
+					break;
+				case FFAT32_MBR_INVALID:
+					video_text_string("** Invalid MBR signature => [");
+					video_text_hexbyte(part.sect.data[510]);
+					video_text_string("][");
+					video_text_hexbyte(part.sect.data[511]);
+					video_text_string("]\n");
+					break;
+				case FFAT32_NOT_FOUND:
+					video_text_string("** Cannot find FAT32 partition!\n");
+					break;
+				case FFAT32_VBR_INVALID:
+					video_text_string("** Cannot read VBR!\n)");
+					break;
+			}
+			break;
+		}
 		video_text_string("-- FAT32 partition @ sector ");
 		video_text_integer(part.sect.offs);
 		video_text_string("\n");

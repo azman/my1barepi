@@ -2,7 +2,7 @@
 TARGET = kernel.img
 
 # multiple source files (list them here as object files!)
-OBJLST = boot.o main.o gpio.o timer.o sdmmc.o fat32.o
+OBJLST = boot.o main.o gpio.o timer.o sdmmc.o fat32.o sdmmc_fat32.o
 OBJLST += mailbox.o barrier.o utils.o font.o video.o
 
 # default rule
