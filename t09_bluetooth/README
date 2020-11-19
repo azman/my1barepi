@@ -16,3 +16,10 @@ Note:
 *Task* Adding more command(s)
 - modify the code to have another command for i/o toggle
 - modify the code to have another command for i/o blink (3x)
+
+Bluetooth Module Pin Interface:
+
+# VCC -> 3.3V
+# GND -> GND
+# TX  -> GPIO15 (RX)
+# RX  -> GPIO14 (TX)
