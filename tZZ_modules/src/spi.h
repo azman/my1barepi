@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1SPIH__
-#define __MY1SPIH__
+#ifndef __MY1SPI_H__
+#define __MY1SPI_H__
 /*----------------------------------------------------------------------------*/
 #include "raspi.h"
 #include "boot.h"
@@ -32,5 +32,5 @@ void spi_select(unsigned int which);
 void spi_activate(unsigned int enable);
 unsigned int spi_transfer(unsigned int data);
 /*----------------------------------------------------------------------------*/
-#endif
+#endif /* __MY1SPI_H__ */
 /*----------------------------------------------------------------------------*/
