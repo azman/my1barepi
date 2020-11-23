@@ -53,23 +53,18 @@ void main(void)
 	spi_init(SPI_CLK_DIVIDE_TEST);
 	/* initialize sd card */
 	video_text_string("Initializing SDCARD... ");
-	spi_select(SPI_SELECT_0); /* CS needs to be DESELECTED for sd spi mode! */
 	sdext_init();
-	spi_select(SPI_SELECT_1);
 	video_text_string("done.\n");
 	/* software reset */
 	video_text_string("Sending idle command... ");
-	card = sdext_command(SDCARD_CMD00,SDCARD_ARG_NONE_,SDCARD_CMD00_CRC);
-	sdext_doflush(SDCARD_FLUSH_R1,0x0);
+	card = sdext_idle();
 	video_text_string("done (0x");
 	video_text_hexbyte((unsigned char)card);
 	video_text_string(").\n");
 	if (card!=SDCARD_RESP_R1_IDLE) error_blink(ERROR_SDCARD_BLINK);
 	/* find out about card? */
 	video_text_string("Check SD card... ");
-	card = sdext_command(SDCARD_CMD08,SDCARD_CMD08_ARG,SDCARD_CMD08_CRC);
-	sdext_doflush(SDCARD_FLUSH_R7,sector);
-	sdext_doflush(SDCARD_FLUSH_R1,0x0);
+	card = sdext_cmd8(sector);
 	video_text_string("done (0x");
 	video_text_hexbyte((unsigned char)card);
 	video_text_string(")=>(0x");
@@ -87,9 +82,7 @@ void main(void)
 		video_text_string("Command OP COND... "); loop = 0;
 		do
 		{
-			card = sdext_command(SDCARD_CMD01,
-				SDCARD_ARG_NONE_,SDCARD_CMD01_CRC);
-			sdext_doflush(SDCARD_FLUSH_R1,0x0);
+			card = sdext_cmd1();
 			loop++;
 		}
 		while (card!=SDCARD_RESP_SUCCESS);
@@ -106,26 +99,25 @@ void main(void)
 				sector[2]==0x01&&sector[3]==0xAA)
 		{
 			video_text_string("  => SD Card version 2 detected.\n");
-			/* sending app cmd */
-
 			video_text_string("Command ACMD41... "); loop = 0;
 			do
 			{
-				card = sdext_command(SDCARD_APPCMD,
-					SDCARD_ARG_NONE_,SDCARD_CMD55_CRC);
-				sdext_doflush(SDCARD_FLUSH_R1,0x0);
-				if (card!=SDCARD_RESP_R1_IDLE)
+				card = sdext_acmd41();
+				if (card&SDCARD_ERROR_FLAG)
 				{
-					video_text_string("Cannot send CMD55? Abort.\n");
-					error_blink(ERROR_SDCARD_BLINK);
-				}
-				card = sdext_command(SDCARD_CMD41,
-					SDCARD_CMD41_ARG,SDCARD_CMD41_CRC);
-				sdext_doflush(SDCARD_FLUSH_R1,0x0);
-				if (card==SDCARD_RESP_ILLEGAL)
-				{
-					video_text_string("Cannot send CMD41? Abort.\n");
-					error_blink(ERROR_SDCARD_BLINK);
+					video_text_string("failed (0x");
+					video_text_hexuint(card);
+					video_text_string(").\n");
+					if (card&SDCARD_ERROR_CMD55)
+					{
+						video_text_string("** Cannot send CMD55? Abort.\n");
+						error_blink(ERROR_SDCARD_BLINK);
+					}
+					else if (card&SDCARD_ERROR_ACMD41)
+					{
+						video_text_string("** Cannot send CMD41? Abort.\n");
+						error_blink(ERROR_SDCARD_BLINK);
+					}
 				}
 				loop++;
 			}
@@ -149,18 +141,16 @@ void main(void)
 	}
 	/* turn off crc? */
 	video_text_string("Command CRC off... ");
-	card = sdext_command(SDCARD_NOCRC,SDCARD_ARG_NONE_,SDCARD_DUMMY_CRC);
+	card = sdext_disable_crc();
 	video_text_string("done (0x");
 	video_text_hexbyte((unsigned char)card);
 	video_text_string(").\n");
-	sdext_doflush(SDCARD_FLUSH_R1,0x0);
 	/* set block length @ sector size */
 	video_text_string("Command set block len... ");
-	card = sdext_command(SDCARD_CHBSIZE,SDCARD_ARG_NONE_,SDCARD_DUMMY_CRC);
+	card = sdext_blocksize();
 	video_text_string("done (0x");
 	video_text_hexbyte((unsigned char)card);
 	video_text_string(").\n");
-	sdext_doflush(SDCARD_FLUSH_R1,0x0);
 	/* change speed - can get up to 12MHz? */
 	/** read a sector... */
 	video_text_string("Reading first sector... ");

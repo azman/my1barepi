@@ -26,7 +26,6 @@
 #define SDCARD_CHBSIZE SDCARD_CMD16
 #define SDCARD_RDBLOCK SDCARD_CMD17
 #define SDCARD_APPCMD SDCARD_CMD55
-#define SDCARD_NOCRC SDCARD_CMD59
 /*----------------------------------------------------------------------------*/
 #define SDCARD_ARG_NONE_ 0x00000000
 #define SDCARD_DUMMY_DATA 0xFF
@@ -36,17 +35,25 @@
 #define SDCARD_RESP_R1_IDLE 0x01
 #define SDCARD_RESP_ILLEGAL 0x05
 #define SDCARD_RESP_INVALID 0xFF
+#define SDCARD_RESP_MASK 0xFF
 /*----------------------------------------------------------------------------*/
 #define SDCARD_FLUSH_R1 1
 #define SDCARD_FLUSH_R7 4
 /*----------------------------------------------------------------------------*/
+#define SDCARD_ERROR_FLAG 0x80000000
+#define SDCARD_ERROR_CMD55 (SDCARD_ERROR_FLAG|0x00010000)
+#define SDCARD_ERROR_ACMD41 (SDCARD_ERROR_FLAG|0x00020000)
+/*----------------------------------------------------------------------------*/
 #define SDCARD_SECTOR_SIZE 512
 /*----------------------------------------------------------------------------*/
 void sdext_init(void);
+unsigned int sdext_idle(void);
+unsigned int sdext_cmd8(unsigned char* buffer);
+unsigned int sdext_cmd1(void);
+unsigned int sdext_acmd41(void);
+unsigned int sdext_disable_crc(void);
+unsigned int sdext_blocksize(void);
 unsigned int sdext_read_block(unsigned int sector, unsigned char* buffer);
-/*----------------------------------------------------------------------------*/
-unsigned int sdext_command(int cmd, unsigned int arg, int crc);
-void sdext_doflush(int count,unsigned char *pbuff);
 /*----------------------------------------------------------------------------*/
 #endif /* __MY1SDEXT_H__ */
 /*----------------------------------------------------------------------------*/
