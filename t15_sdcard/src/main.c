@@ -171,7 +171,7 @@ void main(void)
 	/** initialize timer */
 	timer_init();
 	/** initialize video */
-	video_init(VIDEO_RES_VGA);
+	video_init(VIDEO_RES_MAX);
 	video_set_bgcolor(COLOR_BLUE);
 	video_clear();
 	/* say something... */
@@ -180,10 +180,11 @@ void main(void)
 	video_text_string("--------------------\n\n");
 	/** initialize spi */
 	spi_init(SPI_CLK_DIVIDE_TEST);
-	spi_select(SPI_SELECT_1);
 	/* initialize sd card */
 	video_text_string("Initializing SDCARD... ");
+	spi_select(SPI_SELECT_0); /* CS needs to be DESELECTED for sd spi mode! */
 	sdcard_init();
+	spi_select(SPI_SELECT_1);
 	video_text_string("done.\n");
 	/* software reset */
 	video_text_string("Sending idle command... ");
@@ -296,12 +297,19 @@ void main(void)
 	video_text_string("done. (");
 	video_text_hexuint(card);
 	video_text_string(")\n\n");
-	for (loop=0;loop<8;loop++)
+	video_text_string("-- Sector Offset: 0");
+	for (loop=0;loop<SDCARD_SECTOR_SIZE;loop++)
 	{
-		video_text_string("[0x");
+		if (!(loop&0xf))
+		{
+			video_text_string("\n");
+			video_text_hexuint(loop);
+			video_text_string(":");
+		}
+		video_text_string(" ");
 		video_text_hexbyte(sector[loop]);
-		video_text_string("]");
 	}
+	video_text_string("\n");
 	/** main loop */
 	while(1) { }
 }
