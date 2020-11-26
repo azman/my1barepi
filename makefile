@@ -47,13 +47,31 @@ TEMPS += $(patsubst src/%.c,%.o,$(wildcard src/*.c))
 TEMPS += $(patsubst src/%.c,%.elf,$(wildcard src/*.c))
 .SECONDARY: $(TEMPS)
 
+THIS_PATH:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+THIS_NAME:=$(shell basename $(THIS_PATH))
+
 info:
 	@echo "Go to respective folders to build the tutorial code(s) you need!"
 
-pi: $(TARGET)
+ifeq ($(THIS_NAME),my1barepi)
+
+define rule_template
+$(1):
+	@echo -n "-- Cleaning $(2) => "
+	@make --no-print-directory -C $(2) clean
+endef
+ALL_LIST=$(wildcard t0*_*) $(wildcard t1*_*) $(wildcard t2*_*)
+ALL_RULE=$(foreach tuts, $(ALL_LIST), $(tuts)_rule)
+$(foreach tuts, $(ALL_LIST),$(eval $(call rule_template,$(tuts)_rule,$(tuts))))
+
+clean: $(ALL_RULE)
+
+else
 
 clean:
 	rm -rf *.img *.elf *.lst *.map *.o
+
+pi: $(TARGET)
 
 new: clean pi
 
@@ -84,3 +102,5 @@ $(TOPELF): $(OBJLST) $(LINKER)
 
 %.o: ../tZZ_modules/src/%.c ../tZZ_modules/src/%.h
 	$(TOOLPFIX)-gcc $(CFLAGS) -c $< -o $@
+
+endif
