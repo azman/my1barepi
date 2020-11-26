@@ -60,7 +60,7 @@ $(1):
 	@echo -n "-- Cleaning $(2) => "
 	@make --no-print-directory -C $(2) clean
 endef
-ALL_LIST=$(wildcard t0*_*) $(wildcard t1*_*) $(wildcard t2*_*)
+ALL_LIST=$(subst /makefile,,$(wildcard t*_*/makefile))
 ALL_RULE=$(foreach tuts, $(ALL_LIST), $(tuts)_rule)
 $(foreach tuts, $(ALL_LIST),$(eval $(call rule_template,$(tuts)_rule,$(tuts))))
 
