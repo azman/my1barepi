@@ -8,6 +8,31 @@
 #define SPI_CLK_DIVIDE_TEST 26
 #define MIFARE_UID_SIZE 5
 /*----------------------------------------------------------------------------*/
+/* returns non-zero when equal */
+int compare_card_id(unsigned char* card1, unsigned char* card2)
+{
+	int loop;
+	for (loop=0;loop<MIFARE_UID_SIZE;loop++)
+		if (card1[loop]!=card2[loop]) return 0;
+	return 1;
+}
+/*----------------------------------------------------------------------------*/
+void display_card_id(unsigned char* card1)
+{
+	int loop;
+	video_text_string("ID: ");
+	for (loop=0;loop<MIFARE_UID_SIZE;loop++)
+		video_text_hexbyte(card1[loop]);
+	video_text_string("\n");
+}
+/*----------------------------------------------------------------------------*/
+void copy_card_id(unsigned char* card1, unsigned char* card2)
+{
+	int loop;
+	for (loop=0;loop<MIFARE_UID_SIZE;loop++)
+		card1[loop] = card2[loop];
+}
+/*----------------------------------------------------------------------------*/
 void main(void)
 {
 	int loop;
@@ -56,18 +81,15 @@ void main(void)
 		if (frc522_get_card_id(data)==FRC522_OK)
 		{
 			/* check if we got the same id again... */
-			for (loop=0;loop<MIFARE_UID_SIZE;loop++)
-				if (data[loop]!=save[loop]) break;
-			if (loop==MIFARE_UID_SIZE)
+			if (compare_card_id(data,save))
+			{
 				if ((timer_read()-last)<2*TIMER_S)
 					continue; /* skip if within lapse */
+			}
 			/* show id! */
-			video_text_string("ID: ");
-			for (loop=0;loop<MIFARE_UID_SIZE;loop++)
-				video_text_hexbyte(data[loop]);
-			video_text_string("\n");
-			for (loop=0;loop<MIFARE_UID_SIZE;loop++)
-				save[loop]=data[loop];
+			display_card_id(data);
+			/* save id */
+			copy_card_id(save,data);
 			last = timer_read();
 		}
 	}
