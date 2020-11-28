@@ -117,7 +117,7 @@ word32_t fat32_get_empty_cluster(void)
 		ptmp = (word32_t*) part.sect.data;
 		for (isec=temp==2?temp:0;isec<128;isec++,temp++)
 			if (ptmp[isec]==FAT32_FREE_CLUSTER) return temp;
-		isec = part.sect.offs++; /* next sector of fat */
+		isec = part.sect.offs+1; /* next sector of fat */
 	}
 	return FAT32_FAILURE;
 }
