@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-#ifndef __MY1FAT32H__
-#define __MY1FAT32H__
+#ifndef __MY1FAT32_H__
+#define __MY1FAT32_H__
 /*----------------------------------------------------------------------------*/
 #include "types.h"
 /*----------------------------------------------------------------------------*/
@@ -29,7 +29,7 @@ struct _fat_common_t
 	byte08_t fatcnt;  /* 16 - # of fat (always 2?) */
 	word16_t rooten;  /* 17 - root entries (fat16=>512,fat32=>0) */
 	word16_t sctsma;  /* 19 - sectors (fat32=>0, also 0 if smaller than 32M?) */
-	byte08_t medtyp;  /* 21 - media type (f0-floppy, f8-hard disk, fa-ramdisk?) */
+	byte08_t medtyp;  /* 21 - media type (f0-floppy, f8-hard disk) */
 	word16_t scpfat;  /* 22 - sectors per fat (on small vols, fat32=>0) */
 	word16_t scptrk;  /* 24 - sectors per track (63?) */
 	word16_t heads_;  /* 26 - heads */
@@ -121,32 +121,34 @@ typedef struct _fat32_dir_t fat32_dir_t;
 /*----------------------------------------------------------------------------*/
 #include "sector.h"
 /*----------------------------------------------------------------------------*/
+#define FAT32_FAT_ITEMS (SECTOR_SIZE/4)
+/*----------------------------------------------------------------------------*/
 #define FAT32_FLAG_OK 0
 #define FAT32_FLAG_ERROR (~(~0U>>1))
-#define FAT32_BOOT_MISSING (FAT32_FLAG_ERROR|0x0001)
-#define FAT32_INVALID_ENTRY (FAT32_FLAG_ERROR|0x0002)
-#define FAT32_INVALID_SSIZE (FAT32_FLAG_ERROR|0x0004)
-#define FAT32_FULL_DIRENTRY (FAT32_FLAG_ERROR|0x0008)
-#define FAT32_FULL_CLUSTER (FAT32_FLAG_ERROR|0x0010)
-#define FAT32_NOT_FILE (FAT32_FLAG_ERROR|0x0020)
-#define FAT32_SECTOR_ERROR (FAT32_FLAG_ERROR|0x0040)
-/* 'top' level errors */
-#define FAT32_FIND_FREE (FAT32_FLAG_ERROR|0x0100)
-#define FAT32_DIR_WRITE (FAT32_FLAG_ERROR|0x0200)
+#define FAT32_MBR_FAILED     (FAT32_FLAG_ERROR|0x00000001)
+#define FAT32_MBR_INVALID    (FAT32_FLAG_ERROR|0x00000002)
+#define FAT32_NOT_FOUND      (FAT32_FLAG_ERROR|0x00000004)
+#define FAT32_VBR_FAILED     (FAT32_FLAG_ERROR|0x00000010)
+#define FAT32_VBR_INVALID    (FAT32_FLAG_ERROR|0x00000020)
+#define FAT32_SECTORR_ERROR  (FAT32_FLAG_ERROR|0x00000040)
+#define FAT32_SECTORW_ERROR  (FAT32_FLAG_ERROR|0x00000080)
+#define FAT32_INVALID_ENTRY  (FAT32_FLAG_ERROR|0x00000100)
+#define FAT32_INVALID_FAT32  (FAT32_FLAG_ERROR|0x00000200)
+#define FAT32_INVALID_SSIZE  (FAT32_FLAG_ERROR|0x00000400)
+#define FAT32_FULL_DIRENTRY  (FAT32_FLAG_ERROR|0x00000800)
+#define FAT32_FULL_CLUSTER   (FAT32_FLAG_ERROR|0x00001000)
 /*----------------------------------------------------------------------------*/
-#define FAT32_OPTS_WRITE_OVERWRITE 0x01
-#define FAT32_OPTS_LIST_RAWENTRY 0x02
+#define FAT32_LIST_RAWENTRY 0x01
 /*----------------------------------------------------------------------------*/
 typedef struct _my1fat32_t
 {
 	word32_t flag;
-	word32_t opts;
-	word32_t step;
 	word32_t ifat; /* starting sector for fat */
 	word32_t data; /* starting sector for data cluster */
 	word32_t root; /* cluster index for root - 2? */
-	word16_t _spc; /* cluster size in sector (sector per cluster) */
-	word16_t _sec; /* currect sector index in current cluster */
+	word16_t _opt;
+	byte08_t _spc; /* cluster size in sector (sector per cluster) */
+	byte08_t _sec; /* currect sector index in current cluster */
 	word32_t cls1; /* first cluster in this cluster chain */
 	word32_t curr; /* current cluster for loaded sector */
 	word32_t next; /* next cluster in chain output of fat32_next */
@@ -154,15 +156,42 @@ typedef struct _my1fat32_t
 }
 my1fat32_t;
 /*----------------------------------------------------------------------------*/
-extern my1fat32_t part;
-extern fat32_dir_t* pdir;
+#define FILE_OPTS_OPENED 0x08
+#define FILE_OPTS_DOREAD 0x00
+#define FILE_OPTS_WRMODE 0x01
+#define FILE_OPTS_CREATE_MODE 0x02
+#define FILE_OPTS_APPEND_MODE 0x04
+#define FILE_OPTS_CREATE (FILE_OPTS_WRMODE|FILE_OPTS_CREATE_MODE)
+#define FILE_OPTS_APPEND (FILE_OPTS_WRMODE|FILE_OPTS_APPEND_MODE)
+/*----------------------------------------------------------------------------*/
+#define FILE_NOT_FOUND -1
+#define FILE_CANNOT_CREATE -2
+#define FILE_DIR_NOT_FOUND -3
+#define FILE_SECTOR_ERROR  -4
+#define FILE_ENTRY_LOST -5
+/*----------------------------------------------------------------------------*/
+typedef struct _my1file_t
+{
+	char name[FAT32_NAME_BUFFSIZE];
+	word32_t init; /* initial physical point - fs-dependent? */
+	word32_t curr; /* current physical point - fs-dependent? */
+	word32_t opts; /* file options */
+	word32_t size; /* current size */
+	word32_t last; /* counter for last access */
+	word32_t fpos; /* file byte position - for reading */
+	word32_t tpos; /* temp for reading */
+	word16_t fill; /* used bytes in current sector */
+	word16_t stat; /* error status for file ops */
+}
+my1file_t;
 /*----------------------------------------------------------------------------*/
 word32_t fat32_init(void);
-int fat32_write_file(char* name, byte08_t* data, int size);
+word32_t fat32_root(void); /* back to root */
+word32_t fat32_open(my1file_t* file, char* name, int opts);
+word32_t fat32_close(my1file_t* file);
+word32_t fat32_chdir(my1file_t* file, char* name); /* single dir in cwd */
+int fat32_write(my1file_t* file, byte08_t* data, int size);
+int fat32_read(my1file_t* file, byte08_t* data, int size);
 /*----------------------------------------------------------------------------*/
-/* debug? */
-fat32_dir_t* fat32_find_name(char* name);
-word32_t sector4cluster(word32_t clus);
-/*----------------------------------------------------------------------------*/
-#endif /* __MY1FAT32H__ */
+#endif /* __MY1FAT32_H__ */
 /*----------------------------------------------------------------------------*/

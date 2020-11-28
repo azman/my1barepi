@@ -6,12 +6,7 @@
 #define LOG_DATA "I AM LEGEND!\r\n"
 #define LOG_DATA_LEN 14
 /*----------------------------------------------------------------------------*/
-#define fat32_cl2sect(pick) (((pick-2)*part._spc)+part.data)
-/*----------------------------------------------------------------------------*/
-word32_t sector4cluster(word32_t clus)
-{
-	return fat32_cl2sect(clus);
-}
+extern my1fat32_t part;
 /*----------------------------------------------------------------------------*/
 void sector_show(my1sector_t* sector)
 {
@@ -50,6 +45,7 @@ void sector_show(my1sector_t* sector)
 void main(void)
 {
 	fat32_vbr_t save;
+	my1file_t file;
 	word32_t temp;
 	byte08_t *mark;
 	int test, loop;
@@ -65,46 +61,50 @@ void main(void)
 		video_text_string("\n");
 		if (test) break;
 		video_text_string("Find Part=");
-		test = sector_find_fat32();
-		video_text_integer(test);
+		temp = fat32_init();
+		video_text_hexuint(temp);
 		video_text_string("\n");
-		if (test)
+		if (temp)
 		{
-			switch (test)
+			switch (temp)
 			{
-				case FFAT32_MBR_FAILED:
+				case FAT32_MBR_FAILED:
 					video_text_string("** Cannot read MBR!\n)");
 					break;
-				case FFAT32_MBR_INVALID:
+				case FAT32_MBR_INVALID:
 					video_text_string("** Invalid MBR signature => [");
 					video_text_hexbyte(part.sect.data[510]);
 					video_text_string("][");
 					video_text_hexbyte(part.sect.data[511]);
 					video_text_string("]\n");
 					break;
-				case FFAT32_NOT_FOUND:
+				case FAT32_NOT_FOUND:
 					video_text_string("** Cannot find FAT32 partition!\n");
 					break;
-				case FFAT32_VBR_INVALID:
+				case FAT32_VBR_FAILED:
 					video_text_string("** Cannot read VBR!\n)");
 					break;
+				case FAT32_VBR_INVALID:
+					video_text_string("** Invalid VBR signature => [");
+					video_text_hexbyte(part.sect.data[510]);
+					video_text_string("][");
+					video_text_hexbyte(part.sect.data[511]);
+					video_text_string("]\n");
+					break;
+				default:
+					video_text_string("** Unknown error!\n");
 			}
 			break;
 		}
 		video_text_string("-- FAT32 partition @ sector ");
-		video_text_integer(part.sect.offs);
+		video_text_integer(part.next);
 		video_text_string("\n");
+		sector_read(part.next);
 		mark = (byte08_t*) &save;
 		for (loop=0;loop<SECTOR_SIZE;loop++)
 			mark[loop] = part.sect.data[loop];
 		temp = part.sect.offs;
-		if (fat32_init()==FAT32_FAIL)
-		{
-			video_text_string("** Cannot read FAT32 partition info! (0x");
-			video_text_hexuint(part.flag);
-			video_text_string(")\n");
-			break;
-		}
+		fat32_root(); /* reload root dir */
 		video_text_string("-- FAT32 Info: (");
 		video_text_hexuint(part.flag);
 		video_text_string(")\n");
@@ -168,21 +168,33 @@ void main(void)
 			video_text_char(save.meta.fstype[loop]);
 		video_text_string("'\n");
 		video_text_string("## {File:" LOG_FILE "} {");
-		if (fat32_find_name(LOG_FILE))
+		test = fat32_open(&file,LOG_FILE,FILE_OPTS_APPEND);
+		if (!test)
+		{
+			test = fat32_open(&file,LOG_FILE,FILE_OPTS_APPEND|FILE_OPTS_CREATE);
+			if (!test)
+			{
+				video_text_string("}\n** Failed to create '");
+				video_text_string(file.name);
+				video_text_string("'!\n");
+				break;
+			}
+			else video_text_string("NEW");
+		}
+		else
 		{
 			video_text_string("Clus:");
-			video_text_integer(pdir->clus);
+			video_text_integer(file.curr);
 			video_text_string(",Size:");
-			video_text_integer(pdir->size);
+			video_text_integer(file.size);
 		}
-		else video_text_string("NEW");
 		video_text_string("}\n");
 		video_text_string("-- Writing data... ");
-		test = fat32_write_file(LOG_FILE,(byte08_t*)LOG_DATA,LOG_DATA_LEN);
+		test = fat32_write(&file,(byte08_t*)LOG_DATA,LOG_DATA_LEN);
 		video_text_string("done. (");
 		video_text_hexuint(test);
 		video_text_string(")\n");
-		if (test)
+		if (test!=LOG_DATA_LEN)
 		{
 			video_text_string("\n@@ DEBUG: ");
 			video_text_string("{Offs:");
@@ -193,14 +205,22 @@ void main(void)
 			sector_show(&part.sect);
 			video_text_string("\n");
 		}
-		fat32_find_name(LOG_FILE);
-		video_text_string("## {Read:" LOG_FILE "} {");
+		fat32_close(&file);
+		test = fat32_open(&file,LOG_FILE,FILE_OPTS_DOREAD);
+		if (!test)
+		{
+			video_text_string("** Cannot read file '");
+			video_text_string(file.name);
+			video_text_string("'!\n");
+			break;
+		}
+		video_text_string("## {Read:");
+		video_text_string(file.name);
+		video_text_string("} {");
 		video_text_string("Clus:");
-		video_text_integer(pdir->clus);
-		video_text_string("@Sect:");
-		video_text_integer(sector4cluster(pdir->clus));
+		video_text_integer(file.curr);
 		video_text_string(",Size:");
-		video_text_integer(pdir->size);
+		video_text_integer(file.size);
 		video_text_string("}\n");
 	}
 	while (0);

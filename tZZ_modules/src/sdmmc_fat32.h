@@ -5,12 +5,5 @@
 #include "sdmmc.h"
 #include "fat32.h"
 /*----------------------------------------------------------------------------*/
-#define FFAT32_MBR_FAILED (FAT32_FLAG_ERROR|0x01)
-#define FFAT32_MBR_INVALID (FAT32_FLAG_ERROR|0x02)
-#define FFAT32_NOT_FOUND (FAT32_FLAG_ERROR|0x04)
-#define FFAT32_VBR_INVALID (FAT32_FLAG_ERROR|0x08)
-/*----------------------------------------------------------------------------*/
-int sector_find_fat32(void);
-/*----------------------------------------------------------------------------*/
 #endif /* __MY1SDMMC_FAT32H__ */
 /*----------------------------------------------------------------------------*/
