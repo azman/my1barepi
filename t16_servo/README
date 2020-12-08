@@ -11,3 +11,6 @@ Connections:
 - Red wire - 5V
 - Brown wire - GND
 - Orange wire - PWM
+
+GPIO_PWM0 18
+GPIO_PWM1 19
