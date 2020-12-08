@@ -3,3 +3,11 @@ TUTORIAL 16
 -----------
 
 Example for servo motor interface using  PWM module.
+
+Servo:
+- towerpro mg995
+
+Connections:
+- Red wire - 5V
+- Brown wire - GND
+- Orange wire - PWM
