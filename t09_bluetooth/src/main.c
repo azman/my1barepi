@@ -341,9 +341,21 @@ void main(void)
 		video_text_string("-- Initializing HC-06... ");
 		bt_init(&btdev);
 		if (btdev.status>0) break;
-		video_text_string("fail!\n");
+		video_text_string("fail! (");
+		video_text_integer(btdev.step);
+		video_text_string(") => {");
+		if (btdev.temp>0)
+			video_text_string((char*)btdev.buff);
+		video_text_string("}\n");
 		timer_wait(TIMER_S);
 	}
+	video_text_string("OK!\n## [Version:");
+	video_text_string(btdev.vers);
+	video_text_string("][Name:");
+	video_text_string(btdev.name);
+	video_text_string("][Pin:");
+	video_text_string(btdev.cpin);
+	video_text_string("]\n\n");
 	video_text_string("Module ready!\n\n");
 	/** do the thing... */
 	btdev.bbsize = 0;

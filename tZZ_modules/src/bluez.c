@@ -5,6 +5,7 @@
 #include "utils.h"
 /*----------------------------------------------------------------------------*/
 #define BLUEZ_WAIT_DELAY (3*TIMER_S)
+#define BLUEZ_COMM_DELAY (2*TIMER_S)
 /*----------------------------------------------------------------------------*/
 int bt_timeout(int delay)
 {
@@ -18,6 +19,7 @@ int bt_replies(btmodule_t* btinfo)
 {
 	int count = 0;
 	btinfo->status = 0;
+	btinfo->temp = 0;
 	if (!bt_timeout(BLUEZ_WAIT_DELAY))
 	{
 		while (uart_incoming())
@@ -30,6 +32,7 @@ int bt_replies(btmodule_t* btinfo)
 				break;
 			}
 		}
+		btinfo->temp = count;
 		btinfo->buff[count] = 0x0;
 		if (count>1&&btinfo->buff[0]=='O'&&btinfo->buff[1]=='K')
 			btinfo->status = count;
@@ -61,36 +64,59 @@ int bt_cmdwait(btmodule_t* btinfo)
 void bt_init(btmodule_t* btinfo)
 {
 	int loop;
+	btinfo->temp = 0;
+	btinfo->step = 0;
 	/* try to communicate */
 	uart_print("AT");
-	timer_wait(TIMER_S);
+	timer_wait(BLUEZ_COMM_DELAY);
 	if (bt_replies(btinfo)<=0) return;
+	btinfo->step++;
 	/* get version */
 	uart_print("AT+VERSION");
-	timer_wait(TIMER_S);
-	if (bt_replies(btinfo)<=0) return;
-	/* save version name */
-	loop = 0;
-	while (btinfo->buff[loop+2])
+	timer_wait(BLUEZ_COMM_DELAY);
+	if (bt_replies(btinfo)>0)
 	{
-		btinfo->vers[loop] = btinfo->buff[loop+2];
-		loop++;
+		/* save version name */
+		loop = 0;
+		while (btinfo->buff[loop+2])
+		{
+			btinfo->vers[loop] = btinfo->buff[loop+2];
+			loop++;
+		}
+		btinfo->vers[loop] = 0x0;
 	}
-	btinfo->vers[loop] = 0x0;
+	else if (btinfo->temp>0)
+	{
+		loop = 0;
+		while (btinfo->buff[loop])
+		{
+			btinfo->vers[loop] = btinfo->buff[loop];
+			loop++;
+		}
+		btinfo->vers[loop] = 0x0;
+	}
+	else
+	{
+		btinfo->vers[0] = '?';
+		btinfo->vers[1] = 0x0;
+	}
 	/* set name */
 	uart_print("AT+NAME");
 	uart_print(btinfo->name);
-	timer_wait(TIMER_S);
+	timer_wait(BLUEZ_COMM_DELAY);
 	if (bt_replies(btinfo)<=0) return;
+	btinfo->step++;
 	/* set pin */
 	uart_print("AT+PIN");
 	uart_print(btinfo->cpin);
-	timer_wait(TIMER_S);
+	timer_wait(BLUEZ_COMM_DELAY);
 	if (bt_replies(btinfo)<=0) return;
+	btinfo->step++;
 	/* set baud 9600... always!*/
 	uart_print("AT+BAUD4");
-	timer_wait(TIMER_S);
+	timer_wait(BLUEZ_COMM_DELAY);
 	if (bt_replies(btinfo)<=0) return;
+	btinfo->step++;
 }
 /*----------------------------------------------------------------------------*/
 void bt_send(unsigned int data)

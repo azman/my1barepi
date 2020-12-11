@@ -15,6 +15,7 @@
 typedef struct _btmodule_t
 {
 	int status, bbsize;
+	int temp, step;
 	char name[BT_NAME_BUFF];
 	char cpin[BT_CPIN_BUFF];
 	char vers[BT_BUFF_SIZE];
