@@ -5,8 +5,9 @@
 #include "raspi.h"
 #include "boot.h"
 /*----------------------------------------------------------------------------*/
-#define PWM_CHANNEL_0 0
-#define PWM_CHANNEL_1 1
+/** PWMCH1_PWEN & PWMCH2_PWEN */
+#define PWM_CHANNEL_0 0x0001
+#define PWM_CHANNEL_1 0x0100
 /*----------------------------------------------------------------------------*/
 /**
  *  exculsive use of MS (Mark-Space) pwm mode!
@@ -19,8 +20,9 @@
  *  - div3840 => 5kHz
  *  - div is only 12-bits (max=4095)
 **/
+void pwm_main_clock(unsigned int divi, unsigned int divf);
 /*----------------------------------------------------------------------------*/
-void pwm_init(unsigned int chan, unsigned int divi, unsigned int divf);
+void pwm_init(unsigned int chan);
 void pwm_exec(unsigned int chan);
 void pwm_stop(unsigned int chan);
 void pwm_prep_data(unsigned int chan, unsigned int data);

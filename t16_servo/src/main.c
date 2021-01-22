@@ -24,7 +24,8 @@ void main(void)
 	oled1306_t oled;
 	unsigned int curr,tmax;
 	/** pwm stuffs - 10khz clock @ 0.1ms */
-	pwm_init(PWM_CHANNEL_1,1920,0);
+	pwm_main_clock(1920,0);
+	pwm_init(PWM_CHANNEL_1);
 	curr = pwm_curr_data(PWM_CHANNEL_1);
 	tmax = pwm_curr_full(PWM_CHANNEL_1);
 	/** oled: timer & i2c required */

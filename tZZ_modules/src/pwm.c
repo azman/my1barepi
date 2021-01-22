@@ -62,16 +62,25 @@
 #define CM_CLKDIVI_MASK 0x00FFF000
 #define CM_CLKDIVF_MASK 0x00000FFF
 /*----------------------------------------------------------------------------*/
-void pwm_init(unsigned int chan, unsigned int divi, unsigned int divf)
+void pwm_init(unsigned int chan)
 {
-	unsigned int temp = PWMCH1_MSEN;
-	switch (chan)
+	unsigned int temp = 0;
+	if (chan&PWM_CHANNEL_0)
 	{
-		case 0: gpio_config(GPIO_PWM0,GPIO_ALTF5); break;
-		default:
-		case 1: gpio_config(GPIO_PWM1,GPIO_ALTF5); temp <<= 8; break;
+		gpio_config(GPIO_PWM0,GPIO_ALTF5);
+		temp |= PWMCH1_MSEN;
 	}
-	put32(PWMCTL_OFFSET,get32(PWMCTL_OFFSET)|temp);
+	if (chan&PWM_CHANNEL_1)
+	{
+		gpio_config(GPIO_PWM1,GPIO_ALTF5);
+		temp |= PWMCH1_MSEN<<8;
+	}
+	if (temp) setbit32(PWMCTL_OFFSET,temp);
+}
+/*----------------------------------------------------------------------------*/
+void pwm_main_clock(unsigned int divi, unsigned int divf)
+{
+	unsigned int temp;
 	/* stop clkgen */
 	temp = getbit32(CM_PWMCTL,~CM_PASSWORD_MASK);
 	temp &= CM_CLKGEN_ENAB;
@@ -92,33 +101,23 @@ void pwm_init(unsigned int chan, unsigned int divi, unsigned int divf)
 /*----------------------------------------------------------------------------*/
 void pwm_exec(unsigned int chan)
 {
-	unsigned int temp = PWMCH1_PWEN;
-	switch (chan)
-	{
-		case 0: break;
-		default: case 1: temp <<= 8; break;
-	}
-	setbit32(PWMCTL_OFFSET,temp);
+	chan &= (PWMCH1_PWEN|PWMCH2_PWEN);
+	if (chan) setbit32(PWMCTL_OFFSET,chan);
 }
 /*----------------------------------------------------------------------------*/
 void pwm_stop(unsigned int chan)
 {
-	unsigned int temp = PWMCH1_PWEN;
-	switch (chan)
-	{
-		case 0: break;
-		default: case 1: temp <<= 8; break;
-	}
-	clrbit32(PWMCTL_OFFSET,temp);
+	chan &= (PWMCH1_PWEN|PWMCH2_PWEN);
+	if (chan) clrbit32(PWMCTL_OFFSET,chan);
 }
 /*----------------------------------------------------------------------------*/
 void pwm_prep_data(unsigned int chan, unsigned int data)
 {
 	switch (chan)
 	{
-		case 0: put32(PWM_DAT1_OFFSET,data); break;
+		case PWM_CHANNEL_0: put32(PWM_DAT1_OFFSET,data); break;
 		default:
-		case 1: put32(PWM_DAT2_OFFSET,data); break;
+		case PWM_CHANNEL_1: put32(PWM_DAT2_OFFSET,data); break;
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -126,9 +125,9 @@ void pwm_prep_full(unsigned int chan, unsigned int full)
 {
 	switch (chan)
 	{
-		case 0: put32(PWM_RNG1_OFFSET,full); break;
+		case PWM_CHANNEL_0: put32(PWM_RNG1_OFFSET,full); break;
 		default:
-		case 1: put32(PWM_RNG2_OFFSET,full); break;
+		case PWM_CHANNEL_1: put32(PWM_RNG2_OFFSET,full); break;
 	}
 }
 /*----------------------------------------------------------------------------*/
@@ -136,9 +135,9 @@ unsigned int pwm_curr_data(unsigned int chan)
 {
 	switch (chan)
 	{
-		case 0: chan = PWM_DAT1_OFFSET; break;
+		case PWM_CHANNEL_0: chan = PWM_DAT1_OFFSET; break;
 		default:
-		case 1: chan = PWM_DAT2_OFFSET; break;
+		case PWM_CHANNEL_1: chan = PWM_DAT2_OFFSET; break;
 	}
 	return get32(chan);
 }
@@ -147,9 +146,9 @@ unsigned int pwm_curr_full(unsigned int chan)
 {
 	switch (chan)
 	{
-		case 0: chan = PWM_RNG1_OFFSET; break;
+		case PWM_CHANNEL_0: chan = PWM_RNG1_OFFSET; break;
 		default:
-		case 1: chan = PWM_RNG2_OFFSET; break;
+		case PWM_CHANNEL_1: chan = PWM_RNG2_OFFSET; break;
 	}
 	return get32(chan);
 }
