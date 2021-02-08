@@ -1,8 +1,0 @@
------------
-TUTORIAL 08
------------
-
-This is a program that simply echoes whatever byte that is detected on the
-incoming UART line (RX), to the outgoing line (TX).
-
-**Note:** KEPT FOR TESTING ONLY.

@@ -1,8 +1,0 @@
-- combine uart libraries (use interrupt for bit-bang)
-- add tutorial on simple input detection
-  = detect edges on a signal
-  = measure pulse width, frequency
-  = detect edges on 2 signals
-- modify t05_senstemp to use textlcd
-- update t09_bluetooth (remove uartbb)
-  = use textlcd for main status display
